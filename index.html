@@ -6,13 +6,56 @@
   <title>Pomodoro Timer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="background-ambient" id="ambientBg"></div>
 
   <div class="app-container">
+    <!-- Tomato Leafy Crown (Visible only in Tomato Theme) -->
+    <div class="tomato-stem-crown" aria-hidden="true">
+      <svg viewBox="0 0 160 80" width="130" height="65">
+        <defs>
+          <linearGradient id="leafGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#4ade80" />
+            <stop offset="45%" stop-color="#16a34a" />
+            <stop offset="100%" stop-color="#14532d" />
+          </linearGradient>
+          <linearGradient id="stemGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#22c55e" />
+            <stop offset="100%" stop-color="#15803d" />
+          </linearGradient>
+          <filter id="stemShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(0,0,0,0.5)" />
+          </filter>
+        </defs>
+        <g filter="url(#stemShadow)">
+          <path d="M 80 48 C 65 52, 38 60, 16 54 C 28 44, 55 40, 75 46 Z" fill="url(#leafGrad)" />
+          <path d="M 80 48 C 66 34, 44 20, 32 6 C 48 16, 68 28, 78 44 Z" fill="url(#leafGrad)" />
+          <path d="M 80 48 C 76 28, 78 12, 80 2 C 84 12, 86 28, 84 46 Z" fill="url(#leafGrad)" />
+          <path d="M 80 48 C 94 34, 116 20, 128 6 C 112 16, 92 28, 82 44 Z" fill="url(#leafGrad)" />
+          <path d="M 80 48 C 95 52, 122 60, 144 54 C 132 44, 105 40, 85 46 Z" fill="url(#leafGrad)" />
+          <path d="M 76 52 C 75 36, 70 20, 74 9 C 76 5, 82 5, 85 9 C 83 22, 82 36, 82 52 Z" fill="url(#stemGrad)" />
+          <ellipse cx="80" cy="50" rx="10" ry="4" fill="#14532d" />
+        </g>
+      </svg>
+    </div>
+
+    <!-- Radio Top Speaker Grille & Brass Plaque (Visible only in Radio Theme) -->
+    <div class="radio-top-panel" aria-hidden="true">
+      <div class="radio-brass-badge">
+        <span class="badge-star">★</span>
+        <span class="badge-text">MASTERWORK DELUXE • 1948</span>
+        <span class="badge-star">★</span>
+      </div>
+      <div class="radio-grille-louvers">
+        <span class="louver"></span>
+        <span class="louver"></span>
+        <span class="louver"></span>
+      </div>
+    </div>
+
     <!-- Header -->
     <header class="app-header">
       <div class="logo">
@@ -41,6 +84,24 @@
       </div>
     </header>
 
+    <!-- Theme Customization Switcher -->
+    <div class="theme-bar" role="toolbar" aria-label="Theme Selection">
+      <div class="theme-switcher" role="radiogroup" aria-label="Select Timer Appearance">
+        <button class="theme-pill active" data-theme="modern" role="radio" aria-checked="true" title="Default Modern Cyber Glow Theme">
+          <span class="theme-pill-icon">✨</span>
+          <span class="theme-pill-label">Modern</span>
+        </button>
+        <button class="theme-pill" data-theme="radio" role="radio" aria-checked="false" title="Vintage Wooden Tube Radio Theme">
+          <span class="theme-pill-icon">📻</span>
+          <span class="theme-pill-label">Radio</span>
+        </button>
+        <button class="theme-pill" data-theme="tomato" role="radio" aria-checked="false" title="Classic Kitchen Tomato Timer Theme">
+          <span class="theme-pill-icon">🍅</span>
+          <span class="theme-pill-label">Tomato</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Cycle Progress & Light Indicators -->
     <section class="cycle-section" aria-label="Pomodoro Cycle Lights">
       <div class="cycle-header">
@@ -64,6 +125,130 @@
     <!-- Main Timer Display -->
     <main class="timer-main">
       <div class="timer-display-wrapper">
+        <!-- Vintage Radio Dial Face (Radio Theme) -->
+        <div class="radio-dial-face" aria-hidden="true">
+          <div class="radio-glass-glow"></div>
+          <svg class="radio-dial-svg" viewBox="0 0 290 290">
+            <circle cx="145" cy="145" r="142" class="radio-bezel-outer" />
+            <circle cx="145" cy="145" r="137" class="radio-bezel-inner" />
+            <circle cx="145" cy="145" r="126" class="radio-dial-backing" />
+            <!-- Frequency scale arcs -->
+            <path d="M 45 145 A 100 100 0 0 1 245 145" class="radio-scale-arc" />
+            <path d="M 58 145 A 87 87 0 0 1 232 145" class="radio-scale-arc-sub" />
+            <text x="145" y="70" class="radio-brand-label">ALL WAVE RECEIVER</text>
+            <text x="75" y="100" class="radio-freq-num">55</text>
+            <text x="105" y="86" class="radio-freq-num">70</text>
+            <text x="145" y="82" class="radio-freq-num">100</text>
+            <text x="185" y="86" class="radio-freq-num">130</text>
+            <text x="215" y="100" class="radio-freq-num">160</text>
+            <text x="145" y="97" class="radio-band-name">KILOCYCLES</text>
+            <!-- Glowing Radio Tuning Needle -->
+            <line x1="145" y1="35" x2="145" y2="155" class="radio-tuning-needle" />
+          </svg>
+        </div>
+
+        <!-- Tomato Mechanical Timer Face (Tomato Theme) -->
+        <div class="tomato-dial-face" aria-hidden="true">
+          <svg class="tomato-dial-svg" viewBox="0 0 290 290">
+            <!-- Static Outer Housing Bezel -->
+            <circle cx="145" cy="145" r="141" class="tomato-dial-housing" />
+
+            <!-- Rotating Timer Dial Disk -->
+            <g id="tomatoRotatingDial" class="tomato-rotating-dial">
+              <!-- Cream Dial Face Surface -->
+              <circle cx="145" cy="145" r="136" class="tomato-dial-face-bg" />
+              <circle cx="145" cy="145" r="136" class="tomato-dial-rim-border" />
+              <circle cx="145" cy="145" r="96" class="tomato-dial-inner-ring" />
+
+              <!-- All 60 Minute Ticks -->
+              <g class="tomato-dial-ticks">
+                <line x1="145" y1="10" x2="145" y2="25" class="tomato-tick-major" transform="rotate(0 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(354 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(348 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(342 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(336 145 145)" />
+                <line x1="145" y1="10" x2="145" y2="25" class="tomato-tick-major" transform="rotate(330 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(324 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(318 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(312 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(306 145 145)" />
+                <line x1="145" y1="10" x2="145" y2="25" class="tomato-tick-major" transform="rotate(300 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(294 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(288 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(282 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(276 145 145)" />
+                <line x1="145" y1="10" x2="145" y2="25" class="tomato-tick-major" transform="rotate(270 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(264 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(258 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(252 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(246 145 145)" />
+                <line x1="145" y1="10" x2="145" y2="25" class="tomato-tick-major" transform="rotate(240 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(234 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(228 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(222 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(216 145 145)" />
+                <line x1="145" y1="10" x2="145" y2="25" class="tomato-tick-major" transform="rotate(210 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(204 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(198 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(192 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(186 145 145)" />
+                <line x1="145" y1="10" x2="145" y2="25" class="tomato-tick-major" transform="rotate(180 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(174 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(168 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(162 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(156 145 145)" />
+                <line x1="145" y1="10" x2="145" y2="25" class="tomato-tick-major" transform="rotate(150 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(144 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(138 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(132 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(126 145 145)" />
+                <line x1="145" y1="10" x2="145" y2="25" class="tomato-tick-major" transform="rotate(120 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(114 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(108 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(102 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(96 145 145)" />
+                <line x1="145" y1="10" x2="145" y2="25" class="tomato-tick-major" transform="rotate(90 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(84 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(78 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(72 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(66 145 145)" />
+                <line x1="145" y1="10" x2="145" y2="25" class="tomato-tick-major" transform="rotate(60 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(54 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(48 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(42 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(36 145 145)" />
+                <line x1="145" y1="10" x2="145" y2="25" class="tomato-tick-major" transform="rotate(30 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(24 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(18 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(12 145 145)" />
+                <line x1="145" y1="11" x2="145" y2="19" class="tomato-tick-minor" transform="rotate(6 145 145)" />
+              </g>
+
+              <!-- Minute Numbers 0 to 55 -->
+              <g class="tomato-dial-numbers">
+                <text x="145" y="37" class="tomato-num" transform="rotate(0 145 145)">0</text>
+                <text x="145" y="37" class="tomato-num" transform="rotate(330 145 145)">5</text>
+                <text x="145" y="37" class="tomato-num" transform="rotate(300 145 145)">10</text>
+                <text x="145" y="37" class="tomato-num" transform="rotate(270 145 145)">15</text>
+                <text x="145" y="37" class="tomato-num" transform="rotate(240 145 145)">20</text>
+                <text x="145" y="37" class="tomato-num" transform="rotate(210 145 145)">25</text>
+                <text x="145" y="37" class="tomato-num" transform="rotate(180 145 145)">30</text>
+                <text x="145" y="37" class="tomato-num" transform="rotate(150 145 145)">35</text>
+                <text x="145" y="37" class="tomato-num" transform="rotate(120 145 145)">40</text>
+                <text x="145" y="37" class="tomato-num" transform="rotate(90 145 145)">45</text>
+                <text x="145" y="37" class="tomato-num" transform="rotate(60 145 145)">50</text>
+                <text x="145" y="37" class="tomato-num" transform="rotate(30 145 145)">55</text>
+              </g>
+            </g>
+
+            <!-- Stationary Top Pointer Arrow at 12 o'clock -->
+            <g class="tomato-dial-pointer-group">
+              <path d="M 139 3 L 151 3 L 145 15 Z" class="tomato-dial-pointer-triangle" />
+              <circle cx="145" cy="3" r="2.5" class="tomato-dial-pointer-dot" />
+            </g>
+          </svg>
+        </div>
+
         <svg class="progress-ring" viewBox="0 0 320 320">
           <circle class="progress-ring-bg" cx="160" cy="160" r="140" />
           <circle class="progress-ring-fill" id="progressFill" cx="160" cy="160" r="140" />

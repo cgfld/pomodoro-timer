@@ -18,28 +18,31 @@ const SEGMENTS = [
   { id: 8, type: 'longRest', durationSec: 20 * 60, name: 'Long Rest', color: 'yellow', subtext: 'Long break • Recharge fully' }
 ];
 
-const COLOR_MAP = {
-  green: {
-    color: '#22c55e',
-    glow: 'rgba(34, 197, 94, 0.45)',
-    soft: 'rgba(34, 197, 94, 0.15)'
+const THEME_PALETTES = {
+  modern: {
+    green: { color: '#22c55e', glow: 'rgba(34, 197, 94, 0.45)', soft: 'rgba(34, 197, 94, 0.15)' },
+    orange: { color: '#f97316', glow: 'rgba(249, 115, 22, 0.45)', soft: 'rgba(249, 115, 22, 0.15)' },
+    yellow: { color: '#facc15', glow: 'rgba(250, 204, 21, 0.55)', soft: 'rgba(250, 204, 21, 0.15)' }
   },
-  orange: {
-    color: '#f97316',
-    glow: 'rgba(249, 115, 22, 0.45)',
-    soft: 'rgba(249, 115, 22, 0.15)'
+  radio: {
+    green: { color: '#34d399', glow: 'rgba(52, 211, 153, 0.65)', soft: 'rgba(52, 211, 153, 0.18)' },
+    orange: { color: '#f59e0b', glow: 'rgba(245, 158, 11, 0.65)', soft: 'rgba(245, 158, 11, 0.18)' },
+    yellow: { color: '#fbbf24', glow: 'rgba(251, 191, 36, 0.70)', soft: 'rgba(251, 191, 36, 0.20)' }
   },
-  yellow: {
-    color: '#facc15',
-    glow: 'rgba(250, 204, 21, 0.55)',
-    soft: 'rgba(250, 204, 21, 0.15)'
+  tomato: {
+    green: { color: '#16a34a', glow: 'rgba(22, 163, 74, 0.55)', soft: 'rgba(22, 163, 74, 0.18)' },
+    orange: { color: '#ea580c', glow: 'rgba(234, 88, 12, 0.55)', soft: 'rgba(234, 88, 12, 0.18)' },
+    yellow: { color: '#eab308', glow: 'rgba(234, 179, 8, 0.65)', soft: 'rgba(234, 179, 8, 0.20)' }
   }
 };
+
+const COLOR_MAP = THEME_PALETTES.modern;
 
 // SVG Ring perimeter (2 * PI * 140)
 const RING_CIRCUMFERENCE = 2 * Math.PI * 140;
 
 // --- State ---
+let currentTheme = 'modern';
 let currentSegmentIndex = 0;
 let secondsRemaining = SEGMENTS[0].durationSec;
 let isRunning = false;
@@ -87,7 +90,11 @@ const balanceFillWorkEl = document.getElementById('balanceFillWork');
 const balanceFillRestEl = document.getElementById('balanceFillRest');
 const resetStatsBtn = document.getElementById('resetStatsBtn');
 
-// --- Audio Context for Chimes ---
+// Theme Elements
+const themePills = document.querySelectorAll('.theme-pill');
+const logoIconEl = document.querySelector('.logo-icon');
+
+// --- Audio Context for Chimes & Sound Effects ---
 let audioCtx = null;
 
 function getAudioContext() {
@@ -104,7 +111,83 @@ function getAudioContext() {
 }
 
 /**
- * Plays an organic synthesized musical chime
+ * Plays a subtle tactile mechanical click when controls or themes are clicked
+ */
+function playClick() {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = currentTheme === 'radio' ? 'square' : 'triangle';
+    osc.frequency.setValueAtTime(currentTheme === 'radio' ? 300 : 700, now);
+    osc.frequency.exponentialRampToValueAtTime(80, now + 0.025);
+
+    gain.gain.setValueAtTime(0.06, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.035);
+  } catch (err) {
+    // Ignore audio error
+  }
+}
+
+/**
+ * Plays a rapid spring-winding ratchet sound when setting the tomato timer
+ */
+function playRatchetWind() {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    for (let i = 0; i < 6; i++) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1100 - i * 50, now + i * 0.032);
+      gain.gain.setValueAtTime(0.045, now + i * 0.032);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.032 + 0.018);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + i * 0.032);
+      osc.stop(now + i * 0.032 + 0.022);
+    }
+  } catch (err) {}
+}
+
+/**
+ * Plays a soft, subtle mechanical clockwork tick every second in Tomato theme
+ */
+function playClockTick() {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(2400, now);
+    osc.frequency.exponentialRampToValueAtTime(320, now + 0.012);
+    gain.gain.setValueAtTime(0.018, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.014);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.016);
+  } catch (err) {}
+}
+
+/**
+ * Plays an organic synthesized musical chime customized per theme
  * @param {'workComplete'|'restComplete'} type
  */
 function playChime(type) {
@@ -114,30 +197,81 @@ function playChime(type) {
     if (!ctx) return;
 
     const now = ctx.currentTime;
-    
-    // Frequencies: Work complete plays peaceful chime chord, Break complete plays clear bright chime
-    const notes = type === 'workComplete' 
-      ? [523.25, 659.25, 783.99, 1046.50] // C5, E5, G5, C6 (warm major chord)
-      : [440.00, 554.37, 659.25, 880.00]; // A4, C#5, E5, A5 (alert awakening chord)
 
-    notes.forEach((freq, idx) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
+    if (currentTheme === 'radio') {
+      // Vintage Radio Chime: Warm 1940s 3-tone broadcast chime (G4, E4, C4) or warm tube tone
+      const radioNotes = type === 'workComplete'
+        ? [392.00, 329.63, 261.63] // G4, E4, C4 (classic vintage broadcast chime)
+        : [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5 (awakening broadcast sign-on)
 
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+      radioNotes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
 
-      // Gentle attack and exponential decay for chime/singing bowl sound
-      gain.gain.setValueAtTime(0.0001, now + idx * 0.08);
-      gain.gain.exponentialRampToValueAtTime(0.25 / notes.length, now + idx * 0.08 + 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 1.8);
+        // Warm vibraphone / tube tone using triangle wave
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.22);
 
-      osc.connect(gain);
-      gain.connect(ctx.destination);
+        gain.gain.setValueAtTime(0.0001, now + idx * 0.22);
+        gain.gain.exponentialRampToValueAtTime(0.25 / radioNotes.length, now + idx * 0.22 + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.22 + 2.0);
 
-      osc.start(now + idx * 0.08);
-      osc.stop(now + idx * 0.08 + 1.85);
-    });
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now + idx * 0.22);
+        osc.stop(now + idx * 0.22 + 2.05);
+      });
+    } else if (currentTheme === 'tomato') {
+      // Classic mechanical kitchen timer bell: sharp strike + metallic bell resonance
+      const bellFreqs = type === 'workComplete'
+        ? [1568, 2093, 3136] // G6, C7, G7 (metallic bell resonance)
+        : [1760, 2217, 3520]; // A6, C#7, A7 (bright kitchen alert)
+
+      // Double mechanical bell strike: "Ding... DING!"
+      [0, 0.18].forEach((delay) => {
+        bellFreqs.forEach((freq) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + delay);
+
+          gain.gain.setValueAtTime(0.0001, now + delay);
+          gain.gain.linearRampToValueAtTime(0.3 / bellFreqs.length, now + delay + 0.005);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + delay + 1.2);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now + delay);
+          osc.stop(now + delay + 1.25);
+        });
+      });
+    } else {
+      // Modern Synth Chime (Default)
+      const notes = type === 'workComplete' 
+        ? [523.25, 659.25, 783.99, 1046.50] // C5, E5, G5, C6 (warm major chord)
+        : [440.00, 554.37, 659.25, 880.00]; // A4, C#5, E5, A5 (alert awakening chord)
+
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+
+        gain.gain.setValueAtTime(0.0001, now + idx * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.25 / notes.length, now + idx * 0.08 + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 1.8);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now + idx * 0.08);
+        osc.stop(now + idx * 0.08 + 1.85);
+      });
+    }
   } catch (err) {
     console.error('Audio playback error:', err);
   }
@@ -192,10 +326,43 @@ function updateLightsState() {
   cycleSummaryEl.textContent = `Segment ${currentSegmentIndex + 1} of ${SEGMENTS.length}`;
 }
 
-// --- Theme & Style Dynamic Colors ---
+// --- Theme Switcher & Dynamic Colors ---
+function setTheme(theme) {
+  if (!['modern', 'radio', 'tomato'].includes(theme)) return;
+  currentTheme = theme;
+  document.body.setAttribute('data-theme', theme);
+  localStorage.setItem('pomodoro_theme', theme);
+
+  if (theme === 'tomato') {
+    playRatchetWind();
+  }
+
+  // Update theme pill buttons
+  themePills.forEach(pill => {
+    const isSelected = pill.getAttribute('data-theme') === theme;
+    pill.classList.toggle('active', isSelected);
+    pill.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+  });
+
+  // Update logo icon based on theme
+  if (logoIconEl) {
+    if (theme === 'radio') {
+      logoIconEl.textContent = '📻';
+    } else if (theme === 'tomato') {
+      logoIconEl.textContent = '🍅';
+    } else {
+      logoIconEl.textContent = '⏳';
+    }
+  }
+
+  updateThemeColors();
+  updateDisplay();
+}
+
 function updateThemeColors() {
   const currentSeg = SEGMENTS[currentSegmentIndex];
-  const colorData = COLOR_MAP[currentSeg.color];
+  const palette = THEME_PALETTES[currentTheme] || THEME_PALETTES.modern;
+  const colorData = palette[currentSeg.color];
 
   document.documentElement.style.setProperty('--current-color', colorData.color);
   document.documentElement.style.setProperty('--current-glow', colorData.glow);
@@ -247,6 +414,18 @@ function updateDisplay() {
   const strokeOffset = RING_CIRCUMFERENCE * (1 - progressRatio);
   progressFillEl.style.strokeDashoffset = strokeOffset;
 
+  // Mechanical Rotating Kitchen Timer Dial (Tomato Theme)
+  const tomatoRotatingDialEl = document.getElementById('tomatoRotatingDial');
+  if (tomatoRotatingDialEl) {
+    // Each minute is 6 degrees on a 60-minute dial.
+    // Winds clockwise when set, and unwinds counter-clockwise as time ticks toward zero!
+    // e.g. 25 min remaining -> +150deg (brings 25 to top pointer)
+    //       5 min remaining -> +30deg (brings 5 to top pointer)
+    //       0 min remaining -> 0deg (brings 0 to top pointer)
+    const dialAngle = (secondsRemaining / 10);
+    tomatoRotatingDialEl.style.transform = `rotate(${dialAngle}deg)`;
+  }
+
   // Body running state
   if (isRunning) {
     document.body.classList.add('is-running');
@@ -286,6 +465,7 @@ function pauseTimer() {
 }
 
 function toggleTimer() {
+  playClick();
   if (isRunning) {
     pauseTimer();
   } else {
@@ -293,13 +473,23 @@ function toggleTimer() {
   }
 }
 
+let lastSecondTicked = null;
+
 function tick() {
   if (!isRunning) return;
 
   const now = performance.now();
   const diffSec = Math.max(0, Math.round((targetEndTime - now) / 1000));
-  secondsRemaining = diffSec;
-  updateDisplay();
+
+  if (diffSec !== secondsRemaining) {
+    secondsRemaining = diffSec;
+    // Play a gentle mechanical clockwork tick every second in Tomato theme
+    if (currentTheme === 'tomato' && secondsRemaining !== lastSecondTicked) {
+      lastSecondTicked = secondsRemaining;
+      playClockTick();
+    }
+    updateDisplay();
+  }
 
   if (secondsRemaining <= 0) {
     handleSegmentComplete();
@@ -341,6 +531,10 @@ function handleSegmentComplete() {
 }
 
 function resetSegment() {
+  playClick();
+  if (currentTheme === 'tomato') {
+    playRatchetWind();
+  }
   pauseTimer();
   secondsRemaining = SEGMENTS[currentSegmentIndex].durationSec;
   updateDisplay();
@@ -351,6 +545,10 @@ function switchSegment(index, autoStart = false) {
   currentSegmentIndex = index;
   secondsRemaining = SEGMENTS[currentSegmentIndex].durationSec;
   
+  if (currentTheme === 'tomato') {
+    playRatchetWind();
+  }
+
   updateThemeColors();
   updateLightsState();
   updateDisplay();
@@ -361,6 +559,7 @@ function switchSegment(index, autoStart = false) {
 }
 
 function skipSegment() {
+  playClick();
   const nextIndex = (currentSegmentIndex + 1) % SEGMENTS.length;
   switchSegment(nextIndex, isRunning);
 }
@@ -519,6 +718,27 @@ if (resetStatsBtn) {
   resetStatsBtn.addEventListener('click', resetStats);
 }
 
+// Theme Switcher Buttons
+themePills.forEach(pill => {
+  pill.addEventListener('click', () => {
+    const selected = pill.getAttribute('data-theme');
+    if (selected && selected !== currentTheme) {
+      playClick();
+      setTheme(selected);
+    }
+  });
+});
+
+// Click on Tomato Dial to start/pause timer
+const tomatoDialFaceEl = document.querySelector('.tomato-dial-face');
+if (tomatoDialFaceEl) {
+  tomatoDialFaceEl.addEventListener('click', () => {
+    if (currentTheme === 'tomato') {
+      toggleTimer();
+    }
+  });
+}
+
 soundBtn.addEventListener('click', toggleSound);
 notificationBtn.addEventListener('click', () => {
   if (Notification.permission === 'default') {
@@ -549,6 +769,8 @@ document.addEventListener('keydown', (e) => {
 // --- Initialization ---
 function init() {
   loadStats();
+  const savedTheme = localStorage.getItem('pomodoro_theme') || 'modern';
+  setTheme(savedTheme);
   renderLights();
   updateThemeColors();
   updateLightsState();
