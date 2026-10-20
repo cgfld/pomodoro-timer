@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pomodoro Timer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-ambient" id="ambientBg"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo">
+        <span class="logo-icon">⏳</span>
+        <h1>Pomodoro</h1>
+      </div>
+      <div class="header-actions">
+        <button id="notificationBtn" class="icon-btn" title="Toggle Desktop Notifications" aria-label="Notifications">
+          <svg class="bell-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="badge" id="notifBadge"></span>
+        </button>
+        <button id="soundBtn" class="icon-btn" title="Toggle Sound Chimes" aria-label="Sound Mute/Unmute">
+          <svg id="soundOnIcon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          <svg id="soundOffIcon" class="hidden" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Cycle Progress & Light Indicators -->
+    <section class="cycle-section" aria-label="Pomodoro Cycle Lights">
+      <div class="cycle-header">
+        <span class="cycle-title">Current Cycle</span>
+        <span class="cycle-counter" id="cycleSummary">Segment 1 of 8</span>
+      </div>
+
+      <!-- Segment Lights Container -->
+      <div class="lights-track" id="lightsTrack" role="tablist" aria-label="Segments list">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+
+      <!-- Legend -->
+      <div class="lights-legend">
+        <div class="legend-item"><span class="legend-dot green"></span> 25m Work</div>
+        <div class="legend-item"><span class="legend-dot orange"></span> 5m Short Rest</div>
+        <div class="legend-item"><span class="legend-dot yellow"></span> 20m Long Rest</div>
+      </div>
+    </section>
+
+    <!-- Main Timer Display -->
+    <main class="timer-main">
+      <div class="timer-display-wrapper">
+        <svg class="progress-ring" viewBox="0 0 320 320">
+          <circle class="progress-ring-bg" cx="160" cy="160" r="140" />
+          <circle class="progress-ring-fill" id="progressFill" cx="160" cy="160" r="140" />
+        </svg>
+
+        <div class="timer-content">
+          <div class="segment-badge" id="segmentBadge">
+            <span class="segment-badge-dot"></span>
+            <span id="segmentName">Focus Session 1</span>
+          </div>
+          <div class="time-readout" id="timeDisplay">25:00</div>
+          <div class="segment-subtext" id="segmentSubtext">Work interval • Stay focused</div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="timer-controls">
+        <button id="resetBtn" class="control-btn secondary" title="Reset Current Interval" aria-label="Reset">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+          </svg>
+        </button>
+
+        <button id="startPauseBtn" class="control-btn primary" title="Start Timer (Spacebar)" aria-label="Start Timer">
+          <svg id="playIcon" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <svg id="pauseIcon" class="hidden" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+            <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+            <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+          </svg>
+        </button>
+
+        <button id="skipBtn" class="control-btn secondary" title="Skip to Next Segment" aria-label="Skip to Next Segment">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 4 15 12 5 20 5 4" fill="currentColor"></polygon>
+            <line x1="19" y1="5" x2="19" y2="19"></line>
+          </svg>
+        </button>
+      </div>
+    </main>
+
+    <!-- Accomplishments & Tracking Section -->
+    <section class="accomplishments-section" aria-label="Session Accomplishments">
+      <div class="accomplishments-header">
+        <div class="accomplishments-title-group">
+          <span class="accomplishments-icon">🏆</span>
+          <span class="accomplishments-title">Accomplishments</span>
+        </div>
+        <button id="resetStatsBtn" class="reset-stats-btn" title="Reset accomplishments history" aria-label="Reset Statistics">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+          </svg>
+          <span>Reset Stats</span>
+        </button>
+      </div>
+
+      <!-- Accomplishment Metric Grid -->
+      <div class="accomplishments-grid">
+        <!-- Work Time -->
+        <div class="stat-card work">
+          <div class="stat-card-top">
+            <span class="stat-dot green"></span>
+            <span class="stat-name">Working</span>
+          </div>
+          <div class="stat-value" id="statsWorkTime">0m</div>
+          <div class="stat-subtext" id="statsSessionsCount">0 sessions done</div>
+        </div>
+
+        <!-- Rest Time -->
+        <div class="stat-card rest">
+          <div class="stat-card-top">
+            <span class="stat-dot orange"></span>
+            <span class="stat-name">Resting</span>
+          </div>
+          <div class="stat-value" id="statsRestTime">0m</div>
+          <div class="stat-subtext" id="statsRestBreaksCount">0 breaks taken</div>
+        </div>
+
+        <!-- Completed Cycles -->
+        <div class="stat-card cycles">
+          <div class="stat-card-top">
+            <span class="stat-dot yellow"></span>
+            <span class="stat-name">Full Cycles</span>
+          </div>
+          <div class="stat-value" id="statsCyclesCompleted">0</div>
+          <div class="stat-subtext">8 segments each</div>
+        </div>
+      </div>
+
+      <!-- Focus vs Rest Balance Bar -->
+      <div class="balance-bar-container">
+        <div class="balance-bar-header">
+          <span class="balance-label" id="balanceFocusLabel">Focus 0%</span>
+          <span class="balance-title">Balance</span>
+          <span class="balance-label" id="balanceRestLabel">Rest 0%</span>
+        </div>
+        <div class="balance-track">
+          <div class="balance-fill-work" id="balanceFillWork" style="width: 50%;"></div>
+          <div class="balance-fill-rest" id="balanceFillRest" style="width: 50%;"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
