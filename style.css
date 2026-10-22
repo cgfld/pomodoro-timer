@@ -146,6 +146,72 @@ body {
   background: var(--current-soft);
 }
 
+.stats-open-btn {
+  width: auto;
+  min-width: 44px;
+  padding: 0 12px;
+  gap: 6px;
+  font-size: 0.78rem;
+}
+
+.stats-dialog {
+  width: min(620px, calc(100vw - 28px));
+  max-height: min(90vh, 760px);
+  overflow: auto;
+  padding: 22px;
+  color: var(--text-main);
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+}
+
+.stats-dialog::backdrop {
+  background: rgba(3, 5, 12, 0.72);
+  backdrop-filter: blur(5px);
+}
+
+.stats-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.stats-dialog-header h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.stats-dialog-close {
+  width: 34px;
+  height: 34px;
+  color: inherit;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 10px;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.stats-dialog .accomplishments-section { margin: 0; }
+
+body[data-theme="retro"] .stats-dialog {
+  color: #fff8dc;
+  background: #211b48;
+  border: 4px solid #f4d35e;
+  border-radius: 0;
+  box-shadow: 8px 8px 0 #09071a, 0 0 0 4px #e76f51;
+}
+
+body[data-theme="tomato"] .stats-dialog {
+  color: #fff8f0;
+  background: #7f1d1d;
+  border: 2px solid #fca5a5;
+  border-radius: 24px;
+}
+
 .badge {
   position: absolute;
   top: 8px;
@@ -897,479 +963,64 @@ body.is-running .light-item.active .light-bulb {
 }
 
 /* ==========================================================================
-   VINTAGE WOODEN RADIO THEME (body[data-theme="radio"])
+   8-BIT RETRO THEME (body[data-theme="retro"])
    ========================================================================== */
-
-body[data-theme="radio"] {
-  background-color: #120904;
-  background-image:
-    radial-gradient(circle at 50% 15%, #2a1408 0%, #150904 55%, #080301 100%);
-  color: #f7e6d2;
+body[data-theme="retro"] {
+  background: #100d28;
+  color: #f8f3d6;
+  font-family: 'JetBrains Mono', monospace;
+  image-rendering: pixelated;
 }
-
-body[data-theme="radio"] .background-ambient {
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.45) 0%, rgba(18, 9, 4, 0) 70%);
-  opacity: 0.45;
+body[data-theme="retro"] .background-ambient {
+  background: radial-gradient(circle, rgba(67, 50, 146, .45), transparent 70%);
+  opacity: .5;
 }
-
-/* Wooden Cabinet Enclosure */
-body[data-theme="radio"] .app-container {
-  background:
-    repeating-linear-gradient(90deg,
-      rgba(0, 0, 0, 0.08) 0px,
-      rgba(255, 255, 255, 0.02) 2px,
-      transparent 3px,
-      transparent 7px),
-    linear-gradient(180deg,
-      #5c2c15 0%,
-      #461f0e 15%,
-      #361608 45%,
-      #290f04 80%,
-      #1c0802 100%);
-  border: 3px solid #7d481f;
-  border-radius: 36px 36px 20px 20px;
-  box-shadow:
-    inset 0 0 0 2px #d4af37,
-    inset 0 4px 10px rgba(255, 225, 160, 0.3),
-    inset 0 -8px 20px rgba(0, 0, 0, 0.9),
-    0 30px 75px rgba(0, 0, 0, 0.95),
-    0 0 0 6px #2b1206,
-    0 0 0 9px #633614,
-    0 0 0 12px #140702;
-  color: #fcebd7;
-  gap: 22px;
+body[data-theme="retro"] .app-container {
+  background: #211b48;
+  border: 4px solid #f4d35e;
+  border-radius: 0;
+  box-shadow: 8px 8px 0 #09071a, 0 0 0 4px #e76f51;
+  color: #fff8dc;
 }
-
-/* Speaker Grille & Brass Emblem */
-body[data-theme="radio"] .radio-top-panel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-top: -6px;
-  margin-bottom: 2px;
-}
-
-body[data-theme="radio"] .radio-brass-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: linear-gradient(135deg, #f3d79b 0%, #c9932d 35%, #ffd700 65%, #8c6109 100%);
-  border: 1px solid #ffe8a3;
-  border-radius: 4px;
-  padding: 4px 16px;
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: #351b06;
+body[data-theme="retro"] .logo h1,
+body[data-theme="retro"] .accomplishments-title,
+body[data-theme="retro"] .cycle-title {
+  color: #f4d35e;
+  font-family: 'JetBrains Mono', monospace;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  box-shadow:
-    0 3px 6px rgba(0, 0, 0, 0.7),
-    inset 0 1px 1px rgba(255, 255, 255, 0.8),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.5);
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
+  letter-spacing: .08em;
+  text-shadow: 3px 3px #7b2cbf;
 }
-
-body[data-theme="radio"] .badge-star {
-  font-size: 0.75rem;
-  color: #5c350e;
+body[data-theme="retro"] .logo-icon { filter: none; }
+body[data-theme="retro"] .icon-btn,
+body[data-theme="retro"] .theme-switcher,
+body[data-theme="retro"] .cycle-section,
+body[data-theme="retro"] .accomplishments-section,
+body[data-theme="retro"] .stat-card,
+body[data-theme="retro"] .segment-badge,
+body[data-theme="retro"] .control-btn {
+  border-radius: 0;
+  box-shadow: 4px 4px 0 rgba(8, 6, 24, .75);
 }
-
-body[data-theme="radio"] .radio-grille-louvers {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  width: 90%;
-}
-
-body[data-theme="radio"] .radio-grille-louvers .louver {
-  height: 3px;
-  background: linear-gradient(90deg, transparent 0%, #200f06 15%, #180903 50%, #200f06 85%, transparent 100%);
-  border-bottom: 1px solid rgba(212, 175, 55, 0.35);
-  border-radius: 2px;
-}
-
-/* Header & Logo */
-body[data-theme="radio"] .logo-icon {
-  filter: sepia(1) saturate(3) hue-rotate(5deg);
-}
-
-body[data-theme="radio"] .logo h1 {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  background: linear-gradient(180deg, #fff2c6 0%, #e5b958 40%, #b8860b 80%, #7d5705 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
-}
-
-body[data-theme="radio"] .icon-btn {
-  background: radial-gradient(circle at 35% 35%, #442a15 0%, #231308 100%);
-  border: 1.5px solid #b8860b;
-  color: #e6c587;
-  box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.35),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.8),
-    0 3px 6px rgba(0, 0, 0, 0.6);
-}
-
-body[data-theme="radio"] .icon-btn:hover {
-  background: radial-gradient(circle at 35% 35%, #5a381c 0%, #2c180a 100%);
-  border-color: #ffd700;
-  color: #fff2c6;
-  transform: translateY(-1px);
-}
-
-body[data-theme="radio"] .icon-btn.active {
-  background: radial-gradient(circle at 35% 35%, #996e22 0%, #52350c 100%);
-  border-color: #ffe066;
-  color: #fff9e6;
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
-}
-
-/* Theme Bar */
-body[data-theme="radio"] .theme-switcher {
-  background: rgba(20, 10, 4, 0.85);
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.8);
-}
-
-body[data-theme="radio"] .theme-pill {
-  color: #c9ab85;
-}
-
-body[data-theme="radio"] .theme-pill:hover {
-  color: #fff2c6;
-  background: rgba(212, 175, 55, 0.12);
-}
-
-body[data-theme="radio"] .theme-pill.active {
-  background: linear-gradient(180deg, #f7d998 0%, #c9932d 45%, #9c6c0f 100%);
-  color: #261103;
-  font-weight: 700;
-  box-shadow:
-    0 2px 8px rgba(212, 175, 55, 0.5),
-    inset 0 1px 2px rgba(255, 255, 255, 0.8);
-}
-
-/* Cycle Section: Inset Bakelite Chassis */
-body[data-theme="radio"] .cycle-section {
-  background:
-    repeating-linear-gradient(45deg, #180c05 0px, #180c05 2px, #130903 2px, #130903 4px);
-  border: 1.5px solid rgba(212, 175, 55, 0.25);
-  box-shadow:
-    inset 0 3px 8px rgba(0, 0, 0, 0.85),
-    0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-body[data-theme="radio"] .cycle-title {
-  color: #d4af37;
-  font-family: 'Playfair Display', Georgia, serif;
-  letter-spacing: 0.1em;
-}
-
-body[data-theme="radio"] .cycle-counter {
-  color: #f3d79b;
-}
-
-/* Vacuum Tube Segment Lights */
-body[data-theme="radio"] .light-bulb {
-  width: 26px;
-  height: 36px;
-  border-radius: 13px 13px 4px 4px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(25, 12, 5, 0.7) 40%, rgba(0, 0, 0, 0.85) 100%);
-  border: 1px solid rgba(255, 220, 150, 0.35);
-  border-bottom: 4px solid #b8860b; /* Brass Socket */
-  position: relative;
-  overflow: hidden;
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3), 0 2px 4px rgba(0, 0, 0, 0.6);
-}
-
-body[data-theme="radio"] .light-inner-dot {
-  width: 6px;
-  height: 14px;
-  border-radius: 3px;
-  background-color: #ff9d2e;
-  box-shadow: 0 0 6px #ff8000;
-  opacity: 0.35;
-}
-
-/* Work Tube: Magic Eye Green tint */
-body[data-theme="radio"] .light-item[data-type="work"] .light-inner-dot {
-  background-color: #34d399;
-  box-shadow: 0 0 6px #10b981;
-}
-
-/* Active Glowing Vacuum Tube */
-body[data-theme="radio"] .light-item.active .light-bulb {
-  transform: scale(1.15) translateY(-3px);
-  border-color: #ffe082;
-  border-bottom-color: #ffd700;
-  box-shadow:
-    0 0 20px rgba(255, 170, 50, 0.9),
-    0 -4px 12px rgba(255, 215, 0, 0.7),
-    0 4px 8px rgba(0, 0, 0, 0.8);
-  background: radial-gradient(circle at 50% 60%, rgba(255, 170, 50, 0.6) 0%, rgba(50, 20, 5, 0.85) 100%);
-}
-
-body[data-theme="radio"] .light-item.active[data-type="work"] .light-bulb {
-  box-shadow:
-    0 0 22px rgba(52, 211, 153, 0.9),
-    0 -4px 12px rgba(16, 185, 129, 0.7),
-    0 4px 8px rgba(0, 0, 0, 0.8);
-  background: radial-gradient(circle at 50% 60%, rgba(52, 211, 153, 0.6) 0%, rgba(10, 40, 20, 0.85) 100%);
-}
-
-body[data-theme="radio"] .light-item.active .light-inner-dot {
-  background-color: #ffffff;
-  box-shadow: 0 0 14px #ffb300, 0 0 24px #ff6600;
-  opacity: 1;
-  height: 16px;
-  transform: scale(1.2);
-}
-
-body[data-theme="radio"] .light-item.active[data-type="work"] .light-inner-dot {
-  background-color: #ffffff;
-  box-shadow: 0 0 14px #34d399, 0 0 24px #059669;
-  opacity: 1;
-}
-
-/* Completed Tube */
-body[data-theme="radio"] .light-item.completed .light-bulb {
-  border-color: rgba(212, 175, 55, 0.6);
-  border-bottom-color: #d4af37;
-  background: rgba(60, 30, 10, 0.6);
-}
-
-body[data-theme="radio"] .light-item.completed .light-inner-dot {
-  background-color: #f59e0b;
-  opacity: 0.7;
-}
-
-body[data-theme="radio"] .light-item.completed[data-type="work"] .light-inner-dot {
-  background-color: #10b981;
-  opacity: 0.7;
-}
-
-body[data-theme="radio"] .light-number {
-  color: #c9ab85;
-}
-
-body[data-theme="radio"] .light-item.active .light-number {
-  color: #ffd700;
-  font-weight: 700;
-}
-
-/* Timer Main: Radio Illuminated Dial */
-body[data-theme="radio"] .radio-dial-face {
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  pointer-events: none;
-}
-
-body[data-theme="radio"] .radio-glass-glow {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  width: calc(100% - 30px);
-  height: calc(100% - 30px);
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 170, 50, 0.22) 0%, rgba(40, 18, 5, 0.95) 75%, #150903 100%);
-  box-shadow:
-    inset 0 0 25px rgba(0, 0, 0, 0.95),
-    0 0 35px rgba(255, 150, 30, 0.25);
-}
-
-body[data-theme="radio"] .radio-dial-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-body[data-theme="radio"] .radio-bezel-outer {
-  fill: none;
-  stroke: #916828;
-  stroke-width: 5;
-}
-
-body[data-theme="radio"] .radio-bezel-inner {
-  fill: none;
-  stroke: #d4af37;
-  stroke-width: 2;
-  filter: drop-shadow(0 1px 2px rgba(255, 230, 150, 0.5));
-}
-
-body[data-theme="radio"] .radio-dial-backing {
-  fill: #190c05;
-  stroke: rgba(212, 175, 55, 0.3);
-  stroke-width: 1;
-}
-
-body[data-theme="radio"] .radio-scale-arc {
-  fill: none;
-  stroke: #d4af37;
-  stroke-width: 2;
-  stroke-dasharray: 2 4;
-}
-
-body[data-theme="radio"] .radio-scale-arc-sub {
-  fill: none;
-  stroke: rgba(212, 175, 55, 0.5);
-  stroke-width: 1;
-  stroke-dasharray: 1 3;
-}
-
-body[data-theme="radio"] .radio-brand-label {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 8px;
-  fill: #ffd700;
-  letter-spacing: 2px;
-  text-anchor: middle;
-  font-weight: 700;
-}
-
-body[data-theme="radio"] .radio-freq-num {
+body[data-theme="retro"] .theme-switcher,
+body[data-theme="retro"] .cycle-section,
+body[data-theme="retro"] .accomplishments-section { background: #171335; border: 2px solid #7b2cbf; }
+body[data-theme="retro"] .theme-pill { color: #e9ddff; border-radius: 0; font-family: 'JetBrains Mono', monospace; }
+body[data-theme="retro"] .theme-pill.active { background: #7b2cbf; color: white; box-shadow: inset 0 -3px #4a187c; }
+body[data-theme="retro"] .light-bulb { border-radius: 0; box-shadow: 2px 2px 0 #09071a; }
+body[data-theme="retro"] .timer-display-wrapper { filter: drop-shadow(6px 6px 0 rgba(8,6,24,.7)); }
+body[data-theme="retro"] .progress-ring-bg { stroke: #39316a; }
+body[data-theme="retro"] .progress-ring-fill { filter: drop-shadow(0 0 5px currentColor); }
+body[data-theme="retro"] .time-readout {
+  color: #f4d35e;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 8.5px;
-  fill: #e6c587;
-  text-anchor: middle;
+  text-shadow: 4px 4px #7b2cbf;
 }
-
-body[data-theme="radio"] .radio-band-name {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 7px;
-  fill: #aa8030;
-  letter-spacing: 1.5px;
-  text-anchor: middle;
-}
-
-body[data-theme="radio"] .radio-tuning-needle {
-  stroke: #ff3b30;
-  stroke-width: 2;
-  stroke-linecap: round;
-  filter: drop-shadow(0 0 5px #ff453a);
-}
-
-/* Luminous amber sweep progress ring */
-body[data-theme="radio"] .progress-ring-bg {
-  stroke: rgba(212, 175, 55, 0.12);
-  stroke-width: 8;
-}
-
-body[data-theme="radio"] .progress-ring-fill {
-  stroke: #f59e0b;
-  stroke-width: 8;
-  filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.85));
-}
-
-body[data-theme="radio"] .segment-badge {
-  background: rgba(30, 14, 5, 0.85);
-  border: 1px solid #b8860b;
-  color: #ffe8a3;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-  font-family: 'Playfair Display', Georgia, serif;
-}
-
-body[data-theme="radio"] .time-readout {
-  font-family: 'JetBrains Mono', monospace;
-  color: #ffc272;
-  text-shadow:
-    0 0 14px rgba(255, 160, 30, 0.9),
-    0 0 28px rgba(255, 90, 0, 0.5),
-    0 2px 4px #000000;
-}
-
-body[data-theme="radio"] .segment-subtext {
-  color: #dfbe96;
-}
-
-/* Bakelite & Brass Rotary Knobs */
-body[data-theme="radio"] .control-btn.primary {
-  background:
-    radial-gradient(circle at 50% 50%, #f3d79b 0%, #c9932d 28%, #42250e 32%, #221107 100%);
-  border: 3px solid #140702;
-  box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.9),
-    0 0 0 2px #d4af37,
-    inset 0 2px 3px rgba(255, 255, 255, 0.6),
-    inset 0 -3px 6px rgba(0, 0, 0, 0.9);
-  color: #221107;
-}
-
-body[data-theme="radio"] .control-btn.primary:hover {
-  transform: scale(1.06);
-  box-shadow:
-    0 10px 25px rgba(0, 0, 0, 0.95),
-    0 0 0 2px #ffd700,
-    0 0 16px rgba(212, 175, 55, 0.6);
-}
-
-body[data-theme="radio"] .control-btn.secondary {
-  background:
-    radial-gradient(circle at 50% 50%, #d4af37 0%, #996e22 26%, #2e1709 30%, #170a04 100%);
-  border: 2px solid #140702;
-  box-shadow:
-    0 5px 14px rgba(0, 0, 0, 0.8),
-    0 0 0 1.5px #b8860b,
-    inset 0 1px 2px rgba(255, 255, 255, 0.4);
-  color: #1a0b03;
-}
-
-body[data-theme="radio"] .control-btn.secondary:hover {
-  border-color: #d4af37;
-  color: #2e1709;
-}
-
-/* Accomplishments: Antique Signal Meter */
-body[data-theme="radio"] .accomplishments-section {
-  background:
-    repeating-linear-gradient(45deg, #180c05 0px, #180c05 2px, #130903 2px, #130903 4px);
-  border: 1.5px solid rgba(212, 175, 55, 0.25);
-  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.85);
-}
-
-body[data-theme="radio"] .accomplishments-title {
-  color: #d4af37;
-  font-family: 'Playfair Display', Georgia, serif;
-}
-
-body[data-theme="radio"] .stat-card {
-  background: rgba(18, 9, 4, 0.85);
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8);
-}
-
-body[data-theme="radio"] .stat-name {
-  color: #d5b895;
-}
-
-body[data-theme="radio"] .stat-value {
-  color: #ffc272;
-  text-shadow: 0 0 8px rgba(255, 170, 50, 0.5);
-}
-
-body[data-theme="radio"] .stat-subtext {
-  color: #a88a68;
-}
-
-body[data-theme="radio"] .balance-bar-container {
-  background: rgba(18, 9, 4, 0.7);
-  border: 1px solid rgba(212, 175, 55, 0.18);
-}
-
-body[data-theme="radio"] .balance-title {
-  color: #d4af37;
-}
-
+body[data-theme="retro"] .segment-subtext,
+body[data-theme="retro"] .stat-subtext { color: #c3b9e8; }
+body[data-theme="retro"] .control-btn.primary { background: #e76f51; color: #fff8dc; border: 3px solid #f4d35e; }
+body[data-theme="retro"] .control-btn.secondary { background: #39316a; color: #f4d35e; border: 2px solid #7b2cbf; }
+body[data-theme="retro"] .stat-value { color: #f4d35e; text-shadow: 2px 2px #7b2cbf; }
 /* ==========================================================================
    CLASSIC KITCHEN TOMATO TIMER THEME (body[data-theme="tomato"])
    ========================================================================== */
@@ -1753,7 +1404,7 @@ body[data-theme="tomato"] .balance-label {
 
 /* Responsive adjustments for new themes */
 @media (max-width: 440px) {
-  body[data-theme="radio"] .app-container {
+  body[data-theme="retro"] .app-container {
     padding: 22px 14px 20px;
   }
   
@@ -1776,14 +1427,5 @@ body[data-theme="tomato"] .balance-label {
     font-size: 3.2rem;
   }
 
-  body[data-theme="radio"] .radio-brass-badge {
-    padding: 3px 10px;
-    font-size: 0.6rem;
-  }
-
-  body[data-theme="radio"] .light-bulb {
-    width: 22px;
-    height: 30px;
-  }
 }
 

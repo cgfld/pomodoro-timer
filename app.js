@@ -24,7 +24,7 @@ const THEME_PALETTES = {
     orange: { color: '#f97316', glow: 'rgba(249, 115, 22, 0.45)', soft: 'rgba(249, 115, 22, 0.15)' },
     yellow: { color: '#facc15', glow: 'rgba(250, 204, 21, 0.55)', soft: 'rgba(250, 204, 21, 0.15)' }
   },
-  radio: {
+  retro: {
     green: { color: '#34d399', glow: 'rgba(52, 211, 153, 0.65)', soft: 'rgba(52, 211, 153, 0.18)' },
     orange: { color: '#f59e0b', glow: 'rgba(245, 158, 11, 0.65)', soft: 'rgba(245, 158, 11, 0.18)' },
     yellow: { color: '#fbbf24', glow: 'rgba(251, 191, 36, 0.70)', soft: 'rgba(251, 191, 36, 0.20)' }
@@ -36,13 +36,13 @@ const THEME_PALETTES = {
   }
 };
 
-const COLOR_MAP = THEME_PALETTES.modern;
+const COLOR_MAP = THEME_PALETTES.tomato;
 
 // SVG Ring perimeter (2 * PI * 140)
 const RING_CIRCUMFERENCE = 2 * Math.PI * 140;
 
 // --- State ---
-let currentTheme = 'modern';
+let currentTheme = 'tomato';
 let currentSegmentIndex = 0;
 let secondsRemaining = SEGMENTS[0].durationSec;
 let isRunning = false;
@@ -89,6 +89,9 @@ const balanceRestLabelEl = document.getElementById('balanceRestLabel');
 const balanceFillWorkEl = document.getElementById('balanceFillWork');
 const balanceFillRestEl = document.getElementById('balanceFillRest');
 const resetStatsBtn = document.getElementById('resetStatsBtn');
+const statsBtn = document.getElementById('statsBtn');
+const statsDialog = document.getElementById('statsDialog');
+const closeStatsBtn = document.getElementById('closeStatsBtn');
 
 // Theme Elements
 const themePills = document.querySelectorAll('.theme-pill');
@@ -122,8 +125,8 @@ function playClick() {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
-    osc.type = currentTheme === 'radio' ? 'square' : 'triangle';
-    osc.frequency.setValueAtTime(currentTheme === 'radio' ? 300 : 700, now);
+    osc.type = currentTheme === 'retro' ? 'square' : 'triangle';
+    osc.frequency.setValueAtTime(currentTheme === 'retro' ? 300 : 700, now);
     osc.frequency.exponentialRampToValueAtTime(80, now + 0.025);
 
     gain.gain.setValueAtTime(0.06, now);
@@ -198,29 +201,29 @@ function playChime(type) {
 
     const now = ctx.currentTime;
 
-    if (currentTheme === 'radio') {
-      // Vintage Radio Chime: Warm 1940s 3-tone broadcast chime (G4, E4, C4) or warm tube tone
-      const radioNotes = type === 'workComplete'
-        ? [392.00, 329.63, 261.63] // G4, E4, C4 (classic vintage broadcast chime)
-        : [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5 (awakening broadcast sign-on)
+    if (currentTheme === 'retro') {
+      // Short square-wave arcade fanfare
+      const retroNotes = type === 'workComplete'
+        ? [659.25, 523.25, 392.00] // E5, C5, G4 descending game-over cadence
+        : [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 victory fanfare
 
-      radioNotes.forEach((freq, idx) => {
+      retroNotes.forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
-        // Warm vibraphone / tube tone using triangle wave
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(freq, now + idx * 0.22);
+        // Bright, clipped arcade tones
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.12);
 
-        gain.gain.setValueAtTime(0.0001, now + idx * 0.22);
-        gain.gain.exponentialRampToValueAtTime(0.25 / radioNotes.length, now + idx * 0.22 + 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.22 + 2.0);
+        gain.gain.setValueAtTime(0.0001, now + idx * 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.25 / retroNotes.length, now + idx * 0.12 + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 0.16);
 
         osc.connect(gain);
         gain.connect(ctx.destination);
 
-        osc.start(now + idx * 0.22);
-        osc.stop(now + idx * 0.22 + 2.05);
+        osc.start(now + idx * 0.12);
+        osc.stop(now + idx * 0.12 + 0.18);
       });
     } else if (currentTheme === 'tomato') {
       // Classic mechanical kitchen timer bell: sharp strike + metallic bell resonance
@@ -328,7 +331,7 @@ function updateLightsState() {
 
 // --- Theme Switcher & Dynamic Colors ---
 function setTheme(theme) {
-  if (!['modern', 'radio', 'tomato'].includes(theme)) return;
+  if (!['modern', 'retro', 'tomato'].includes(theme)) return;
   currentTheme = theme;
   document.body.setAttribute('data-theme', theme);
   localStorage.setItem('pomodoro_theme', theme);
@@ -346,8 +349,8 @@ function setTheme(theme) {
 
   // Update logo icon based on theme
   if (logoIconEl) {
-    if (theme === 'radio') {
-      logoIconEl.textContent = '📻';
+    if (theme === 'retro') {
+      logoIconEl.textContent = '🕹️';
     } else if (theme === 'tomato') {
       logoIconEl.textContent = '🍅';
     } else {
@@ -717,6 +720,17 @@ skipBtn.addEventListener('click', skipSegment);
 if (resetStatsBtn) {
   resetStatsBtn.addEventListener('click', resetStats);
 }
+if (statsBtn && statsDialog) {
+  statsBtn.addEventListener('click', () => statsDialog.showModal());
+}
+if (closeStatsBtn && statsDialog) {
+  closeStatsBtn.addEventListener('click', () => statsDialog.close());
+}
+if (statsDialog) {
+  statsDialog.addEventListener('click', event => {
+    if (event.target === statsDialog) statsDialog.close();
+  });
+}
 
 // Theme Switcher Buttons
 themePills.forEach(pill => {
@@ -769,7 +783,8 @@ document.addEventListener('keydown', (e) => {
 // --- Initialization ---
 function init() {
   loadStats();
-  const savedTheme = localStorage.getItem('pomodoro_theme') || 'modern';
+  const storedTheme = localStorage.getItem('pomodoro_theme');
+  const savedTheme = storedTheme === 'radio' ? 'retro' : (storedTheme || 'tomato');
   setTheme(savedTheme);
   renderLights();
   updateThemeColors();
