@@ -19,15 +19,15 @@ const SEGMENTS = [
 ];
 
 const THEME_PALETTES = {
-  modern: {
-    green: { color: '#22c55e', glow: 'rgba(34, 197, 94, 0.45)', soft: 'rgba(34, 197, 94, 0.15)' },
-    orange: { color: '#f97316', glow: 'rgba(249, 115, 22, 0.45)', soft: 'rgba(249, 115, 22, 0.15)' },
-    yellow: { color: '#facc15', glow: 'rgba(250, 204, 21, 0.55)', soft: 'rgba(250, 204, 21, 0.15)' }
+  zen: {
+    green: { color: '#789274', glow: 'rgba(120, 146, 116, 0.48)', soft: 'rgba(120, 146, 116, 0.16)' },
+    orange: { color: '#b58a5c', glow: 'rgba(181, 138, 92, 0.45)', soft: 'rgba(181, 138, 92, 0.15)' },
+    yellow: { color: '#9c8056', glow: 'rgba(156, 128, 86, 0.45)', soft: 'rgba(156, 128, 86, 0.16)' }
   },
-  retro: {
-    green: { color: '#34d399', glow: 'rgba(52, 211, 153, 0.65)', soft: 'rgba(52, 211, 153, 0.18)' },
-    orange: { color: '#f59e0b', glow: 'rgba(245, 158, 11, 0.65)', soft: 'rgba(245, 158, 11, 0.18)' },
-    yellow: { color: '#fbbf24', glow: 'rgba(251, 191, 36, 0.70)', soft: 'rgba(251, 191, 36, 0.20)' }
+  sundial: {
+    green: { color: '#75834f', glow: 'rgba(117, 131, 79, 0.48)', soft: 'rgba(117, 131, 79, 0.16)' },
+    orange: { color: '#bd7045', glow: 'rgba(189, 112, 69, 0.46)', soft: 'rgba(189, 112, 69, 0.16)' },
+    yellow: { color: '#d0aa5d', glow: 'rgba(208, 170, 93, 0.5)', soft: 'rgba(208, 170, 93, 0.16)' }
   },
   tomato: {
     green: { color: '#16a34a', glow: 'rgba(22, 163, 74, 0.55)', soft: 'rgba(22, 163, 74, 0.18)' },
@@ -44,6 +44,7 @@ const RING_CIRCUMFERENCE = 2 * Math.PI * 140;
 // --- State ---
 let currentTheme = 'tomato';
 let currentSegmentIndex = 0;
+let completedSegmentIndices = new Set();
 let secondsRemaining = SEGMENTS[0].durationSec;
 let isRunning = false;
 let timerInterval = null;
@@ -57,15 +58,17 @@ let stats = {
   restSeconds: 0,
   workCompleted: 0,
   breaksCompleted: 0,
-  cyclesCompleted: 0
+  cyclesCompleted: 0,
+  todayWorkDate: '',
+  todayWorkSeconds: 0,
+  dailyWorkHistory: {}
 };
 
 // --- DOM Elements ---
 const lightsTrackEl = document.getElementById('lightsTrack');
 const cycleSummaryEl = document.getElementById('cycleSummary');
+const focusSessionTitleEl = document.getElementById('focusSessionTitle');
 const timeDisplayEl = document.getElementById('timeDisplay');
-const segmentNameEl = document.getElementById('segmentName');
-const segmentSubtextEl = document.getElementById('segmentSubtext');
 const progressFillEl = document.getElementById('progressFill');
 const startPauseBtn = document.getElementById('startPauseBtn');
 const playIcon = document.getElementById('playIcon');
@@ -84,10 +87,12 @@ const statsRestTimeEl = document.getElementById('statsRestTime');
 const statsCyclesCompletedEl = document.getElementById('statsCyclesCompleted');
 const statsSessionsCountEl = document.getElementById('statsSessionsCount');
 const statsRestBreaksCountEl = document.getElementById('statsRestBreaksCount');
-const balanceFocusLabelEl = document.getElementById('balanceFocusLabel');
-const balanceRestLabelEl = document.getElementById('balanceRestLabel');
-const balanceFillWorkEl = document.getElementById('balanceFillWork');
-const balanceFillRestEl = document.getElementById('balanceFillRest');
+const dailyFocusTimeEl = document.getElementById('dailyFocusTime');
+const dailyFocusGoalInputEl = document.getElementById('dailyFocusGoalInput');
+const dailyFocusGoalValueEl = document.getElementById('dailyFocusGoalValue');
+const dailyFocusTrackEl = document.getElementById('dailyFocusTrack');
+const dailyFocusFillEl = document.getElementById('dailyFocusFill');
+const dailyFocusProgressTextEl = document.getElementById('dailyFocusProgressText');
 const resetStatsBtn = document.getElementById('resetStatsBtn');
 const statsBtn = document.getElementById('statsBtn');
 const statsDialog = document.getElementById('statsDialog');
@@ -96,6 +101,8 @@ const closeStatsBtn = document.getElementById('closeStatsBtn');
 // Theme Elements
 const themePills = document.querySelectorAll('.theme-pill');
 const logoIconEl = document.querySelector('.logo-icon');
+const zenRakeGroovesEl = document.getElementById('zenRakeGrooves');
+const zenRakeToolEl = document.getElementById('zenRakeTool');
 
 // --- Audio Context for Chimes & Sound Effects ---
 let audioCtx = null;
@@ -125,8 +132,8 @@ function playClick() {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
-    osc.type = currentTheme === 'retro' ? 'square' : 'triangle';
-    osc.frequency.setValueAtTime(currentTheme === 'retro' ? 300 : 700, now);
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(700, now);
     osc.frequency.exponentialRampToValueAtTime(80, now + 0.025);
 
     gain.gain.setValueAtTime(0.06, now);
@@ -201,31 +208,7 @@ function playChime(type) {
 
     const now = ctx.currentTime;
 
-    if (currentTheme === 'retro') {
-      // Short square-wave arcade fanfare
-      const retroNotes = type === 'workComplete'
-        ? [659.25, 523.25, 392.00] // E5, C5, G4 descending game-over cadence
-        : [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 victory fanfare
-
-      retroNotes.forEach((freq, idx) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-
-        // Bright, clipped arcade tones
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(freq, now + idx * 0.12);
-
-        gain.gain.setValueAtTime(0.0001, now + idx * 0.12);
-        gain.gain.exponentialRampToValueAtTime(0.25 / retroNotes.length, now + idx * 0.12 + 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 0.16);
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.start(now + idx * 0.12);
-        osc.stop(now + idx * 0.12 + 0.18);
-      });
-    } else if (currentTheme === 'tomato') {
+    if (currentTheme === 'tomato') {
       // Classic mechanical kitchen timer bell: sharp strike + metallic bell resonance
       const bellFreqs = type === 'workComplete'
         ? [1568, 2093, 3136] // G6, C7, G7 (metallic bell resonance)
@@ -252,27 +235,30 @@ function playChime(type) {
         });
       });
     } else {
-      // Modern Synth Chime (Default)
-      const notes = type === 'workComplete' 
-        ? [523.25, 659.25, 783.99, 1046.50] // C5, E5, G5, C6 (warm major chord)
-        : [440.00, 554.37, 659.25, 880.00]; // A4, C#5, E5, A5 (alert awakening chord)
+      // Gentle pentatonic garden chime
+      const notes = currentTheme === 'zen'
+        ? (type === 'workComplete' ? [523.25, 659.25, 783.99] : [587.33, 698.46, 880.00])
+        : (type === 'workComplete'
+          ? [523.25, 659.25, 783.99, 1046.50]
+          : [440.00, 554.37, 659.25, 880.00]);
+      const noteSpacing = currentTheme === 'zen' ? 0.16 : 0.08;
 
       notes.forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+        osc.frequency.setValueAtTime(freq, now + idx * noteSpacing);
 
-        gain.gain.setValueAtTime(0.0001, now + idx * 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.25 / notes.length, now + idx * 0.08 + 0.04);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 1.8);
+        gain.gain.setValueAtTime(0.0001, now + idx * noteSpacing);
+        gain.gain.exponentialRampToValueAtTime(0.18 / notes.length, now + idx * noteSpacing + 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * noteSpacing + 1.8);
 
         osc.connect(gain);
         gain.connect(ctx.destination);
 
-        osc.start(now + idx * 0.08);
-        osc.stop(now + idx * 0.08 + 1.85);
+        osc.start(now + idx * noteSpacing);
+        osc.stop(now + idx * noteSpacing + 1.85);
       });
     }
   } catch (err) {
@@ -295,7 +281,7 @@ function renderLights() {
     // State classes
     if (idx === currentSegmentIndex) {
       button.classList.add('active');
-    } else if (idx < currentSegmentIndex) {
+    } else if (idx < currentSegmentIndex || completedSegmentIndices.has(idx)) {
       button.classList.add('completed');
     }
 
@@ -321,17 +307,20 @@ function updateLightsState() {
     item.classList.remove('active', 'completed');
     if (idx === currentSegmentIndex) {
       item.classList.add('active');
-    } else if (idx < currentSegmentIndex) {
+    } else if (idx < currentSegmentIndex || completedSegmentIndices.has(idx)) {
       item.classList.add('completed');
     }
   });
 
   cycleSummaryEl.textContent = `Segment ${currentSegmentIndex + 1} of ${SEGMENTS.length}`;
+  if (focusSessionTitleEl) {
+    focusSessionTitleEl.textContent = SEGMENTS[currentSegmentIndex].name;
+  }
 }
 
 // --- Theme Switcher & Dynamic Colors ---
 function setTheme(theme) {
-  if (!['modern', 'retro', 'tomato'].includes(theme)) return;
+  if (!['zen', 'sundial', 'tomato'].includes(theme)) return;
   currentTheme = theme;
   document.body.setAttribute('data-theme', theme);
   localStorage.setItem('pomodoro_theme', theme);
@@ -347,10 +336,19 @@ function setTheme(theme) {
     pill.setAttribute('aria-checked', isSelected ? 'true' : 'false');
   });
 
-  // Update logo icon based on theme
+  // Keep the bonsai mark for Zen while restoring each theme's original logo icon.
   if (logoIconEl) {
-    if (theme === 'retro') {
-      logoIconEl.textContent = '🕹️';
+    if (theme === 'sundial') {
+      logoIconEl.textContent = '🌴';
+    } else if (theme === 'zen') {
+      logoIconEl.innerHTML = `<svg viewBox="0 0 120 78" role="presentation">
+        <path d="M59 61 C55 51 53 42 56 32 C59 24 69 20 72 12 M58 42 C49 38 43 31 40 25 M62 33 C70 33 78 29 83 23" fill="none" stroke="#765b3d" stroke-width="5" stroke-linecap="round" />
+        <path d="M31 61 Q60 70 89 61 L84 68 Q60 76 36 68 Z" fill="#8b5d43" />
+        <path d="M34 61 Q60 66 86 61" fill="none" stroke="#d7b18c" stroke-width="2" />
+        <ellipse cx="59" cy="61" rx="19" ry="5" fill="#6c5940" />
+        <g fill="#527858" stroke="#d5e0c6" stroke-width="1.2"><circle cx="41" cy="22" r="10"/><circle cx="51" cy="16" r="11"/><circle cx="64" cy="16" r="12"/><circle cx="76" cy="18" r="10"/><circle cx="84" cy="24" r="8"/><circle cx="47" cy="29" r="9"/><circle cx="62" cy="27" r="11"/><circle cx="75" cy="28" r="9"/></g>
+        <g fill="#88a47a"><circle cx="47" cy="14" r="3"/><circle cx="67" cy="12" r="3"/><circle cx="79" cy="22" r="2.5"/></g>
+      </svg>`;
     } else if (theme === 'tomato') {
       logoIconEl.textContent = '🍅';
     } else {
@@ -364,7 +362,7 @@ function setTheme(theme) {
 
 function updateThemeColors() {
   const currentSeg = SEGMENTS[currentSegmentIndex];
-  const palette = THEME_PALETTES[currentTheme] || THEME_PALETTES.modern;
+  const palette = THEME_PALETTES[currentTheme] || THEME_PALETTES.zen;
   const colorData = palette[currentSeg.color];
 
   document.documentElement.style.setProperty('--current-color', colorData.color);
@@ -381,6 +379,40 @@ function formatTime(seconds) {
   const m = Math.floor(seconds / 60);
   const s = Math.floor(seconds % 60);
   return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
+
+function updateZenRake(progressRatio) {
+  if (currentTheme !== 'zen' || !zenRakeGroovesEl || !zenRakeToolEl) return;
+
+  const grooveCount = 20;
+  const firstRadius = 6;
+  const radiusStep = 102 / (grooveCount - 1);
+  if (zenRakeGroovesEl.childElementCount !== grooveCount) {
+    zenRakeGroovesEl.replaceChildren();
+    for (let i = 0; i < grooveCount; i += 1) {
+      const groove = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      groove.setAttribute('class', 'zen-rake-groove');
+      zenRakeGroovesEl.appendChild(groove);
+    }
+  }
+
+  const elapsed = Math.min(1, Math.max(0, 1 - progressRatio));
+  Array.from(zenRakeGroovesEl.children).forEach((groove, index) => {
+    const radius = firstRadius + index * radiusStep;
+    let path = `M 145 ${145 - radius}`;
+    if (elapsed >= 1) {
+      path += ` A ${radius} ${radius} 0 1 1 145 ${145 + radius} A ${radius} ${radius} 0 1 1 145 ${145 - radius}`;
+    } else if (elapsed > 0) {
+      const angle = -Math.PI / 2 + elapsed * Math.PI * 2;
+      const x = 145 + radius * Math.cos(angle);
+      const y = 145 + radius * Math.sin(angle);
+      path += ` A ${radius} ${radius} 0 ${elapsed > 0.5 ? 1 : 0} 1 ${x.toFixed(2)} ${y.toFixed(2)}`;
+    }
+    groove.setAttribute('d', path);
+  });
+
+  const rotation = elapsed * 360;
+  zenRakeToolEl.setAttribute('transform', `translate(145 145) rotate(${rotation})`);
 }
 
 function formatDuration(totalSeconds) {
@@ -408,14 +440,22 @@ function updateDisplay() {
   // Title attribute for tab readability
   document.title = `${formatTime(secondsRemaining)} - ${currentSeg.name} | Pomodoro`;
 
-  // Segment Badge & info
-  segmentNameEl.textContent = currentSeg.name;
-  segmentSubtextEl.textContent = currentSeg.subtext;
-
   // Ring Progress: 1 is full, 0 is empty
   const progressRatio = secondsRemaining / currentSeg.durationSec;
-  const strokeOffset = RING_CIRCUMFERENCE * (1 - progressRatio);
+  const strokeDirection = currentTheme === 'sundial' ? -1 : 1;
+  const strokeOffset = RING_CIRCUMFERENCE * (1 - progressRatio) * strokeDirection;
   progressFillEl.style.strokeDashoffset = strokeOffset;
+  const rakeRemaining = isRunning && targetEndTime
+    ? Math.max(0, (targetEndTime - performance.now()) / 1000)
+    : secondsRemaining;
+  updateZenRake(rakeRemaining / currentSeg.durationSec);
+
+  // The Oasis sun and its opposite shadow orbit counterclockwise around the fixed sundial face.
+  const sundialProgress = Math.min(1, Math.max(0, 1 - progressRatio));
+  const sundialSunEl = document.getElementById('sundialRingSun');
+  const sundialShadowEl = document.getElementById('sundialShadow');
+  if (sundialSunEl) sundialSunEl.setAttribute('transform', `rotate(${sundialProgress * 360} 160 160)`);
+  if (sundialShadowEl) sundialShadowEl.setAttribute('transform', `rotate(${-sundialProgress * 360} 145 145)`);
 
   // Mechanical Rotating Kitchen Timer Dial (Tomato Theme)
   const tomatoRotatingDialEl = document.getElementById('tomatoRotatingDial');
@@ -482,6 +522,12 @@ function tick() {
   if (!isRunning) return;
 
   const now = performance.now();
+  const preciseRemaining = Math.max(0, (targetEndTime - now) / 1000);
+  const preciseProgress = preciseRemaining / SEGMENTS[currentSegmentIndex].durationSec;
+  updateZenRake(preciseProgress);
+  const sundialProgress = Math.min(1, Math.max(0, 1 - preciseProgress));
+  document.getElementById('sundialRingSun')?.setAttribute('transform', `rotate(${sundialProgress * 360} 160 160)`);
+  document.getElementById('sundialShadow')?.setAttribute('transform', `rotate(${-sundialProgress * 360} 145 145)`);
   const diffSec = Math.max(0, Math.round((targetEndTime - now) / 1000));
 
   if (diffSec !== secondsRemaining) {
@@ -512,8 +558,10 @@ function handleSegmentComplete() {
   }
 
   // Completing the last segment (long rest) completes the full 8-segment cycle!
+  completedSegmentIndices.add(currentSegmentIndex);
   if (currentSegmentIndex === SEGMENTS.length - 1) {
     stats.cyclesCompleted += 1;
+    completedSegmentIndices.clear();
   }
 
   saveStats();
@@ -528,9 +576,13 @@ function handleSegmentComplete() {
     sendNotification('Break Finished! ⚡️', `Ready for your next work session? Click start when you are ready.`);
   }
 
-  // Advance to next segment
+  // Let Zen users see the finished raked circle at 00:00 for one frame.
   const nextIndex = (currentSegmentIndex + 1) % SEGMENTS.length;
-  switchSegment(nextIndex, false);
+  if (currentTheme === 'zen') {
+    requestAnimationFrame(() => requestAnimationFrame(() => switchSegment(nextIndex, false)));
+  } else {
+    switchSegment(nextIndex, false);
+  }
 }
 
 function resetSegment() {
@@ -633,6 +685,7 @@ function loadStats() {
       console.warn('Failed to parse saved stats');
     }
   }
+  ensureTodayWorkStats();
   const savedSound = localStorage.getItem('pomodoro_sound');
   if (savedSound !== null) {
     soundEnabled = savedSound === 'true';
@@ -648,6 +701,118 @@ function saveStats() {
   localStorage.setItem('pomodoro_accomplishments', JSON.stringify(stats));
 }
 
+let dailyWorkGoalSeconds = 2 * 60 * 60;
+const DAILY_WORK_GOAL_STORAGE_KEY = 'pomodoro_daily_work_goal_seconds';
+
+function loadDailyWorkGoal() {
+  const savedGoal = Number(localStorage.getItem(DAILY_WORK_GOAL_STORAGE_KEY));
+  if (Number.isFinite(savedGoal) && savedGoal > 0) {
+    dailyWorkGoalSeconds = Math.min(12 * 60 * 60, Math.max(30 * 60, Math.round(savedGoal / (30 * 60)) * 30 * 60));
+  }
+  if (dailyFocusGoalInputEl) dailyFocusGoalInputEl.value = String(dailyWorkGoalSeconds / 3600);
+}
+
+function formatFocusDuration(seconds) {
+  const totalMinutes = Math.floor(Math.max(0, seconds) / 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  if (hours > 0) return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+  return `${totalMinutes}m`;
+}
+
+function renderDailyWorkGoal() {
+  const today = getLocalDateKey();
+  const focusedSeconds = Math.max(0, Number(stats.dailyWorkHistory?.[today] ?? stats.todayWorkSeconds) || 0);
+  const progress = Math.min(1, focusedSeconds / dailyWorkGoalSeconds);
+  const goalHours = dailyWorkGoalSeconds / 3600;
+  const goalLabel = `${Number.isInteger(goalHours) ? goalHours : goalHours.toFixed(1)}h`;
+
+  if (dailyFocusTimeEl) dailyFocusTimeEl.textContent = formatFocusDuration(focusedSeconds);
+  if (dailyFocusGoalValueEl) dailyFocusGoalValueEl.textContent = goalLabel;
+  if (dailyFocusFillEl) dailyFocusFillEl.style.width = `${progress * 100}%`;
+  if (dailyFocusTrackEl) {
+    dailyFocusTrackEl.setAttribute('aria-valuemax', String(dailyWorkGoalSeconds));
+    dailyFocusTrackEl.setAttribute('aria-valuenow', String(Math.min(focusedSeconds, dailyWorkGoalSeconds)));
+  }
+  if (dailyFocusProgressTextEl) {
+    dailyFocusProgressTextEl.textContent = focusedSeconds >= dailyWorkGoalSeconds
+      ? 'Goal reached'
+      : `${Math.floor(progress * 100)}% complete`;
+  }
+  renderWorkHistory();
+}
+
+let workHistoryMode = 'week';
+let workHistoryOffset = 0;
+
+function shiftLocalDate(date, days) {
+  const shifted = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  shifted.setDate(shifted.getDate() + days);
+  return shifted;
+}
+
+function renderWorkHistory() {
+  const chart = document.getElementById('workHistoryChart');
+  const title = document.getElementById('workHistoryPeriod');
+  if (!chart || !title) return;
+
+  const today = new Date();
+  let dates = [];
+  let label = '';
+  if (workHistoryMode === 'week') {
+    const start = shiftLocalDate(today, -((today.getDay() + 6) % 7) + workHistoryOffset * 7);
+    dates = Array.from({ length: 7 }, (_, index) => shiftLocalDate(start, index));
+    const end = dates[6];
+    const options = { month: 'short', day: 'numeric' };
+    label = `${dates[0].toLocaleDateString(undefined, options)} – ${end.toLocaleDateString(undefined, { ...options, year: 'numeric' })}`;
+  } else {
+    const monthStart = new Date(today.getFullYear(), today.getMonth() + workHistoryOffset, 1);
+    const dayCount = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0).getDate();
+    dates = Array.from({ length: dayCount }, (_, index) => new Date(monthStart.getFullYear(), monthStart.getMonth(), index + 1));
+    label = monthStart.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+  }
+
+  title.textContent = label;
+  chart.classList.toggle('monthly', workHistoryMode === 'month');
+  chart.innerHTML = '';
+  if (workHistoryMode === 'month') {
+    ['M', 'T', 'W', 'T', 'F', 'S', 'S'].forEach(letter => {
+      const weekday = document.createElement('span');
+      weekday.className = 'work-history-weekday';
+      weekday.textContent = letter;
+      chart.appendChild(weekday);
+    });
+    const offset = (dates[0].getDay() + 6) % 7;
+    for (let i = 0; i < offset; i++) {
+      const spacer = document.createElement('span');
+      spacer.className = 'work-history-spacer';
+      chart.appendChild(spacer);
+    }
+  }
+  const maxSeconds = Math.max(dailyWorkGoalSeconds, ...dates.map(date => Number(stats.dailyWorkHistory?.[getLocalDateKey(date)]) || 0), 1);
+  dates.forEach(date => {
+    const key = getLocalDateKey(date);
+    const seconds = Math.max(0, Number(stats.dailyWorkHistory?.[key]) || 0);
+    const day = document.createElement('div');
+    day.className = 'work-history-day';
+    day.title = `${date.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}: ${formatFocusDuration(seconds)}`;
+    const bar = document.createElement('div');
+    bar.className = 'work-history-bar';
+    bar.style.height = `${seconds ? Math.max(4, seconds / maxSeconds * 100) : 0}%`;
+    bar.setAttribute('aria-hidden', 'true');
+    const value = document.createElement('span');
+    value.className = 'work-history-day-value';
+    value.textContent = seconds ? formatFocusDuration(seconds) : '—';
+    const name = document.createElement('span');
+    name.className = 'work-history-day-name';
+    name.textContent = workHistoryMode === 'week'
+      ? date.toLocaleDateString(undefined, { weekday: 'short' })
+      : String(date.getDate());
+    day.append(bar, value, name);
+    chart.appendChild(day);
+  });
+}
+
 function renderStats() {
   if (!statsWorkTimeEl) return;
 
@@ -657,22 +822,7 @@ function renderStats() {
 
   statsSessionsCountEl.textContent = `${stats.workCompleted} session${stats.workCompleted === 1 ? '' : 's'} done`;
   statsRestBreaksCountEl.textContent = `${stats.breaksCompleted} break${stats.breaksCompleted === 1 ? '' : 's'} taken`;
-
-  // Focus vs Rest Balance Ratio
-  const totalTracked = stats.workSeconds + stats.restSeconds;
-  if (totalTracked > 0) {
-    const workPercent = Math.round((stats.workSeconds / totalTracked) * 100);
-    const restPercent = 100 - workPercent;
-    balanceFocusLabelEl.textContent = `Focus ${workPercent}%`;
-    balanceRestLabelEl.textContent = `Rest ${restPercent}%`;
-    balanceFillWorkEl.style.width = `${workPercent}%`;
-    balanceFillRestEl.style.width = `${restPercent}%`;
-  } else {
-    balanceFocusLabelEl.textContent = `Focus 0%`;
-    balanceRestLabelEl.textContent = `Rest 0%`;
-    balanceFillWorkEl.style.width = `50%`;
-    balanceFillRestEl.style.width = `50%`;
-  }
+  renderDailyWorkGoal();
 }
 
 function resetStats() {
@@ -683,7 +833,10 @@ function resetStats() {
       restSeconds: 0,
       workCompleted: 0,
       breaksCompleted: 0,
-      cyclesCompleted: 0
+      cyclesCompleted: 0,
+      todayWorkDate: getLocalDateKey(),
+      todayWorkSeconds: 0,
+      dailyWorkHistory: {}
     };
     saveStats();
     renderStats();
@@ -693,16 +846,46 @@ function resetStats() {
 // --- Live Time Tracker Heartbeat ---
 // Accurately tracks working time and resting time second by second while the timer runs
 let lastHeartbeatTime = Date.now();
+function getLocalDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function ensureTodayWorkStats() {
+  if (!stats.dailyWorkHistory || typeof stats.dailyWorkHistory !== 'object') stats.dailyWorkHistory = {};
+  const today = getLocalDateKey();
+  if (stats.todayWorkDate !== today) {
+    if (stats.todayWorkDate && Number(stats.todayWorkSeconds) > 0 && stats.dailyWorkHistory[stats.todayWorkDate] == null) {
+      stats.dailyWorkHistory[stats.todayWorkDate] = Number(stats.todayWorkSeconds);
+    }
+    stats.todayWorkDate = today;
+    stats.todayWorkSeconds = Number(stats.dailyWorkHistory[today]) || 0;
+    return true;
+  }
+  if (!Number.isFinite(stats.todayWorkSeconds)) stats.todayWorkSeconds = 0;
+  if (stats.dailyWorkHistory[today] == null && stats.todayWorkSeconds > 0) stats.dailyWorkHistory[today] = stats.todayWorkSeconds;
+  return false;
+}
+
 function initHeartbeat() {
   setInterval(() => {
     const now = Date.now();
     const delta = (now - lastHeartbeatTime) / 1000;
     lastHeartbeatTime = now;
 
+    if (ensureTodayWorkStats()) {
+      saveStats();
+      renderStats();
+    }
+
     if (isRunning && delta > 0 && delta < 600) {
       const cur = SEGMENTS[currentSegmentIndex];
       if (cur.type === 'work') {
         stats.workSeconds += delta;
+        stats.todayWorkSeconds += delta;
+        stats.dailyWorkHistory[getLocalDateKey()] = (Number(stats.dailyWorkHistory[getLocalDateKey()]) || 0) + delta;
       } else {
         stats.restSeconds += delta;
       }
@@ -720,8 +903,82 @@ skipBtn.addEventListener('click', skipSegment);
 if (resetStatsBtn) {
   resetStatsBtn.addEventListener('click', resetStats);
 }
+if (dailyFocusGoalInputEl) {
+  dailyFocusGoalInputEl.addEventListener('change', () => {
+    const enteredHours = Number(dailyFocusGoalInputEl.value);
+    const validHours = Number.isFinite(enteredHours) && dailyFocusGoalInputEl.value !== ''
+      ? enteredHours
+      : dailyWorkGoalSeconds / 3600;
+    const roundedHours = Math.min(12, Math.max(.5, Math.round(validHours * 2) / 2));
+    dailyWorkGoalSeconds = roundedHours * 3600;
+    dailyFocusGoalInputEl.value = String(roundedHours);
+    localStorage.setItem(DAILY_WORK_GOAL_STORAGE_KEY, String(dailyWorkGoalSeconds));
+    renderDailyWorkGoal();
+  });
+}
+document.querySelectorAll('[data-history-mode]').forEach(button => {
+  button.addEventListener('click', () => {
+    workHistoryMode = button.dataset.historyMode;
+    workHistoryOffset = 0;
+    document.querySelectorAll('[data-history-mode]').forEach(option => {
+      const active = option === button;
+      option.classList.toggle('active', active);
+      option.setAttribute('aria-pressed', String(active));
+    });
+    renderWorkHistory();
+  });
+});
+document.getElementById('workHistoryPrevious')?.addEventListener('click', () => {
+  workHistoryOffset -= 1;
+  renderWorkHistory();
+});
+document.getElementById('workHistoryNext')?.addEventListener('click', () => {
+  if (workHistoryOffset < 0) workHistoryOffset += 1;
+  renderWorkHistory();
+});
 if (statsBtn && statsDialog) {
-  statsBtn.addEventListener('click', () => statsDialog.showModal());
+  statsBtn.addEventListener('click', () => {
+    statsDialog.style.removeProperty('left');
+    statsDialog.style.removeProperty('top');
+    statsDialog.style.removeProperty('right');
+    statsDialog.style.removeProperty('bottom');
+    statsDialog.style.removeProperty('transform');
+    statsDialog.showModal();
+  });
+}
+if (statsDialog) {
+  const statsHeader = statsDialog.querySelector('.stats-dialog-header');
+  let dragState = null;
+
+  if (statsHeader) {
+    statsHeader.addEventListener('pointerdown', event => {
+      if (event.button !== 0 || event.target.closest('button, a')) return;
+      const rect = statsDialog.getBoundingClientRect();
+      dragState = { pointerId: event.pointerId, offsetX: event.clientX - rect.left, offsetY: event.clientY - rect.top };
+      statsDialog.style.left = `${rect.left}px`;
+      statsDialog.style.top = `${rect.top}px`;
+      statsDialog.style.transform = 'none';
+      statsHeader.setPointerCapture(event.pointerId);
+      event.preventDefault();
+    });
+
+    statsHeader.addEventListener('pointermove', event => {
+      if (!dragState || event.pointerId !== dragState.pointerId) return;
+      const rect = statsDialog.getBoundingClientRect();
+      const left = Math.max(0, Math.min(window.innerWidth - rect.width, event.clientX - dragState.offsetX));
+      const top = Math.max(0, Math.min(window.innerHeight - rect.height, event.clientY - dragState.offsetY));
+      statsDialog.style.left = `${left}px`;
+      statsDialog.style.top = `${top}px`;
+    });
+
+    const endStatsDrag = event => {
+      if (!dragState || event.pointerId !== dragState.pointerId) return;
+      dragState = null;
+      if (statsHeader.hasPointerCapture(event.pointerId)) statsHeader.releasePointerCapture(event.pointerId);
+    };
+    statsHeader.addEventListener('pointerup', endStatsDrag);
+    statsHeader.addEventListener('pointercancel', endStatsDrag);
+  }
 }
 if (closeStatsBtn && statsDialog) {
   closeStatsBtn.addEventListener('click', () => statsDialog.close());
@@ -783,9 +1040,8 @@ document.addEventListener('keydown', (e) => {
 // --- Initialization ---
 function init() {
   loadStats();
-  const storedTheme = localStorage.getItem('pomodoro_theme');
-  const savedTheme = storedTheme === 'radio' ? 'retro' : (storedTheme || 'tomato');
-  setTheme(savedTheme);
+  loadDailyWorkGoal();
+  setTheme('tomato');
   renderLights();
   updateThemeColors();
   updateLightsState();

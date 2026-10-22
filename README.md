@@ -39,9 +39,9 @@ Then visit [http://localhost:8000](http://localhost:8000).
 
 You can switch between 3 hand-crafted visual skins at any time using the theme bar below the header:
 
-1. ✨ **Modern Dark**:
-   - Sleek cyber-glow aesthetic with translucent glassmorphic surfaces, dynamic segment neon lighting, and serene ambient backdrops.
-   - Modern synthesized chord chimes for break and work transitions.
+1. 🪴 **Zen Garden**:
+   - Calm moss, stone, and warm sand colors with a quiet garden atmosphere.
+   - Soft, gentle chimes for work and break transitions.
 
 2. 🕹️ **8-Bit Retro**:
    - Pixel-inspired arcade palette with sharp edges, chunky shadows, and classic game-console colors.
@@ -57,7 +57,7 @@ You can switch between 3 hand-crafted visual skins at any time using the theme b
    - **Cherry Tomato & Seed Lights**: Round indicator dots with fresh leaf accents.
    - **Mechanical Sounds**: Subtle clockwork ticking per second and a dual-strike mechanical kitchen timer "Ding... DING!" alert sound.
 
-*Theme selections are saved automatically in `localStorage` and persist across browser reloads.*
+*Tomato opens as the default theme each time the app loads. You can switch themes while using the app.*
 
 ---
 
