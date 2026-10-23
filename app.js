@@ -397,16 +397,30 @@ function updateZenRake(progressRatio) {
   }
 
   const elapsed = Math.min(1, Math.max(0, 1 - progressRatio));
+  const isResting = SEGMENTS[currentSegmentIndex].type !== 'work';
+  const grooveProgress = isResting ? 1 - elapsed : elapsed;
   Array.from(zenRakeGroovesEl.children).forEach((groove, index) => {
     const radius = firstRadius + index * radiusStep;
     let path = `M 145 ${145 - radius}`;
-    if (elapsed >= 1) {
+    if (grooveProgress >= 1) {
       path += ` A ${radius} ${radius} 0 1 1 145 ${145 + radius} A ${radius} ${radius} 0 1 1 145 ${145 - radius}`;
-    } else if (elapsed > 0) {
-      const angle = -Math.PI / 2 + elapsed * Math.PI * 2;
-      const x = 145 + radius * Math.cos(angle);
-      const y = 145 + radius * Math.sin(angle);
-      path += ` A ${radius} ${radius} 0 ${elapsed > 0.5 ? 1 : 0} 1 ${x.toFixed(2)} ${y.toFixed(2)}`;
+    } else if (grooveProgress > 0) {
+      if (isResting) {
+        const startAngle = -Math.PI / 2 + elapsed * Math.PI * 2;
+        const midpointAngle = startAngle + grooveProgress * Math.PI;
+        const startX = 145 + radius * Math.cos(startAngle);
+        const startY = 145 + radius * Math.sin(startAngle);
+        const midpointX = 145 + radius * Math.cos(midpointAngle);
+        const midpointY = 145 + radius * Math.sin(midpointAngle);
+        path = `M ${startX.toFixed(2)} ${startY.toFixed(2)}`;
+        path += ` A ${radius} ${radius} 0 0 1 ${midpointX.toFixed(2)} ${midpointY.toFixed(2)}`;
+        path += ` A ${radius} ${radius} 0 0 1 145 ${(145 - radius).toFixed(2)}`;
+      } else {
+        const angle = -Math.PI / 2 + grooveProgress * Math.PI * 2;
+        const x = 145 + radius * Math.cos(angle);
+        const y = 145 + radius * Math.sin(angle);
+        path += ` A ${radius} ${radius} 0 ${grooveProgress > 0.5 ? 1 : 0} 1 ${x.toFixed(2)} ${y.toFixed(2)}`;
+      }
     }
     groove.setAttribute('d', path);
   });
