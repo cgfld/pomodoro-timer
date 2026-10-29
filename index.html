@@ -358,14 +358,11 @@
           <stop offset="0" stop-color="#fff7df" stop-opacity=".95" />
           <stop offset="1" stop-color="#fff7df" stop-opacity="0" />
         </linearGradient>
-        <clipPath id="nightMoonClip">
-          <circle cx="1086" cy="177" r="57" />
-        </clipPath>
       </defs>
       <rect width="1440" height="900" fill="url(#nightSky)" />
       <circle cx="1086" cy="177" r="83" fill="#f2e9d0" opacity=".1" />
-      <circle cx="1086" cy="177" r="57" fill="#f4edda" />
-      <circle cx="1106" cy="177" r="56" fill="#1b2948" stroke="#d7d7cb" stroke-width="1.2" opacity=".98" clip-path="url(#nightMoonClip)" />
+      <circle cx="1086" cy="177" r="57" fill="#111a36" stroke="#d7d7cb" stroke-width="1.2" />
+      <path id="nightLandscapeMoonIllumination" d="M1086 120 A57 57 0 0 1 1086 234 Q1143 177 1086 120Z" fill="#f4edda" />
       <g fill="#fbf3dd">
         <circle cx="164" cy="120" r="2.5"/><circle cx="258" cy="229" r="2"/><circle cx="373" cy="101" r="2.2"/>
         <circle cx="467" cy="183" r="1.8"/><circle cx="586" cy="91" r="2.4"/><circle cx="687" cy="218" r="2"/>
@@ -413,6 +410,37 @@
       <g class="scene-water-ripples" fill="none" stroke="#dce8f1" stroke-width="1.4">
         <ellipse cx="225" cy="845" rx="13" ry="2"/><ellipse cx="605" cy="873" rx="16" ry="2"/><ellipse cx="990" cy="841" rx="13" ry="2"/><ellipse cx="1280" cy="866" rx="16" ry="2"/>
       </g>
+    </svg>
+  </div>
+
+  <div class="winter-landscape" aria-hidden="true">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="winterWall" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#142b46"/><stop offset=".58" stop-color="#42667a"/><stop offset="1" stop-color="#b5cdd0"/></linearGradient>
+        <linearGradient id="winterAurora" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8ce0c0" stop-opacity="0"/><stop offset=".48" stop-color="#8ce0c0" stop-opacity=".5"/><stop offset="1" stop-color="#b2e7d5" stop-opacity="0"/></linearGradient>
+        <linearGradient id="winterSnow" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f4f5ec"/><stop offset="1" stop-color="#cbdadd"/></linearGradient>
+        <radialGradient id="winterMoonGlow"><stop stop-color="#f7efcf" stop-opacity=".4"/><stop offset="1" stop-color="#f7efcf" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="1440" height="900" fill="url(#winterWall)"/>
+      <ellipse cx="1090" cy="192" rx="190" ry="190" fill="url(#winterMoonGlow)"/>
+      <circle cx="1090" cy="192" r="54" fill="#f5edcf" opacity=".92"/>
+      <path d="M-60 260 Q270 64 570 232 T1130 168 T1510 222 L1510 354 Q1120 286 850 356 T280 334 T-60 390Z" fill="url(#winterAurora)" opacity=".8"/>
+      <path d="M0 520L215 272 390 460 628 192 904 500 1112 278 1440 520V900H0Z" fill="#536f83" opacity=".78"/>
+      <path d="M95 414L215 272 306 374 263 357 215 319 174 371 145 366Z M448 378L628 192 777 365 708 337 628 247 557 326Z M1002 405L1112 278 1266 432 1192 395 1112 329 1069 379Z" fill="#e7eff0" opacity=".92"/>
+      <path d="M0 565Q205 472 404 545T803 531T1194 506T1440 555V900H0Z" fill="#dce7e8"/>
+      <path d="M0 666Q210 562 435 637T857 606T1216 602T1440 650V900H0Z" fill="url(#winterSnow)"/>
+      <path d="M0 780Q250 660 502 744T991 713T1440 738V900H0Z" fill="#f1f3eb"/>
+      <!-- Snow-laden firs frame the clearing -->
+      <g fill="#263f4b">
+        <path d="M58 716l88-324 88 324h-57l47 111H68l47-111z M214 753l72-258 72 258h-46l40 99H220l40-99z M1125 724l92-344 92 344h-60l51 123h-166l51-123z M1300 750l70-270 70 270h-45l40 102h-130l40-102z"/>
+        <path d="M-42 772l65-236 66 236H47l36 92H-70l36-92z M990 768l67-245 67 245h-43l37 100H996l37-100z"/>
+      </g>
+      <g fill="none" stroke="#edf3ef" stroke-width="13" stroke-linecap="round" opacity=".95">
+        <path d="M79 617l67-225 67 225 M49 708h175 M233 672l53-177 53 177 M1115 622l102-242 102 242 M1080 702h210 M1287 675l83-195 83 195 M-10 691l33-155 44 155 M979 696l78-173 78 173"/>
+      </g>
+      <g fill="#fffdf5" opacity=".85"><circle cx="186" cy="140" r="2"/><circle cx="326" cy="96" r="2"/><circle cx="474" cy="174" r="2"/><circle cx="759" cy="108" r="2"/><circle cx="876" cy="216" r="2"/><circle cx="1250" cy="91" r="2"/><circle cx="1368" cy="186" r="2"/></g>
+      <g class="winter-snowfall" fill="#fffdf5" opacity=".8"><circle cx="122" cy="210" r="3"/><circle cx="271" cy="298" r="2.5"/><circle cx="405" cy="218" r="3"/><circle cx="568" cy="322" r="2.5"/><circle cx="743" cy="242" r="3"/><circle cx="928" cy="317" r="2.5"/><circle cx="1170" cy="290" r="3"/><circle cx="1352" cy="344" r="2.5"/><circle cx="188" cy="462" r="2.5"/><circle cx="522" cy="468" r="3"/><circle cx="840" cy="432" r="2.5"/><circle cx="1284" cy="478" r="3"/></g>
+      <path d="M0 847Q390 782 720 838T1440 816V900H0Z" fill="#fffdf6" opacity=".88"/>
     </svg>
   </div>
 
@@ -535,6 +563,9 @@
           </button>
           <button class="theme-more-option theme-more-select" type="button" data-theme="night" aria-label="Try the night sky theme">
             <span>night sky</span><span class="theme-more-lock" aria-hidden="true">🌙</span>
+          </button>
+          <button class="theme-more-option theme-more-select" type="button" data-theme="winter" aria-label="Try the Northern Lights theme">
+            <span>northern lights</span><span class="theme-more-lock" aria-hidden="true">❄️</span>
           </button>
           <p class="theme-more-note">more themes coming soon</p>
         </div>
@@ -692,6 +723,136 @@
             </g>
           </svg>
         </div>
+        <div class="winter-aurora-clock" aria-hidden="true">
+          <svg viewBox="0 0 290 290">
+            <defs>
+              <radialGradient id="auroraNightSky" cx="48%" cy="38%" r="72%"><stop stop-color="#213b60"/><stop offset=".72" stop-color="#111e3a"/><stop offset="1" stop-color="#0b1429"/></radialGradient>
+              <linearGradient id="auroraRibbon" x1="0" y1="0" x2="1" y2=".2"><stop stop-color="#73e5d0" stop-opacity="0"/><stop offset=".24" stop-color="#72e5bf" stop-opacity=".32"/><stop offset=".48" stop-color="#8cf4c6" stop-opacity=".88"/><stop offset=".7" stop-color="#63cfdf" stop-opacity=".58"/><stop offset="1" stop-color="#8f8cf2" stop-opacity="0"/></linearGradient>
+              <linearGradient id="auroraRibbonTwo" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#6bc7ec" stop-opacity="0"/><stop offset=".5" stop-color="#64d6d2" stop-opacity=".46"/><stop offset="1" stop-color="#9e8cf3" stop-opacity="0"/></linearGradient>
+              <clipPath id="auroraClockClip"><circle cx="145" cy="145" r="119"/></clipPath>
+            </defs>
+            <circle cx="145" cy="145" r="119" fill="url(#auroraNightSky)" stroke="#d9f2f0" stroke-opacity=".68" stroke-width="3"/>
+            <g clip-path="url(#auroraClockClip)">
+              <circle cx="87" cy="79" r="2" fill="#fff" opacity=".9"/><circle cx="197" cy="68" r="1.7" fill="#fff" opacity=".75"/><circle cx="223" cy="111" r="1.5" fill="#fff" opacity=".8"/><circle cx="62" cy="131" r="1.5" fill="#fff" opacity=".65"/><circle cx="175" cy="105" r="1.4" fill="#fff" opacity=".75"/><circle cx="112" cy="56" r="1.2" fill="#fff" opacity=".7"/><circle cx="205" cy="157" r="1.7" fill="#fff" opacity=".72"/>
+              <g class="clock-snowfall clock-snowfall-one" fill="none" stroke="#f5ffff" stroke-width="1.5" stroke-linecap="round" opacity=".9">
+                <path d="M94 82v10m-5-5h10m-8.5-3.5 7 7m0-7-7 7 M155 111v9m-4.5-4.5h9m-7.5-3 6 6m0-6-6 6 M219 73v9m-4.5-4.5h9m-7.5-3 6 6m0-6-6 6"/>
+              </g>
+              <g class="clock-snowfall clock-snowfall-two" fill="none" stroke="#d9fff4" stroke-width="1.4" stroke-linecap="round" opacity=".82">
+                <path d="M58 157v9m-4.5-4.5h9m-7.5-3 6 6m0-6-6 6 M187 83v9m-4.5-4.5h9m-7.5-3 6 6m0-6-6 6 M236 137v9m-4.5-4.5h9m-7.5-3 6 6m0-6-6 6"/>
+              </g>
+              <path class="aurora-ribbon aurora-ribbon-one" d="M13 155 Q68 94 120 131 T217 113 Q256 103 286 127 L286 157 Q237 132 199 150 T118 162 T13 184Z" fill="url(#auroraRibbon)"/>
+              <path class="aurora-ribbon aurora-ribbon-two" d="M-4 180 Q62 128 117 157 T220 139 Q263 131 296 153 L296 176 Q251 155 211 171 T117 185 T-4 208Z" fill="url(#auroraRibbonTwo)"/>
+              <!-- Tiny snowy forest horizon keeps the clock face scenic on narrow screens. -->
+              <path d="M23 190Q62 174 99 188T171 187T267 182V270H23Z" fill="#9bbbc7" opacity=".88"/>
+              <g fill="#244b5a">
+                <path d="M42 207l13-38 13 38h-8l7 15H43l7-15z M71 214l10-30 10 30h-7l6 12H72l6-12z M197 210l15-46 15 46h-9l8 17h-28l8-17z M226 214l10-31 10 31h-7l6 12h-18l6-12z"/>
+              </g>
+              <g fill="none" stroke="#e9f5f4" stroke-width="3" stroke-linecap="round" opacity=".95">
+                <path d="M46 196l9-27 10 27 M38 207h34 M74 207l7-23 8 23 M192 199l20-35 14 35 M188 209h44 M226 207l10-24 9 24"/>
+              </g>
+              <path d="M18 213Q66 193 111 211T202 207T272 202V270H18Z" fill="#e5f0ee"/>
+              <path d="M17 232Q68 210 113 227T205 224T273 220V270H17Z" fill="#f7f9f2"/>
+              <path d="M22 245Q70 232 112 243T203 240T267 238" fill="none" stroke="#c4dbdc" stroke-width="2" opacity=".8"/>
+            </g>
+            <circle cx="145" cy="145" r="126" fill="none" stroke="#e7f4f2" stroke-opacity=".2" stroke-width="1"/>
+            <path d="M74 53Q99 31 127 29" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <svg class="forest-clock-scene" viewBox="0 0 290 290" aria-hidden="true">
+          <defs>
+            <clipPath id="forestClockClip"><circle cx="145" cy="145" r="119"/></clipPath>
+            <linearGradient id="forestClockSky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a9c9c2"/><stop offset="1" stop-color="#e4e6c9"/></linearGradient>
+          </defs>
+          <circle class="forest-clock-sky" cx="145" cy="145" r="119" fill="url(#forestClockSky)" stroke="#e6edd7" stroke-opacity=".8" stroke-width="3"/>
+          <g clip-path="url(#forestClockClip)">
+            <circle class="forest-clock-sun" cx="205" cy="67" r="15" fill="#f7edc5" opacity=".86"/>
+            <g class="forest-clock-stars" fill="#f5f1d9" opacity="0"><circle cx="84" cy="72" r="1.8"/><circle cx="196" cy="92" r="1.5"/><circle cx="222" cy="133" r="1.7"/><circle cx="68" cy="143" r="1.4"/><circle cx="117" cy="97" r="1.3"/></g>
+            <path class="forest-clock-hill-far" d="M19 184Q60 143 101 175T178 168T271 180V270H19Z" fill="#a2b993"/>
+            <path class="forest-clock-hill-mid" d="M19 202Q66 171 110 199T198 191T271 201V270H19Z" fill="#78966e"/>
+            <g class="forest-clock-pines" fill="#365c4b">
+              <path d="M39 216l16-49 16 49H60l8 18H46l8-18z M72 224l12-37 12 37h-8l6 15H74l6-15z M191 219l18-56 18 56h-12l10 21h-32l10-21z M226 225l12-38 12 38h-8l6 15h-20l6-15z"/>
+            </g>
+            <g class="forest-clock-pine-snow" fill="none" stroke="#d8e2c8" stroke-width="2.5" stroke-linecap="round" opacity=".8">
+              <path d="M43 206l12-39 13 39 M36 216h38 M187 207l22-44 15 44 M183 218h38"/>
+            </g>
+            <path class="forest-clock-hill-front" d="M17 226Q64 203 111 222T207 217T273 225V270H17Z" fill="#52765b"/>
+            <path class="forest-clock-creek" d="M137 270Q163 246 143 239T148 234" fill="none" stroke="#9bc9c3" stroke-width="13" stroke-linecap="butt"/>
+            <path class="forest-clock-creek-glint" d="M137 270Q163 246 143 239T148 234" fill="none" stroke="#e3f0db" stroke-opacity=".75" stroke-width="1.8" stroke-linecap="butt"/>
+          </g>
+          <circle cx="145" cy="145" r="126" fill="none" stroke="#eaf1de" stroke-opacity=".4" stroke-width="1"/>
+        </svg>
+        <svg class="rainy-clock-scene" viewBox="0 0 290 290" aria-hidden="true">
+          <defs>
+            <linearGradient id="rainyClockSky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#718c98"/><stop offset="1" stop-color="#cbd9d7"/></linearGradient>
+            <clipPath id="rainyClockClip"><circle cx="145" cy="145" r="119"/></clipPath>
+            <clipPath id="rainyClockCreekClip"><path d="M18 228Q65 205 112 224T204 216T273 224V270H18Z"/></clipPath>
+          </defs>
+          <circle cx="145" cy="145" r="119" fill="url(#rainyClockSky)" stroke="#e5efeb" stroke-opacity=".78" stroke-width="3"/>
+          <g clip-path="url(#rainyClockClip)">
+            <g fill="#647f8b" opacity=".78">
+              <path d="M44 100h91c-2-12-12-21-25-21-4 0-8 1-12 3-5-17-21-29-40-29-20 0-36 13-41 31-3-1-6-2-9-2-12 0-22 10-22 22 0 4 1 8 3 11z"/>
+              <path d="M165 119h86c-2-11-10-19-21-19-4 0-8 1-11 3-4-14-15-24-29-24-14 0-26 10-30 23-3-1-5-2-8-2-9 0-17 8-17 17 0 3 1 6 2 9z" opacity=".8"/>
+            </g>
+            <g class="rainy-clock-drops" fill="none" stroke="#e4eff0" stroke-width="2" stroke-linecap="round" opacity=".72">
+              <path d="M68 112l-5 18 M91 118l-5 18 M116 110l-5 18 M159 140l-5 18 M184 133l-5 18 M211 143l-5 18 M237 126l-5 18"/>
+            </g>
+            <path d="M17 192Q58 158 102 184T183 177T273 188V270H17Z" fill="#8ca3a0" opacity=".94"/>
+            <path d="M17 208Q64 178 111 203T202 195T273 204V270H17Z" fill="#6f8988"/>
+            <g fill="#49676d">
+              <path d="M36 218l14-44 14 44h-9l8 17H37l8-17z M66 224l11-34 11 34h-7l6 15H68l6-15z M198 219l16-50 16 50h-10l9 19h-30l9-19z M231 225l11-35 11 35h-7l6 15h-20l6-15z"/>
+            </g>
+            <path d="M18 228Q65 205 112 224T204 216T273 224V270H18Z" fill="#536f76"/>
+            <g clip-path="url(#rainyClockCreekClip)">
+              <path class="rainy-clock-creek" d="M134 270Q158 248 145 235T148 220" fill="none" stroke="#a8c4c6" stroke-width="17" stroke-linecap="round"/>
+              <path class="rainy-clock-creek-glint" d="M134 270Q158 248 145 235T148 220" fill="none" stroke="#e4eff0" stroke-width="2" stroke-linecap="round" opacity=".74"/>
+            </g>
+          </g>
+          <circle cx="145" cy="145" r="126" fill="none" stroke="#edf4f1" stroke-opacity=".38" stroke-width="1"/>
+        </svg>
+        <svg class="night-moon-clock" viewBox="0 0 290 290" aria-hidden="true">
+          <defs>
+            <radialGradient id="nightClockMoonGlow"><stop stop-color="#f4edda" stop-opacity=".32"/><stop offset="1" stop-color="#f4edda" stop-opacity="0"/></radialGradient>
+            <linearGradient id="nightClockCometTrail" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#d5dcff" stop-opacity="0"/><stop offset="1" stop-color="#fff8df" stop-opacity=".9"/></linearGradient>
+            <radialGradient id="nightClockSky" cx="48%" cy="32%" r="76%"><stop stop-color="#34466d"/><stop offset=".66" stop-color="#1e2b4c"/><stop offset="1" stop-color="#111a36"/></radialGradient>
+            <clipPath id="nightClockFaceClip"><circle cx="145" cy="145" r="119"/></clipPath>
+          </defs>
+          <circle cx="145" cy="145" r="119" fill="url(#nightClockSky)" stroke="#aeb5d0" stroke-opacity=".72" stroke-width="3"/>
+          <g clip-path="url(#nightClockFaceClip)">
+          <g fill="#f8f3df">
+            <circle cx="76" cy="105" r="1.7" opacity=".8"/><circle cx="94" cy="139" r="1.2" opacity=".68"/>
+            <circle cx="212" cy="111" r="1.8" opacity=".78"/><circle cx="224" cy="149" r="1.2" opacity=".72"/>
+            <circle cx="65" cy="185" r="1.4" opacity=".72"/><circle cx="87" cy="215" r="1.7" opacity=".82"/>
+            <circle cx="206" cy="215" r="1.5" opacity=".76"/><circle cx="230" cy="188" r="1.2" opacity=".68"/>
+            <circle cx="110" cy="93" r="1" opacity=".72"/><circle cx="180" cy="95" r="1.1" opacity=".76"/>
+          </g>
+          <g fill="none" stroke="#fff7df" stroke-width="1.2" stroke-linecap="round" opacity=".72">
+            <path d="M80 166v7m-3.5-3.5h7m-6-2.5 5 5m0-5-5 5 M218 168v6m-3-3h6m-5-2 4 4m0-4-4 4"/>
+          </g>
+          <g class="night-clock-comet" opacity="0">
+            <path d="M-34 -11L-3 0" stroke="url(#nightClockCometTrail)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle r="2.4" fill="#fff9e7"/>
+            <animateTransform attributeName="transform" type="translate" values="66 119;220 91" keyTimes="0;1" dur="7.5s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;.14;.2;.68;.82" dur="7.5s" repeatCount="indefinite"/>
+          </g>
+          <g class="night-clock-comet" opacity="0">
+            <path d="M3 -1L34 11" stroke="url(#nightClockCometTrail)" stroke-width="2" stroke-linecap="round"/>
+            <circle r="2" fill="#e9f5ff"/>
+            <animateTransform attributeName="transform" type="translate" values="221 166;70 153" keyTimes="0;1" dur="10.5s" begin="-3s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;.12;.18;.62;.78" dur="10.5s" begin="-3s" repeatCount="indefinite"/>
+          </g>
+          <circle cx="145" cy="70" r="29" fill="url(#nightClockMoonGlow)"/>
+          <circle cx="145" cy="70" r="15" fill="#222c49" stroke="#eee8d4" stroke-opacity=".78" stroke-width="1.2"/>
+          <path id="nightClockMoonIllumination" d="M145 55 A15 15 0 0 1 145 85 Q160 70 145 55Z" fill="#fff1c9"/>
+          <circle cx="145" cy="70" r="15" fill="none" stroke="#fff6dc" stroke-opacity=".75" stroke-width=".8"/>
+          <!-- Miniature mountain horizon and pine forest inside the clock face. -->
+          <path d="M18 199L68 157 101 189 143 143 178 188 217 157 273 199V270H18Z" fill="#65708f" opacity=".86"/>
+          <path d="M18 210Q61 184 108 205T198 201T273 207V270H18Z" fill="#344361"/>
+          <g fill="#1b2947">
+            <path d="M41 227l15-47 15 47h-10l8 20H43l8-20z M75 232l11-35 11 35h-7l6 16H76l6-16z M192 228l17-54 17 54h-11l9 21h-32l9-21z M225 233l11-37 11 37h-7l6 16h-26l6-16z"/>
+          </g>
+          <path d="M18 243Q68 222 115 240T204 237T273 242V270H18Z" fill="#17233f"/>
+          </g>
+        </svg>
         <svg class="progress-ring" viewBox="0 0 320 320">
           <defs>
             <linearGradient id="sundialProgressGradient" x1="0" y1="0" x2="1" y2="1">

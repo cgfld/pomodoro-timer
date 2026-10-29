@@ -44,6 +44,11 @@ const THEME_PALETTES = {
     orange: { color: '#78a9c5', glow: 'rgba(120, 169, 197, 0.48)', soft: 'rgba(120, 169, 197, 0.16)' },
     yellow: { color: '#e3c77e', glow: 'rgba(227, 199, 126, 0.52)', soft: 'rgba(227, 199, 126, 0.18)' }
   },
+  winter: {
+    green: { color: '#4d8065', glow: 'rgba(77, 128, 101, 0.45)', soft: 'rgba(77, 128, 101, 0.16)' },
+    orange: { color: '#5596a5', glow: 'rgba(85, 150, 165, 0.44)', soft: 'rgba(85, 150, 165, 0.16)' },
+    yellow: { color: '#8993c7', glow: 'rgba(137, 147, 199, 0.48)', soft: 'rgba(137, 147, 199, 0.18)' }
+  },
   tomato: {
     green: { color: '#16a34a', glow: 'rgba(22, 163, 74, 0.55)', soft: 'rgba(22, 163, 74, 0.18)' },
     orange: { color: '#ea580c', glow: 'rgba(234, 88, 12, 0.55)', soft: 'rgba(234, 88, 12, 0.18)' },
@@ -255,12 +260,14 @@ function playChime(type) {
       });
     } else {
       // Gentle pentatonic garden chime
-      const notes = currentTheme === 'zen'
-        ? (type === 'workComplete' ? [523.25, 659.25, 783.99] : [587.33, 698.46, 880.00])
+      const notes = currentTheme === 'winter'
+        ? (type === 'workComplete' ? [392.00, 493.88, 587.33, 783.99] : [523.25, 659.25, 783.99, 1046.50])
+        : currentTheme === 'zen'
+          ? (type === 'workComplete' ? [523.25, 659.25, 783.99] : [587.33, 698.46, 880.00])
         : (type === 'workComplete'
           ? [523.25, 659.25, 783.99, 1046.50]
           : [440.00, 554.37, 659.25, 880.00]);
-      const noteSpacing = currentTheme === 'zen' ? 0.16 : 0.08;
+      const noteSpacing = ['zen', 'winter'].includes(currentTheme) ? 0.16 : 0.08;
 
       notes.forEach((freq, idx) => {
         const osc = ctx.createOscillator();
@@ -348,7 +355,7 @@ function setForestMode(mode) {
 }
 
 function setTheme(theme) {
-  if (!['zen', 'sundial', 'tomato', 'rainy', 'night', 'forest'].includes(theme)) return;
+  if (!['zen', 'sundial', 'tomato', 'rainy', 'night', 'forest', 'winter'].includes(theme)) return;
   currentTheme = theme;
   document.body.setAttribute('data-theme', theme);
   localStorage.setItem('pomodoro_theme', theme);
@@ -363,7 +370,7 @@ function setTheme(theme) {
     pill.classList.toggle('active', isSelected);
     pill.setAttribute('aria-checked', isSelected ? 'true' : 'false');
   });
-  moreThemesToggleEl?.classList.toggle('active', ['rainy', 'night', 'forest'].includes(theme));
+  moreThemesToggleEl?.classList.toggle('active', ['rainy', 'night', 'forest', 'winter'].includes(theme));
 
   // Keep the bonsai mark for Zen while restoring each theme's original logo icon.
   if (logoIconEl) {
@@ -379,6 +386,8 @@ function setTheme(theme) {
       logoIconEl.textContent = '🌙';
     } else if (theme === 'forest') {
       logoIconEl.textContent = '🌲';
+    } else if (theme === 'winter') {
+      logoIconEl.textContent = '❄️';
     } else {
       logoIconEl.textContent = '⏳';
     }
@@ -484,6 +493,7 @@ function updateDisplay() {
 
   // Ring Progress: 1 is full, 0 is empty
   const progressRatio = secondsRemaining / currentSeg.durationSec;
+  updateMoonPhase(progressRatio);
   // Progress advances clockwise by default; the Sundial theme opts into the opposite stroke direction.
   const strokeDirection = currentTheme === 'sundial' ? -1 : 1;
   const strokeOffset = RING_CIRCUMFERENCE * (1 - progressRatio) * strokeDirection;
@@ -528,6 +538,23 @@ function updateDisplay() {
     playIcon.classList.remove('hidden');
     pauseIcon.classList.add('hidden');
     startPauseBtn.title = "Start Timer (Spacebar)";
+  }
+}
+
+function updateMoonPhase(progressRatio) {
+  // New moon at the start and end, full moon halfway through the interval.
+  const phase = Math.min(1, Math.max(0, 1 - progressRatio));
+  const waxing = phase <= 0.5;
+  const terminatorX = 13 * Math.cos(phase * Math.PI * 2) * (waxing ? 1 : -1);
+  const sweep = waxing ? 1 : 0;
+  const clockMoonEl = document.getElementById('nightClockMoonIllumination');
+  const landscapeMoonEl = document.getElementById('nightLandscapeMoonIllumination');
+  if (clockMoonEl) {
+    clockMoonEl.setAttribute('d', `M145 55 A15 15 0 0 ${sweep} 145 85 Q${145 + (30 / 13) * terminatorX} 70 145 55Z`);
+  }
+  if (landscapeMoonEl) {
+    const landscapeTerminatorX = 57 * Math.cos(phase * Math.PI * 2) * (waxing ? 1 : -1);
+    landscapeMoonEl.setAttribute('d', `M1086 120 A57 57 0 0 ${sweep} 1086 234 Q${1086 + 2 * landscapeTerminatorX} 177 1086 120Z`);
   }
 }
 
@@ -1124,7 +1151,7 @@ function init() {
   loadDailyWorkGoal();
   setForestMode(localStorage.getItem('pomodoro_forest_mode') || 'day');
   const savedTheme = localStorage.getItem('pomodoro_theme');
-  setTheme(['zen', 'sundial', 'tomato', 'rainy', 'night', 'forest'].includes(savedTheme) ? savedTheme : 'tomato');
+  setTheme(['zen', 'sundial', 'tomato', 'rainy', 'night', 'forest', 'winter'].includes(savedTheme) ? savedTheme : 'tomato');
   renderLights();
   updateThemeColors();
   updateLightsState();

@@ -57,6 +57,21 @@ You can switch between 3 hand-crafted visual skins at any time using the theme b
    - **Cherry Tomato & Seed Lights**: Round indicator dots with fresh leaf accents.
    - **Mechanical Sounds**: Subtle clockwork ticking per second and a dual-strike mechanical kitchen timer "Ding... DING!" alert sound.
 
+4. 🌌 **Northern Lights**:
+   - An outdoor moonlit winter clearing, framed by snow-covered firs, distant peaks, and a soft aurora.
+   - A midnight-blue Northern Lights clock face with drifting aurora, falling snow, and a miniature snowy forest along the lower edge.
+   - Gentle falling snow and cool alpine colors pair with a soft bell chime at interval changes.
+
+5. 🌙 **Night Sky**:
+   - The moon in the landscape and timer face waxes from new to full at the interval midpoint, then wanes back to new as the timer reaches zero.
+   - A miniature night landscape with stars, mountain ridges, pines, and occasional animated comets sits inside the clock face.
+
+6. 🌲 **Forest Retreat**:
+   - A tiny forest, rolling hills, and winding creek fill the clock face in both day and night modes.
+
+7. 🌧️ **Rainy Day**:
+   - Misty hills, pines, a winding stream, and gentle animated rain miniature the rainy landscape inside the clock face.
+
 *Tomato opens as the default theme each time the app loads. You can switch themes while using the app.*
 
 ---

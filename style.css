@@ -75,6 +75,7 @@ body {
 .forest-landscape { display: none; }
 .rainy-landscape { display: none; }
 .night-landscape { display: none; }
+.winter-landscape { display: none; }
 
 /* Main Container Card */
 .app-container {
@@ -669,6 +670,10 @@ body.is-running .light-item.active .light-bulb {
 }
 
 .sundial-ring-sun { display: none; }
+.winter-aurora-clock { display: none; }
+.forest-clock-scene { display: none; }
+.rainy-clock-scene { display: none; }
+.night-moon-clock { display: none; }
 
 .timer-content {
   display: flex;
@@ -2001,6 +2006,16 @@ body[data-theme="rainy"] .rainy-landscape {
 }
 
 body[data-theme="rainy"] .rainy-landscape svg { display: block; width: 100%; height: 100%; }
+body[data-theme="rainy"] .rainy-clock-scene {
+  display: block; position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none;
+  filter: drop-shadow(0 10px 16px rgba(49, 78, 85, .24));
+}
+body[data-theme="rainy"] .rainy-clock-drops path {
+  stroke-dasharray: 6 28; stroke-dashoffset: 34; animation: rainy-clock-fall 1.1s linear infinite;
+}
+body[data-theme="rainy"] .rainy-clock-creek-glint { animation: rainy-clock-water-glint 4s ease-in-out infinite alternate; }
+@keyframes rainy-clock-fall { to { stroke-dashoffset: 0; } }
+@keyframes rainy-clock-water-glint { from { opacity: .32; } to { opacity: .82; } }
 body[data-theme="rainy"] .background-ambient {
   background: radial-gradient(circle, rgba(224, 240, 239, .56), transparent 72%);
   opacity: .68;
@@ -2082,6 +2097,8 @@ body[data-theme="rainy"] .rain-streaks path:nth-child(3) { animation-delay: -.68
 }
 @media (prefers-reduced-motion: reduce) {
   body[data-theme="rainy"] .rain-streaks path { animation: none; }
+  body[data-theme="rainy"] .rainy-clock-drops path,
+  body[data-theme="rainy"] .rainy-clock-creek-glint { animation: none; }
 }
 
 /* NIGHT SKY THEME */
@@ -2110,6 +2127,14 @@ body[data-theme="night"] .night-landscape {
   pointer-events: none;
 }
 body[data-theme="night"] .night-landscape svg { display: block; width: 100%; height: 100%; }
+body[data-theme="night"] .night-moon-clock {
+  display: block; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  filter: drop-shadow(0 0 8px rgba(244, 237, 218, .38));
+}
+body[data-theme="night"] .night-moon-clock circle,
+body[data-theme="night"] .night-moon-clock path { transition: d .25s ease, fill .25s ease; }
+body[data-theme="night"] .night-moon-clock { width: 100%; height: 100%; }
+body[data-theme="night"] .night-clock-comet { filter: drop-shadow(0 0 4px rgba(210, 225, 255, .8)); }
 body[data-theme="night"] .shooting-star { display: block; }
 body[data-theme="night"] .travelling-planet { display: block; }
 .static-travelling-planet { display: none; }
@@ -2185,6 +2210,7 @@ body[data-theme="night"] .stats-dialog-close { background: rgba(234, 233, 248, .
 @media (prefers-reduced-motion: reduce) {
   .shooting-star { display: none !important; }
   .travelling-planet { display: none !important; }
+  .night-clock-comet { display: none !important; }
   body[data-theme="night"] .static-travelling-planet { display: block; }
 }
 
@@ -2209,6 +2235,22 @@ body[data-theme="forest"] .forest-landscape {
   display: block; position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
 }
 body[data-theme="forest"] .forest-landscape svg { display: block; width: 100%; height: 100%; }
+body[data-theme="forest"] .forest-clock-scene {
+  display: block; position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none;
+  filter: drop-shadow(0 10px 16px rgba(38, 70, 49, .28));
+}
+body[data-theme="forest"][data-forest-mode="night"] .forest-clock-scene { filter: drop-shadow(0 10px 16px rgba(5, 14, 24, .42)); }
+body[data-theme="forest"][data-forest-mode="night"] .forest-clock-sky { fill: #23374a; stroke: #c1d4ca; }
+body[data-theme="forest"][data-forest-mode="night"] .forest-clock-sun { display: none; }
+body[data-theme="forest"][data-forest-mode="night"] .forest-clock-stars { opacity: .82; }
+body[data-theme="forest"][data-forest-mode="night"] .forest-clock-hill-far { fill: #526475; }
+body[data-theme="forest"][data-forest-mode="night"] .forest-clock-hill-mid { fill: #344d52; }
+body[data-theme="forest"][data-forest-mode="night"] .forest-clock-pines { fill: #1b3038; }
+body[data-theme="forest"][data-forest-mode="night"] .forest-clock-pine-snow { opacity: .22; }
+body[data-theme="forest"][data-forest-mode="night"] .forest-clock-hill-front { fill: #1d343b; }
+body[data-theme="forest"][data-forest-mode="night"] .forest-clock-creek { stroke: #6b9da0; }
+body[data-theme="forest"] .forest-clock-creek-glint { animation: forest-clock-creek-shimmer 5s ease-in-out infinite alternate; }
+@keyframes forest-clock-creek-shimmer { from { opacity: .35; } to { opacity: .95; } }
 body[data-theme="forest"] .background-ambient {
   background: radial-gradient(circle, rgba(255, 239, 174, .6), transparent 72%); opacity: .76;
 }
@@ -2363,9 +2405,136 @@ body[data-theme="night"] .scene-water-ripples { stroke: #dce7f0; }
 }
 @media (prefers-reduced-motion: reduce) {
   body[data-theme="forest"] .forest-shooting-star { display: none !important; }
+  body[data-theme="forest"] .forest-clock-creek-glint { animation: none; }
   .scene-creek-glint-wide,
   .scene-creek-glint,
   .scene-creek-glint-second { animation: none; }
   .scene-water-ripples ellipse { animation: none; opacity: .12; }
+}
+
+/* NORTHERN LIGHTS THEME */
+body[data-theme="winter"] {
+  --bg-primary: #1b3448;
+  --bg-card: rgba(239, 247, 247, .94);
+  --bg-card-border: rgba(86, 130, 143, .3);
+  --text-main: #263e50;
+  --text-muted: #597181;
+  --text-subtle: #788f9b;
+  --color-green: #4d8065;
+  --color-green-glow: rgba(77, 128, 101, .45);
+  --color-orange: #5596a5;
+  --color-orange-glow: rgba(85, 150, 165, .44);
+  --color-yellow: #8993c7;
+  --color-yellow-glow: rgba(137, 147, 199, .48);
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+}
+body[data-theme="winter"] .winter-landscape {
+  display: block; position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+}
+body[data-theme="winter"] .winter-landscape svg { display: block; width: 100%; height: 100%; }
+body[data-theme="winter"] .background-ambient {
+  background: radial-gradient(circle, rgba(169, 220, 209, .3), transparent 72%); opacity: .72;
+}
+body[data-theme="winter"] .app-container {
+  color: #263e50;
+  background: linear-gradient(145deg, rgba(246, 251, 250, .97), rgba(231, 242, 244, .97) 70%, rgba(218, 233, 238, .98));
+  border: 2px solid rgba(141, 183, 191, .7); border-radius: 28px;
+  box-shadow: 0 24px 64px rgba(13, 32, 50, .42), inset 0 1px rgba(255, 255, 255, .9);
+}
+body[data-theme="winter"] .logo h1,
+body[data-theme="winter"] .cycle-title,
+body[data-theme="winter"] .accomplishments-title,
+body[data-theme="winter"] .stat-value { color: #376b61; }
+body[data-theme="winter"] .logo h1 { background: none; -webkit-text-fill-color: currentColor; }
+body[data-theme="winter"] .icon-btn,
+body[data-theme="winter"] .theme-bar,
+body[data-theme="winter"] .cycle-section,
+body[data-theme="winter"] .accomplishments-section,
+body[data-theme="winter"] .stat-card {
+  background-color: rgba(250, 253, 251, .7); border-color: rgba(98, 143, 153, .22); color: #3d5b6a;
+}
+body[data-theme="winter"] .theme-pill { color: #587483; }
+body[data-theme="winter"] .theme-pill:hover { color: #294858; background: rgba(94, 152, 163, .12); }
+body[data-theme="winter"] .theme-pill.active,
+body[data-theme="winter"] .theme-more-toggle.active {
+  color: #f6fbf8; background: linear-gradient(145deg, #55958a, #406d7e); box-shadow: 0 3px 12px rgba(39, 83, 96, .25);
+}
+body[data-theme="winter"] .theme-more-menu { color: #355465; background: #edf5f4; border-color: #9bbdc1; }
+body[data-theme="winter"] .theme-more-select:hover { background: rgba(94, 152, 163, .13); }
+body[data-theme="winter"] .segment-badge { color: #416978; background: rgba(244, 250, 248, .95); border-color: rgba(102, 157, 165, .42); }
+body[data-theme="winter"] .time-readout { color: #263e50; text-shadow: 0 1px rgba(255, 255, 255, .72); }
+body[data-theme="winter"] .segment-subtext,
+body[data-theme="winter"] .stat-subtext,
+body[data-theme="winter"] .stat-name,
+body[data-theme="winter"] .cycle-counter { color: #627f8c; }
+body[data-theme="winter"] .progress-ring-bg { stroke: rgba(57, 91, 107, .18); }
+body[data-theme="winter"] .progress-ring { transform: scaleX(-1) rotate(-90deg); }
+body[data-theme="winter"] .winter-aurora-clock {
+  display: block; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  filter: drop-shadow(0 12px 18px rgba(8, 21, 43, .34));
+}
+body[data-theme="winter"] .winter-aurora-clock svg { display: block; width: 100%; height: 100%; }
+body[data-theme="winter"] .aurora-ribbon-one { animation: aurora-drift-one 12s ease-in-out infinite alternate; }
+body[data-theme="winter"] .aurora-ribbon-two { animation: aurora-drift-two 15s ease-in-out infinite alternate; }
+body[data-theme="winter"] .clock-snowfall-one { animation: clock-snow-fall 7s linear infinite; }
+body[data-theme="winter"] .clock-snowfall-two { animation: clock-snow-fall 9s linear -4s infinite; }
+body[data-theme="winter"] .progress-ring { z-index: 1; }
+body[data-theme="winter"] .progress-ring-bg { stroke: rgba(226, 249, 247, .5); stroke-width: 8; }
+body[data-theme="winter"] .progress-ring-fill { stroke-width: 8; filter: drop-shadow(0 0 8px var(--current-glow)); }
+body[data-theme="winter"] .timer-content { z-index: 2; }
+body[data-theme="winter"] .time-readout {
+  color: #f3fbff; text-shadow: 0 2px 12px rgba(4, 13, 33, .85);
+}
+@keyframes aurora-drift-one {
+  from { transform: translateX(-5px) translateY(1px); opacity: .75; }
+  to { transform: translateX(7px) translateY(-5px); opacity: 1; }
+}
+@keyframes aurora-drift-two {
+  from { transform: translateX(6px) translateY(5px); opacity: .55; }
+  to { transform: translateX(-8px) translateY(-3px); opacity: .9; }
+}
+@keyframes clock-snow-fall {
+  0% { transform: translateY(-16px); opacity: 0; }
+  16% { opacity: .9; }
+  82% { opacity: .8; }
+  100% { transform: translateY(34px); opacity: 0; }
+}
+body[data-theme="winter"] .light-item[data-type="work"] .light-bulb { border-color: rgba(77, 128, 101, .66); }
+body[data-theme="winter"] .light-item[data-type="work"] .light-inner-dot { background: #4d8065; }
+body[data-theme="winter"] .light-item[data-type="shortRest"] .light-bulb { border-color: rgba(85, 150, 165, .66); }
+body[data-theme="winter"] .light-item[data-type="shortRest"] .light-inner-dot { background: #5596a5; }
+body[data-theme="winter"] .light-item[data-type="longRest"] .light-bulb { border-color: rgba(137, 147, 199, .7); }
+body[data-theme="winter"] .light-item[data-type="longRest"] .light-inner-dot { background: #8993c7; }
+body[data-theme="winter"] .light-item.active .light-bulb { border-color: #f6fbf8; }
+body[data-theme="winter"] .light-item.active[data-type="work"] .light-bulb { background: linear-gradient(145deg, #78a88a, #4d8065); box-shadow: 0 0 12px rgba(77, 128, 101, .4); }
+body[data-theme="winter"] .light-item.active[data-type="shortRest"] .light-bulb { background: #5596a5; box-shadow: 0 0 12px rgba(85, 150, 165, .38); }
+body[data-theme="winter"] .light-item.active[data-type="longRest"] .light-bulb { background: #8993c7; box-shadow: 0 0 12px rgba(137, 147, 199, .42); }
+body[data-theme="winter"] .light-item.active .light-inner-dot { background: #f6fbf8; }
+body[data-theme="winter"] .legend-dot.green,
+body[data-theme="winter"] .stat-dot.green { background: #4d8065; box-shadow: 0 0 7px rgba(77, 128, 101, .35); }
+body[data-theme="winter"] .legend-dot.orange,
+body[data-theme="winter"] .stat-dot.orange { background: #5596a5; box-shadow: 0 0 7px rgba(85, 150, 165, .34); }
+body[data-theme="winter"] .legend-dot.yellow,
+body[data-theme="winter"] .stat-dot.yellow { background: #8993c7; box-shadow: 0 0 7px rgba(137, 147, 199, .34); }
+body[data-theme="winter"] .control-btn.primary { color: #f5fbf8; background: linear-gradient(145deg, #55958a, #406d7e); border: 1px solid #7db6b4; }
+body[data-theme="winter"] .control-btn.secondary { color: #416575; background: #f4f9f7; border: 1px solid #a9c5c9; }
+body[data-theme="winter"] .daily-focus-card,
+body[data-theme="winter"] .work-history-card { background: rgba(249, 253, 250, .68); border-color: rgba(98, 143, 153, .22); }
+body[data-theme="winter"] .daily-focus-fill,
+body[data-theme="winter"] .work-history-bar { background: linear-gradient(90deg, #55958a, #406d7e); }
+body[data-theme="winter"] .daily-focus-track { background: rgba(57, 91, 107, .14); }
+body[data-theme="winter"] .stats-dialog { color: #263e50; background: #edf5f4; border-color: #9bbdc1; }
+body[data-theme="winter"] .stats-dialog-close { background: rgba(68, 109, 126, .1); border-color: rgba(68, 109, 126, .25); }
+.winter-snowfall { animation: winter-snow-drift 10s ease-in-out infinite; }
+@keyframes winter-snow-drift {
+  0% { transform: translateY(-16px); opacity: 0; }
+  18%, 78% { opacity: .7; }
+  100% { transform: translateY(22px); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-theme="winter"] .winter-snowfall,
+  body[data-theme="winter"] .aurora-ribbon,
+  body[data-theme="winter"] .clock-snowfall { animation: none; }
 }
 
