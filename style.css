@@ -1508,7 +1508,7 @@ body[data-theme="tomato"] .light-item.active .light-bulb {
 body[data-theme="tomato"] .light-item.active[data-type="work"] .light-bulb {
   background: radial-gradient(circle at 35% 30%, #b3c891, #638648);
   box-shadow: 0 0 18px rgba(99, 134, 72, .72), 0 0 6px #ffffff;
-  border-color: transparent;
+  border-color: #638648;
 }
 
 body[data-theme="tomato"] .light-item.active[data-type="shortRest"] .light-bulb,
@@ -1853,6 +1853,7 @@ body[data-theme="tomato"] .light-item.completed .light-inner-dot {
 body[data-theme="tomato"] .light-item.completed[data-type="work"] .light-bulb {
   background: radial-gradient(circle at 35% 30%, #b3c891, #638648);
   box-shadow: 0 0 18px rgba(99, 134, 72, .72), 0 0 6px #fff;
+  border-color: #638648;
 }
 body[data-theme="tomato"] .light-item.completed[data-type="shortRest"] .light-bulb {
   background: radial-gradient(circle at 35% 30%, #d7f0fb, #78bde2);
