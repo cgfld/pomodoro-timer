@@ -29,6 +29,21 @@ const THEME_PALETTES = {
     orange: { color: '#bd7045', glow: 'rgba(189, 112, 69, 0.46)', soft: 'rgba(189, 112, 69, 0.16)' },
     yellow: { color: '#d0aa5d', glow: 'rgba(208, 170, 93, 0.5)', soft: 'rgba(208, 170, 93, 0.16)' }
   },
+  rainy: {
+    green: { color: '#628e8a', glow: 'rgba(98, 142, 138, 0.48)', soft: 'rgba(98, 142, 138, 0.16)' },
+    orange: { color: '#7e9fb5', glow: 'rgba(126, 159, 181, 0.46)', soft: 'rgba(126, 159, 181, 0.16)' },
+    yellow: { color: '#a899bb', glow: 'rgba(168, 153, 187, 0.5)', soft: 'rgba(168, 153, 187, 0.16)' }
+  },
+  forest: {
+    green: { color: '#789b70', glow: 'rgba(120, 155, 112, 0.48)', soft: 'rgba(120, 155, 112, 0.16)' },
+    orange: { color: '#c18c5c', glow: 'rgba(193, 140, 92, 0.46)', soft: 'rgba(193, 140, 92, 0.16)' },
+    yellow: { color: '#d2bd78', glow: 'rgba(210, 189, 120, 0.5)', soft: 'rgba(210, 189, 120, 0.17)' }
+  },
+  night: {
+    green: { color: '#9b91cf', glow: 'rgba(155, 145, 207, 0.5)', soft: 'rgba(155, 145, 207, 0.17)' },
+    orange: { color: '#78a9c5', glow: 'rgba(120, 169, 197, 0.48)', soft: 'rgba(120, 169, 197, 0.16)' },
+    yellow: { color: '#e3c77e', glow: 'rgba(227, 199, 126, 0.52)', soft: 'rgba(227, 199, 126, 0.18)' }
+  },
   tomato: {
     green: { color: '#16a34a', glow: 'rgba(22, 163, 74, 0.55)', soft: 'rgba(22, 163, 74, 0.18)' },
     orange: { color: '#ea580c', glow: 'rgba(234, 88, 12, 0.55)', soft: 'rgba(234, 88, 12, 0.18)' },
@@ -99,7 +114,10 @@ const statsDialog = document.getElementById('statsDialog');
 const closeStatsBtn = document.getElementById('closeStatsBtn');
 
 // Theme Elements
-const themePills = document.querySelectorAll('.theme-pill');
+const themePills = document.querySelectorAll('.theme-switcher .theme-pill');
+const moreThemesToggleEl = document.getElementById('moreThemesToggle');
+const moreThemesMenuEl = document.getElementById('moreThemesMenu');
+const forestModeButtons = document.querySelectorAll('.forest-mode-button');
 const logoIconEl = document.querySelector('.logo-icon');
 const zenLogoMarkup = logoIconEl?.innerHTML || '';
 const zenRakeGroovesEl = document.getElementById('zenRakeGrooves');
@@ -320,8 +338,17 @@ function updateLightsState() {
 }
 
 // --- Theme Switcher & Dynamic Colors ---
+function setForestMode(mode) {
+  const forestMode = mode === 'night' ? 'night' : 'day';
+  document.body.setAttribute('data-forest-mode', forestMode);
+  localStorage.setItem('pomodoro_forest_mode', forestMode);
+  forestModeButtons.forEach(button => {
+    button.setAttribute('aria-pressed', String(button.getAttribute('data-forest-mode') === forestMode));
+  });
+}
+
 function setTheme(theme) {
-  if (!['zen', 'sundial', 'tomato'].includes(theme)) return;
+  if (!['zen', 'sundial', 'tomato', 'rainy', 'night', 'forest'].includes(theme)) return;
   currentTheme = theme;
   document.body.setAttribute('data-theme', theme);
   localStorage.setItem('pomodoro_theme', theme);
@@ -336,6 +363,7 @@ function setTheme(theme) {
     pill.classList.toggle('active', isSelected);
     pill.setAttribute('aria-checked', isSelected ? 'true' : 'false');
   });
+  moreThemesToggleEl?.classList.toggle('active', ['rainy', 'night', 'forest'].includes(theme));
 
   // Keep the bonsai mark for Zen while restoring each theme's original logo icon.
   if (logoIconEl) {
@@ -345,6 +373,12 @@ function setTheme(theme) {
       logoIconEl.innerHTML = zenLogoMarkup;
     } else if (theme === 'tomato') {
       logoIconEl.textContent = '🍅';
+    } else if (theme === 'rainy') {
+      logoIconEl.textContent = '🌧️';
+    } else if (theme === 'night') {
+      logoIconEl.textContent = '🌙';
+    } else if (theme === 'forest') {
+      logoIconEl.textContent = '🌲';
     } else {
       logoIconEl.textContent = '⏳';
     }
@@ -450,6 +484,7 @@ function updateDisplay() {
 
   // Ring Progress: 1 is full, 0 is empty
   const progressRatio = secondsRemaining / currentSeg.durationSec;
+  // Progress advances clockwise by default; the Sundial theme opts into the opposite stroke direction.
   const strokeDirection = currentTheme === 'sundial' ? -1 : 1;
   const strokeOffset = RING_CIRCUMFERENCE * (1 - progressRatio) * strokeDirection;
   progressFillEl.style.strokeDashoffset = strokeOffset;
@@ -1008,6 +1043,44 @@ themePills.forEach(pill => {
   });
 });
 
+forestModeButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    playClick();
+    setForestMode(button.getAttribute('data-forest-mode'));
+  });
+});
+
+if (moreThemesToggleEl && moreThemesMenuEl) {
+  const setMoreThemesMenuOpen = open => {
+    moreThemesToggleEl.setAttribute('aria-expanded', String(open));
+    moreThemesMenuEl.classList.toggle('hidden', !open);
+  };
+
+  moreThemesToggleEl.addEventListener('click', () => {
+    const isOpen = moreThemesToggleEl.getAttribute('aria-expanded') === 'true';
+    setMoreThemesMenuOpen(!isOpen);
+  });
+
+  moreThemesMenuEl.addEventListener('click', event => {
+    const themeOption = event.target.closest('[data-theme]');
+    if (!themeOption) return;
+    playClick();
+    setTheme(themeOption.getAttribute('data-theme'));
+    setMoreThemesMenuOpen(false);
+  });
+
+  document.addEventListener('pointerdown', event => {
+    if (!event.target.closest('.theme-more')) setMoreThemesMenuOpen(false);
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && moreThemesToggleEl.getAttribute('aria-expanded') === 'true') {
+      setMoreThemesMenuOpen(false);
+      moreThemesToggleEl.focus();
+    }
+  });
+}
+
 // Click on Tomato Dial to start/pause timer
 const tomatoDialFaceEl = document.querySelector('.tomato-dial-face');
 if (tomatoDialFaceEl) {
@@ -1049,7 +1122,9 @@ document.addEventListener('keydown', (e) => {
 function init() {
   loadStats();
   loadDailyWorkGoal();
-  setTheme('tomato');
+  setForestMode(localStorage.getItem('pomodoro_forest_mode') || 'day');
+  const savedTheme = localStorage.getItem('pomodoro_theme');
+  setTheme(['zen', 'sundial', 'tomato', 'rainy', 'night', 'forest'].includes(savedTheme) ? savedTheme : 'tomato');
   renderLights();
   updateThemeColors();
   updateLightsState();
