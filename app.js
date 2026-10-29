@@ -19,6 +19,26 @@ const SEGMENTS = [
 ];
 
 const THEME_PALETTES = {
+  astronomical: {
+    green: { color: '#b5a269', glow: 'rgba(181, 162, 105, .3)', soft: 'rgba(181, 162, 105, .13)' },
+    orange: { color: '#c18c72', glow: 'rgba(193, 140, 114, .3)', soft: 'rgba(193, 140, 114, .13)' },
+    yellow: { color: '#a4adce', glow: 'rgba(164, 173, 206, .3)', soft: 'rgba(164, 173, 206, .13)' }
+  },
+  rolex: {
+    green: { color: '#b9a268', glow: 'rgba(185, 162, 104, .3)', soft: 'rgba(185, 162, 104, .12)' },
+    orange: { color: '#c39370', glow: 'rgba(195, 147, 112, .3)', soft: 'rgba(195, 147, 112, .12)' },
+    yellow: { color: '#d5bd7e', glow: 'rgba(213, 189, 126, .3)', soft: 'rgba(213, 189, 126, .12)' }
+  },
+  hourglass: {
+    green: { color: '#b88745', glow: 'rgba(184, 135, 69, 0.4)', soft: 'rgba(184, 135, 69, 0.15)' },
+    orange: { color: '#b96f50', glow: 'rgba(185, 111, 80, 0.4)', soft: 'rgba(185, 111, 80, 0.15)' },
+    yellow: { color: '#a88b38', glow: 'rgba(168, 139, 56, 0.4)', soft: 'rgba(168, 139, 56, 0.15)' }
+  },
+  retro: {
+    green: { color: '#70f5b1', glow: 'rgba(112, 245, 177, 0.5)', soft: 'rgba(112, 245, 177, 0.15)' },
+    orange: { color: '#ff9970', glow: 'rgba(255, 153, 112, 0.5)', soft: 'rgba(255, 153, 112, 0.15)' },
+    yellow: { color: '#ffe478', glow: 'rgba(255, 228, 120, 0.5)', soft: 'rgba(255, 228, 120, 0.15)' }
+  },
   zen: {
     green: { color: '#789274', glow: 'rgba(120, 146, 116, 0.48)', soft: 'rgba(120, 146, 116, 0.16)' },
     orange: { color: '#b58a5c', glow: 'rgba(181, 138, 92, 0.45)', soft: 'rgba(181, 138, 92, 0.15)' },
@@ -156,7 +176,7 @@ function playClick() {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
-    osc.type = 'triangle';
+    osc.type = currentTheme === 'retro' ? 'square' : 'triangle';
     osc.frequency.setValueAtTime(700, now);
     osc.frequency.exponentialRampToValueAtTime(80, now + 0.025);
 
@@ -273,12 +293,12 @@ function playChime(type) {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
-        osc.type = 'sine';
+        osc.type = currentTheme === 'retro' ? 'square' : 'sine';
         osc.frequency.setValueAtTime(freq, now + idx * noteSpacing);
 
         gain.gain.setValueAtTime(0.0001, now + idx * noteSpacing);
-        gain.gain.exponentialRampToValueAtTime(0.18 / notes.length, now + idx * noteSpacing + 0.06);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * noteSpacing + 1.8);
+        gain.gain.exponentialRampToValueAtTime((currentTheme === 'retro' ? 0.08 : 0.18) / notes.length, now + idx * noteSpacing + 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * noteSpacing + (currentTheme === 'retro' ? 0.18 : 1.8));
 
         osc.connect(gain);
         gain.connect(ctx.destination);
@@ -355,7 +375,7 @@ function setForestMode(mode) {
 }
 
 function setTheme(theme) {
-  if (!['zen', 'sundial', 'tomato', 'rainy', 'night', 'forest', 'winter'].includes(theme)) return;
+  if (!Object.hasOwn(THEME_PALETTES, theme)) return;
   currentTheme = theme;
   document.body.setAttribute('data-theme', theme);
   localStorage.setItem('pomodoro_theme', theme);
@@ -370,7 +390,7 @@ function setTheme(theme) {
     pill.classList.toggle('active', isSelected);
     pill.setAttribute('aria-checked', isSelected ? 'true' : 'false');
   });
-  moreThemesToggleEl?.classList.toggle('active', ['rainy', 'night', 'forest', 'winter'].includes(theme));
+  moreThemesToggleEl?.classList.toggle('active', ['astronomical', 'rolex', 'hourglass', 'retro', 'rainy', 'night', 'forest', 'winter'].includes(theme));
 
   // Keep the bonsai mark for Zen while restoring each theme's original logo icon.
   if (logoIconEl) {
@@ -386,6 +406,14 @@ function setTheme(theme) {
       logoIconEl.textContent = '🌙';
     } else if (theme === 'forest') {
       logoIconEl.textContent = '🌲';
+    } else if (theme === 'astronomical') {
+      logoIconEl.textContent = '☉';
+    } else if (theme === 'rolex') {
+      logoIconEl.textContent = '♛';
+    } else if (theme === 'hourglass') {
+      logoIconEl.textContent = '⌛';
+    } else if (theme === 'retro') {
+      logoIconEl.textContent = '👾';
     } else if (theme === 'winter') {
       logoIconEl.textContent = '❄️';
     } else {
@@ -493,6 +521,39 @@ function updateDisplay() {
 
   // Ring Progress: 1 is full, 0 is empty
   const progressRatio = secondsRemaining / currentSeg.durationSec;
+  const celestialProgress = Math.min(1, Math.max(0, 1 - progressRatio));
+  const astronomicalSun = document.getElementById('astronomicalSun');
+  const astronomicalMoon = document.getElementById('astronomicalMoon');
+  const astronomicalZodiac = document.getElementById('astronomicalZodiac');
+  if (astronomicalSun && astronomicalMoon && astronomicalZodiac) {
+    astronomicalSun.setAttribute('transform', `rotate(${secondsRemaining / 10} 160 160)`);
+    // The moon hand is drawn at 45 degrees; offset it to start seconds at XII.
+    astronomicalMoon.setAttribute('transform', `rotate(${secondsRemaining * 6 - 135} 160 160)`);
+    astronomicalZodiac.setAttribute('transform', `rotate(${celestialProgress * 30} 160 160)`);
+  }
+  const astronomicalProgress = document.getElementById('astronomicalProgress');
+  if (astronomicalProgress) {
+    astronomicalProgress.style.strokeDashoffset = String(2 * Math.PI * 158 * celestialProgress);
+  }
+  const watchMinuteHand = document.getElementById('watchMinuteHand');
+  const watchSecondHand = document.getElementById('watchSecondHand');
+  if (watchMinuteHand && watchSecondHand) {
+    watchMinuteHand.setAttribute('transform', `rotate(${secondsRemaining / 10} 145 145)`);
+    watchSecondHand.setAttribute('transform', `rotate(${secondsRemaining * 6} 145 145)`);
+  }
+  const sandRemaining = Math.min(1, Math.max(0, progressRatio));
+  const upperSand = document.getElementById('hourglassUpperSand');
+  const lowerSand = document.getElementById('hourglassLowerSand');
+  const sandStream = document.getElementById('hourglassSandStream');
+  if (upperSand && lowerSand && sandStream) {
+    const upperHeight = 96 * Math.sqrt(sandRemaining);
+    upperSand.setAttribute('y', String(139 - upperHeight));
+    upperSand.setAttribute('height', String(upperHeight));
+    const pileHeight = 96 * (1 - Math.sqrt(sandRemaining));
+    lowerSand.setAttribute('y', String(247 - pileHeight));
+    lowerSand.setAttribute('height', String(pileHeight));
+    sandStream.style.opacity = isRunning && sandRemaining > 0 ? '1' : '0';
+  }
   updateMoonPhase(progressRatio);
   // Progress advances clockwise by default; the Sundial theme opts into the opposite stroke direction.
   const strokeDirection = currentTheme === 'sundial' ? -1 : 1;
@@ -1151,7 +1212,7 @@ function init() {
   loadDailyWorkGoal();
   setForestMode(localStorage.getItem('pomodoro_forest_mode') || 'day');
   const savedTheme = localStorage.getItem('pomodoro_theme');
-  setTheme(['zen', 'sundial', 'tomato', 'rainy', 'night', 'forest', 'winter'].includes(savedTheme) ? savedTheme : 'tomato');
+  setTheme(Object.hasOwn(THEME_PALETTES, savedTheme) ? savedTheme : 'tomato');
   renderLights();
   updateThemeColors();
   updateLightsState();

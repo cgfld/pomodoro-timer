@@ -37,15 +37,15 @@ Then visit [http://localhost:8000](http://localhost:8000).
 
 ## 🎨 Customizable UI Themes
 
-You can switch between 3 hand-crafted visual skins at any time using the theme bar below the header:
+You can switch themes at any time using the theme bar below the header, with additional options in **more**:
 
 1. 🪴 **Zen Garden**:
    - Calm moss, stone, and warm sand colors with a quiet garden atmosphere.
    - Soft, gentle chimes for work and break transitions.
 
 2. 🕹️ **8-Bit Retro**:
-   - Pixel-inspired arcade palette with sharp edges, chunky shadows, and classic game-console colors.
-   - Monospaced timer display with bright HUD accents and square segment lights.
+   - Available under **more → 8-bit retro**, with a pixel-inspired arcade palette, skyline, sharp edges, and chunky shadows.
+   - Monospaced scanline timer display with bright HUD accents and square segment lights.
    - Retro synthesized sound effects for timer controls and transitions.
 
 3. 🍅 **Classic Kitchen Tomato (Default)**:
@@ -72,7 +72,20 @@ You can switch between 3 hand-crafted visual skins at any time using the theme b
 7. 🌧️ **Rainy Day**:
    - Misty hills, pines, a winding stream, and gentle animated rain miniature the rainy landscape inside the clock face.
 
-*Tomato opens as the default theme each time the app loads. You can switch themes while using the app.*
+8. ⌛ **Hourglass**:
+   - Available under **more → hourglass**, with warm parchment, a wooden frame, and translucent glass.
+   - Sand drains into the lower chamber as the interval progresses. The falling stream pauses with the timer, with the time remaining displayed below the glass.
+
+9. ♛ **Chronometer**:
+   - Available under **more → chronometer**, with a deep green watch dial, fluted gold bezel, and champagne hour markers.
+   - Minute and second hands start at the interval's duration (25, 5, or 20 minutes) and count down counterclockwise to zero, with a small digital countdown window below the center.
+
+10. ☉ **Astronomical Clock**:
+    - Available under **more → astronomical clock**, with a medieval blue-and-gold dial, Roman numerals, and a zodiac ring.
+    - Sun and moon hands count down counterclockwise from the interval duration, like the chronometer. An outer progress ring drains as the interval runs, while the zodiac ring slowly turns.
+    - The digital countdown sits below the dial, and the daily goal bar matches the brass-colored work lights.
+
+*Tomato opens as the default theme on your first visit. After you switch themes, the app restores your saved theme on future visits.*
 
 ---
 

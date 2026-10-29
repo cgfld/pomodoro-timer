@@ -1,4 +1,4 @@
-:root {
+  :root {
   /* Core palette */
   --bg-primary: #0b0f17;
   --bg-card: rgba(18, 24, 38, 0.85);
@@ -373,7 +373,16 @@ body[data-theme="tomato"] .stats-dialog {
 .theme-more-option { opacity: .76; }
 .theme-more-select { cursor: pointer; opacity: 1; }
 .theme-more-select:hover { background: rgba(255, 255, 255, .12); }
-.theme-more-lock { font-size: .72rem; }
+.theme-more-lock {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 20px;
+  height: 20px;
+  font-size: .72rem;
+  line-height: 1;
+}
+.theme-more-option[data-theme="rolex"] .theme-more-lock { font-size: 1rem; }
 .theme-more-note { padding: 6px 10px 4px; color: inherit; opacity: .68; font-size: .62rem; }
 .forest-mode-control { display: none; position: absolute; top: 62px; left: 50%; transform: translateX(-50%); z-index: 4; padding: 3px; border-radius: 999px; background: rgba(248, 247, 228, .88); box-shadow: 0 2px 8px rgba(35, 64, 41, .18); }
 body[data-theme="forest"] .forest-mode-control { display: flex; }
@@ -1019,7 +1028,7 @@ body.is-running .light-item.active .light-bulb {
   width: 0;
   height: 100%;
   border-radius: inherit;
-  background: #22c55e;
+  background: var(--color-green);
   transition: width .35s ease;
 }
 
@@ -1149,6 +1158,8 @@ body[data-theme="tomato"] .work-history-bar { background: #fda4af; }
 
 /* Quiet Zen Garden theme */
 body[data-theme="zen"] {
+  --color-green: #789274;
+  --color-green-glow: rgba(120, 146, 116, .35);
   --text-main: #27372b;
   --text-muted: #657464;
   --text-subtle: #788372;
@@ -1316,7 +1327,6 @@ body[data-theme="zen"] .control-btn.primary { color: #f8f6ed; background: linear
 body[data-theme="zen"] .control-btn.secondary { color: #526f58; background: #f4f1e7; border: 1px solid #bcc4b1; }
 body[data-theme="zen"] .stat-value { color: #49664f; }
 body[data-theme="zen"] .daily-focus-card { background: rgba(243, 241, 232, .8); border-color: rgba(104, 122, 94, .24); }
-body[data-theme="zen"] .daily-focus-fill { background: linear-gradient(90deg, #789274, #526f58); box-shadow: 0 0 8px rgba(120, 146, 116, .34); }
 body[data-theme="zen"] .stat-card.work::before { background: #789274; box-shadow: 0 0 8px rgba(120, 146, 116, .35); }
 body[data-theme="zen"] .stat-card.rest::before { background: #b58a5c; box-shadow: 0 0 8px rgba(181, 138, 92, .3); }
 body[data-theme="zen"] .stat-card.cycles::before { background: #9c8056; box-shadow: 0 0 8px rgba(156, 128, 86, .3); }
@@ -1330,6 +1340,8 @@ body[data-theme="zen"] .theme-more-menu { color: #344638; background: #f2f0e7; b
    DESERT OASIS SUNDIAL THEME
    ========================================================================== */
 body[data-theme="sundial"] {
+  --color-green: #75834f;
+  --color-green-glow: rgba(117, 131, 79, .35);
   --text-main: #493b2b;
   --text-muted: #79634a;
   --text-subtle: #927b5c;
@@ -1423,7 +1435,6 @@ body[data-theme="sundial"] .legend-dot.green { background: #75834f; box-shadow: 
 body[data-theme="sundial"] .legend-dot.orange { background: #bd7045; box-shadow: 0 0 7px rgba(189, 112, 69, .4); }
 body[data-theme="sundial"] .legend-dot.yellow { background: #d0aa5d; box-shadow: 0 0 7px rgba(208, 170, 93, .4); }
 body[data-theme="sundial"] .daily-focus-card { background: rgba(255, 246, 223, .65); border-color: rgba(139, 101, 61, .22); }
-body[data-theme="sundial"] .daily-focus-fill { background: linear-gradient(90deg, #75834f, #87905c); }
 body[data-theme="sundial"] .theme-more-menu { color: #58432e; background: #ead9b8; border-color: #a47749; }
 body[data-theme="sundial"] .control-btn.primary { color: #fff8ec; background: linear-gradient(145deg, #bd7045, #98583a); border: 1px solid #a7794e; }
 body[data-theme="sundial"] .control-btn.secondary { color: #795638; background: #f2e4c7; border: 1px solid #bea17b; }
@@ -1864,7 +1875,6 @@ body[data-theme="tomato"] .daily-focus-value {
 body[data-theme="tomato"] .daily-focus-progress-text {
   color: rgba(255, 255, 255, 0.9);
 }
-body[data-theme="tomato"] .daily-focus-fill { background: linear-gradient(90deg, #fb7185, #fda4af); }
 body[data-theme="tomato"] .daily-focus-track { background: rgba(0, 0, 0, .22); }
 
 /* Completed cycle lights stay fully illuminated, matching the active light. */
@@ -2080,7 +2090,6 @@ body[data-theme="rainy"] .control-btn.secondary { color: #4e7278; background: #e
 body[data-theme="rainy"] .stat-value { color: #456b70; }
 body[data-theme="rainy"] .daily-focus-card,
 body[data-theme="rainy"] .work-history-card { background: rgba(241, 247, 244, .58); border-color: rgba(91, 122, 129, .26); }
-body[data-theme="rainy"] .daily-focus-fill,
 body[data-theme="rainy"] .work-history-bar { background: linear-gradient(90deg, #759b9b, #527b80); }
 body[data-theme="rainy"] .daily-focus-track { background: rgba(66, 92, 101, .14); }
 body[data-theme="rainy"] .stats-dialog { color: #344b58; background: #dce9e6; border-color: #91aaad; }
@@ -2202,7 +2211,6 @@ body[data-theme="night"] .control-btn.secondary { color: #ddd8f0; background: rg
 body[data-theme="night"] .stat-value { color: #e6d9ad; }
 body[data-theme="night"] .daily-focus-card,
 body[data-theme="night"] .work-history-card { background: rgba(238, 238, 250, .08); border-color: rgba(214, 215, 240, .18); }
-body[data-theme="night"] .daily-focus-fill,
 body[data-theme="night"] .work-history-bar { background: linear-gradient(90deg, #aaa0dc, #8379bd); }
 body[data-theme="night"] .daily-focus-track { background: rgba(5, 10, 28, .32); }
 body[data-theme="night"] .stats-dialog { color: #f2f0e9; background: #222d4c; border-color: #76809e; }
@@ -2309,7 +2317,6 @@ body[data-theme="forest"] .control-btn.primary { color: #fffdf0; background: lin
 body[data-theme="forest"] .control-btn.secondary { color: #4a6748; background: #f7f6e7; border: 1px solid #b6c29b; }
 body[data-theme="forest"] .daily-focus-card,
 body[data-theme="forest"] .work-history-card { background: rgba(255, 255, 247, .62); border-color: rgba(108, 139, 85, .2); }
-body[data-theme="forest"] .daily-focus-fill,
 body[data-theme="forest"] .work-history-bar { background: linear-gradient(90deg, #91a977, #567a59); }
 body[data-theme="forest"] .daily-focus-track { background: rgba(63, 94, 57, .14); }
 body[data-theme="forest"] .stats-dialog { color: #344f39; background: #f4f2df; border-color: #9baa7c; }
@@ -2521,7 +2528,6 @@ body[data-theme="winter"] .control-btn.primary { color: #f5fbf8; background: lin
 body[data-theme="winter"] .control-btn.secondary { color: #416575; background: #f4f9f7; border: 1px solid #a9c5c9; }
 body[data-theme="winter"] .daily-focus-card,
 body[data-theme="winter"] .work-history-card { background: rgba(249, 253, 250, .68); border-color: rgba(98, 143, 153, .22); }
-body[data-theme="winter"] .daily-focus-fill,
 body[data-theme="winter"] .work-history-bar { background: linear-gradient(90deg, #55958a, #406d7e); }
 body[data-theme="winter"] .daily-focus-track { background: rgba(57, 91, 107, .14); }
 body[data-theme="winter"] .stats-dialog { color: #263e50; background: #edf5f4; border-color: #9bbdc1; }
@@ -2538,3 +2544,315 @@ body[data-theme="winter"] .stats-dialog-close { background: rgba(68, 109, 126, .
   body[data-theme="winter"] .clock-snowfall { animation: none; }
 }
 
+
+/* 8-bit arcade: hard edges, a phosphor screen, and a pixel skyline. */
+body[data-theme="retro"] {
+  --text-main: #f3edff;
+  --text-muted: #c2b5dc;
+  --text-subtle: #aa9ac9;
+  --color-green: #70f5b1;
+  --color-orange: #ff9970;
+  --color-yellow: #ffe478;
+  --radius-lg: 0px;
+  --radius-md: 0px;
+  --radius-sm: 0px;
+  font-family: 'JetBrains Mono', monospace;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, #07051433 3px 4px),
+    linear-gradient(#100c26 55%, #33204e);
+}
+body[data-theme="retro"]::before {
+  content: '';
+  position: fixed;
+  inset: auto 0 0;
+  height: 28vh;
+  background: #18132e;
+  clip-path: polygon(0 35%, 6% 35%, 6% 60%, 13% 60%, 13% 15%, 20% 15%, 20% 45%, 28% 45%, 28% 0, 35% 0, 35% 55%, 44% 55%, 44% 25%, 54% 25%, 54% 65%, 62% 65%, 62% 10%, 70% 10%, 70% 40%, 78% 40%, 78% 20%, 86% 20%, 86% 55%, 94% 55%, 94% 30%, 100% 30%, 100% 100%, 0 100%);
+  pointer-events: none;
+}
+body[data-theme="retro"] .app-container {
+  background: #201a35;
+  border: 3px solid #8972b5;
+  box-shadow: 8px 8px 0 #080613, inset 0 0 0 4px #322747;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+body[data-theme="retro"] .logo h1 {
+  background: none;
+  color: #ffe478;
+  -webkit-text-fill-color: currentColor;
+  font-family: inherit;
+  text-shadow: 2px 2px #a84b75;
+}
+body[data-theme="retro"] :is(.theme-bar, .cycle-section, .accomplishments-section, .stat-card, .stats-dialog, .theme-more-menu) {
+  background: #171328;
+  border: 2px solid #655184;
+  border-radius: 0;
+  box-shadow: 3px 3px 0 #0a0814;
+}
+body[data-theme="retro"] :is(button, input, .theme-pill, .light-bulb, .light-inner-dot, .legend-dot, .balance-bar, .daily-focus-track) {
+  border-radius: 0;
+  font-family: inherit;
+}
+body[data-theme="retro"] .theme-pill.active {
+  background: #393050;
+  color: #ffe478;
+  box-shadow: inset 0 -3px #ffe478;
+}
+body[data-theme="retro"] .timer-display-wrapper {
+  background: repeating-linear-gradient(0deg, #0c1f21 0 3px, #0a1a1d 3px 5px);
+  border: 4px solid #8972b5;
+  box-shadow: 6px 6px 0 #0a0814, inset 0 0 0 5px #0a0814;
+}
+body[data-theme="retro"] .timer-display-wrapper::after {
+  content: 'PLAYER 1 • FOCUS';
+  position: absolute;
+  top: 26%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  color: #70f5b1;
+  font-size: .65rem;
+  letter-spacing: .1em;
+}
+body[data-theme="retro"] .time-readout {
+  color: #b4ffd3;
+  text-shadow: 3px 3px #266052;
+  letter-spacing: -.06em;
+}
+body[data-theme="retro"] .progress-ring { inset: 8px; width: calc(100% - 16px); height: calc(100% - 16px); }
+body[data-theme="retro"] .progress-ring-fill { stroke-linecap: butt; filter: none; transition: stroke-dashoffset 1s steps(4), stroke .2s; }
+body[data-theme="retro"] .progress-ring-bg { stroke: #23413d; }
+body[data-theme="retro"] .control-btn {
+  border: 2px solid #b7a0d9;
+  box-shadow: 4px 4px 0 #0a0814;
+}
+body[data-theme="retro"] .control-btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 #0a0814; }
+body[data-theme="retro"] .light-item.active .light-bulb { animation: none; box-shadow: 3px 3px 0 #0a0814; }
+body[data-theme="retro"] button:focus-visible { outline: 3px solid #ffe478; outline-offset: 4px; }
+
+/* Warm wood and glass, with sand driven by the actual interval progress. */
+.hourglass-clock { display: none; }
+body[data-theme="hourglass"] {
+  --text-main: #4e3c2d;
+  --text-muted: #756453;
+  --text-subtle: #89745e;
+  background: radial-gradient(ellipse at 50% 35%, #fbf5e8, #e1d2b8);
+}
+body[data-theme="hourglass"] .background-ambient { opacity: .12; }
+body[data-theme="hourglass"] .app-container {
+  background: #faf5e9;
+  border-color: #cbb99a;
+  box-shadow: 0 20px 65px #71533830;
+}
+body[data-theme="hourglass"] .logo h1 {
+  background: none;
+  color: #72513a;
+  -webkit-text-fill-color: currentColor;
+  font-family: 'Playfair Display', serif;
+}
+body[data-theme="hourglass"] :is(.theme-bar, .cycle-section, .stat-card, .accomplishments-section, .theme-more-menu, .stats-dialog) {
+  background: #f1e8d6;
+  border-color: #d5c5aa;
+  color: #4e3c2d;
+}
+body[data-theme="hourglass"] :is(.theme-pill, .icon-btn, .control-btn.secondary) { color: #756453; }
+body[data-theme="hourglass"] .theme-pill.active,
+body[data-theme="hourglass"] .theme-more-option:hover { background: #e3d3b5; color: #61462f; }
+body[data-theme="hourglass"] .timer-display-wrapper {
+  height: 350px;
+  max-width: 100%;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+}
+body[data-theme="hourglass"] .progress-ring { display: none; }
+body[data-theme="hourglass"] .hourglass-clock {
+  display: block;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 275px;
+}
+body[data-theme="hourglass"] .time-readout {
+  color: #61462f;
+  font-size: 2.8rem;
+  text-shadow: 0 1px #fff;
+}
+body[data-theme="hourglass"] .control-btn.secondary { background: #e9ddc7; border-color: #cbb99a; }
+.hourglass-sand-stream { opacity: 0; }
+body[data-theme="hourglass"].is-running .hourglass-sand-stream { animation: hourglass-fall .45s linear infinite; }
+@keyframes hourglass-fall { to { stroke-dashoffset: -7; } }
+@media (prefers-reduced-motion: reduce) {
+  body[data-theme="hourglass"].is-running .hourglass-sand-stream { animation: none; }
+}
+
+/* Muted sage, clay, and ochre session markers for the hourglass. */
+body[data-theme="hourglass"] {
+  --color-green: #8b9776;
+  --color-orange: #bc9278;
+  --color-yellow: #b5a16b;
+  --color-green-glow: rgba(139, 151, 118, .16);
+  --color-orange-glow: rgba(188, 146, 120, .16);
+  --color-yellow-glow: rgba(181, 161, 107, .16);
+}
+body[data-theme="hourglass"] .light-item[data-type="work"] { --light-tone: #8b9776; --light-tint: #e3e6d9; }
+body[data-theme="hourglass"] .light-item[data-type="shortRest"] { --light-tone: #bc9278; --light-tint: #eee0d5; }
+body[data-theme="hourglass"] .light-item[data-type="longRest"] { --light-tone: #b5a16b; --light-tint: #ece5cf; }
+body[data-theme="hourglass"] .light-item .light-bulb {
+  background: #f7f2e7;
+  border-color: var(--light-tone);
+  box-shadow: none;
+}
+body[data-theme="hourglass"] .light-item.active .light-bulb {
+  background: var(--light-tone);
+  border-color: #fffaf0;
+  box-shadow: 0 0 0 2px var(--light-tone);
+  animation: none;
+}
+body[data-theme="hourglass"] .light-item.completed .light-bulb {
+  background: var(--light-tint);
+  border-color: var(--light-tone);
+  box-shadow: none;
+  filter: none;
+}
+body[data-theme="hourglass"] .light-item.completed .light-inner-dot { background: var(--light-tone); }
+body[data-theme="hourglass"] .legend-dot { box-shadow: none; }
+
+/* Green sunburst dial, champagne markers, and a fluted gold bezel. */
+.rolex-clock { display: none; }
+body[data-theme="rolex"] {
+  --text-main: #eee5cc;
+  --text-muted: #c0b99d;
+  --text-subtle: #a79f80;
+  --color-green: #b9a268;
+  --color-orange: #c39370;
+  --color-yellow: #d5bd7e;
+  --color-green-glow: #b9a26822;
+  --color-orange-glow: #c3937022;
+  --color-yellow-glow: #d5bd7e22;
+  background: radial-gradient(ellipse at 50% 30%, #214c3e, #081d17 80%);
+}
+body[data-theme="rolex"] .app-container {
+  background: linear-gradient(145deg, #15392e, #0b271f);
+  border: 1px solid #867448;
+  box-shadow: 0 25px 65px #0007, inset 0 0 0 4px #ffffff03;
+}
+body[data-theme="rolex"] .logo h1 {
+  background: none;
+  color: #e0ca91;
+  -webkit-text-fill-color: currentColor;
+  font-family: 'Playfair Display', serif;
+  letter-spacing: .04em;
+}
+body[data-theme="rolex"] .logo-icon { color: #e0ca91; }
+body[data-theme="rolex"] :is(.cycle-section, .theme-bar, .stat-card, .accomplishments-section, .theme-more-menu, .stats-dialog) {
+  background: #102c24;
+  border-color: #b9a26838;
+}
+body[data-theme="rolex"] .theme-pill.active { background: #b9a26822; color: #eddbab; }
+body[data-theme="rolex"] .timer-display-wrapper { isolation: isolate; }
+body[data-theme="rolex"] .rolex-clock { display: block; position: absolute; inset: 0; width: 100%; height: 100%; }
+body[data-theme="rolex"] .chronometer-hands { z-index: 3; pointer-events: none; }
+body[data-theme="rolex"] .progress-ring { display: none; }
+body[data-theme="rolex"] .timer-content {
+  position: absolute;
+  top: 64%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  background: #092f27;
+  border: 1px solid #b9a26866;
+  border-radius: 3px;
+}
+body[data-theme="rolex"] .time-readout {
+  font-size: 1.15rem;
+  color: #eddbab;
+  letter-spacing: .05em;
+  margin: 0;
+  text-shadow: none;
+}
+body[data-theme="rolex"] .control-btn.primary {
+  background: linear-gradient(135deg, #f2dfaa, #b29458);
+  color: #15392e;
+  box-shadow: 0 4px 14px #0004;
+}
+body[data-theme="rolex"] .light-item[data-type="work"] { --watch-light: #b9a268; }
+body[data-theme="rolex"] .light-item[data-type="shortRest"] { --watch-light: #c39370; }
+body[data-theme="rolex"] .light-item[data-type="longRest"] { --watch-light: #d5bd7e; }
+body[data-theme="rolex"] .light-item .light-bulb { border-color: var(--watch-light); box-shadow: none; }
+body[data-theme="rolex"] .light-item.active .light-bulb {
+  background: var(--watch-light);
+  border-color: #eddbab;
+  box-shadow: 0 0 0 2px #b9a26833;
+  animation: none;
+}
+body[data-theme="rolex"] .light-item.completed .light-bulb { background: #b9a26833; filter: none; }
+body[data-theme="rolex"] .legend-dot { box-shadow: none; }
+
+/* Astronomical clock: celestial brasswork and a medieval blue dial. */
+.astronomical-clock { display: none; }
+body[data-theme="astronomical"] {
+  --text-main: #ede5cf;
+  --text-muted: #c0bba8;
+  --text-subtle: #a6a18d;
+  --color-green: #b5a269;
+  --color-orange: #c18c72;
+  --color-yellow: #a4adce;
+  --color-green-glow: rgba(181, 162, 105, .2);
+  --color-orange-glow: rgba(193, 140, 114, .2);
+  --color-yellow-glow: rgba(164, 173, 206, .2);
+  background: radial-gradient(circle at 18% 22%, #e1cf9a99 0 1px, transparent 2px),
+    radial-gradient(circle at 79% 31%, #e1cf9a88 0 1px, transparent 2px),
+    radial-gradient(circle at 85% 73%, #e1cf9a66 0 1px, transparent 2px),
+    radial-gradient(ellipse at 50% 35%, #263e55, #0c1726 80%);
+}
+body[data-theme="astronomical"] .app-container {
+  background: linear-gradient(145deg, #1e2c3d, #121f30);
+  border: 1px solid #8f7d51;
+  box-shadow: 0 25px 65px #0006, inset 0 0 0 4px #c9ad6c0a;
+}
+body[data-theme="astronomical"] .logo h1 {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: #dfca91;
+  font-family: 'Playfair Display', serif;
+}
+body[data-theme="astronomical"] .logo-icon { color: #dfca91; }
+body[data-theme="astronomical"] :is(.theme-bar, .cycle-section, .stat-card, .accomplishments-section, .daily-focus-card, .work-history-card, .theme-more-menu, .stats-dialog) {
+  background: #142335;
+  border-color: #b5a26940;
+}
+body[data-theme="astronomical"] .theme-pill.active { background: #b5a26926; color: #e1cf9a; box-shadow: none; }
+body[data-theme="astronomical"] .theme-more-option:hover { background: #b5a2691a; }
+body[data-theme="astronomical"] .timer-display-wrapper { height: 350px; max-width: 100%; flex-direction: column; justify-content: flex-end; }
+body[data-theme="astronomical"] .astronomical-clock { display: block; position: absolute; top: 0; width: 100%; height: 290px; filter: drop-shadow(0 8px 10px #0005); }
+body[data-theme="astronomical"] .progress-ring { display: none; }
+body[data-theme="astronomical"] .time-readout { color: #e1cf9a; font-size: 2.5rem; text-shadow: 0 2px 6px #0004; }
+body[data-theme="astronomical"] .control-btn.primary { background: linear-gradient(135deg, #e1cf9a, #a68b53); color: #142335; box-shadow: 0 4px 14px #0004; }
+body[data-theme="astronomical"] .light-item[data-type="work"] { --celestial-light: #b5a269; }
+body[data-theme="astronomical"] .light-item[data-type="shortRest"] { --celestial-light: #c18c72; }
+body[data-theme="astronomical"] .light-item[data-type="longRest"] { --celestial-light: #a4adce; }
+body[data-theme="astronomical"] .light-item .light-bulb { border-color: var(--celestial-light); box-shadow: none; }
+body[data-theme="astronomical"] .light-item.active .light-bulb { background: var(--celestial-light); border-color: #e1cf9a; box-shadow: 0 0 0 2px #b5a26926; animation: none; }
+body[data-theme="astronomical"] .light-item.completed .light-bulb { background: #b5a26926; filter: none; }
+body[data-theme="astronomical"] .light-item.completed .light-inner-dot { background: var(--celestial-light); }
+body[data-theme="astronomical"] .legend-dot { box-shadow: none; }
+.theme-more-option[data-theme="astronomical"] .theme-more-lock { font-size: 1rem; }
+
+.astronomical-sky { display: none; }
+body[data-theme="astronomical"] .astronomical-sky { display: block; position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+body[data-theme="astronomical"] .astronomical-sky svg { display: block; width: 100%; height: 100%; }
+
+.astronomical-progress-track,
+.astronomical-progress-fill { fill: none; stroke-width: 3; }
+.astronomical-progress-track { stroke: #b5a26926; }
+.astronomical-progress-fill {
+  stroke: var(--current-color);
+  stroke-dasharray: 992.7432785343747;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  transition: stroke-dashoffset .8s linear, stroke .3s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .astronomical-progress-fill { transition: none; }
+}
