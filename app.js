@@ -101,6 +101,7 @@ const closeStatsBtn = document.getElementById('closeStatsBtn');
 // Theme Elements
 const themePills = document.querySelectorAll('.theme-pill');
 const logoIconEl = document.querySelector('.logo-icon');
+const zenLogoMarkup = logoIconEl?.innerHTML || '';
 const zenRakeGroovesEl = document.getElementById('zenRakeGrooves');
 const zenRakeToolEl = document.getElementById('zenRakeTool');
 
@@ -341,14 +342,7 @@ function setTheme(theme) {
     if (theme === 'sundial') {
       logoIconEl.textContent = '🌴';
     } else if (theme === 'zen') {
-      logoIconEl.innerHTML = `<svg viewBox="0 0 120 78" role="presentation">
-        <path d="M59 61 C55 51 53 42 56 32 C59 24 69 20 72 12 M58 42 C49 38 43 31 40 25 M62 33 C70 33 78 29 83 23" fill="none" stroke="#765b3d" stroke-width="5" stroke-linecap="round" />
-        <path d="M31 61 Q60 70 89 61 L84 68 Q60 76 36 68 Z" fill="#8b5d43" />
-        <path d="M34 61 Q60 66 86 61" fill="none" stroke="#d7b18c" stroke-width="2" />
-        <ellipse cx="59" cy="61" rx="19" ry="5" fill="#6c5940" />
-        <g fill="#527858" stroke="#d5e0c6" stroke-width="1.2"><circle cx="41" cy="22" r="10"/><circle cx="51" cy="16" r="11"/><circle cx="64" cy="16" r="12"/><circle cx="76" cy="18" r="10"/><circle cx="84" cy="24" r="8"/><circle cx="47" cy="29" r="9"/><circle cx="62" cy="27" r="11"/><circle cx="75" cy="28" r="9"/></g>
-        <g fill="#88a47a"><circle cx="47" cy="14" r="3"/><circle cx="67" cy="12" r="3"/><circle cx="79" cy="22" r="2.5"/></g>
-      </svg>`;
+      logoIconEl.innerHTML = zenLogoMarkup;
     } else if (theme === 'tomato') {
       logoIconEl.textContent = '🍅';
     } else {
