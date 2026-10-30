@@ -105,7 +105,6 @@ function renderAccountUI() {
   document.getElementById('accountPasswordTitle').textContent = backendState.recovery ? 'Choose a new password' : 'Set or change your password';
   document.getElementById('accountPasswordHelp').textContent = backendState.recovery ? 'Your reset link has been verified. Save a new password to finish.' : 'Already using email links? Add a password to the same account. Your statistics and subscription stay with you.';
   document.getElementById('signOutBtn').hidden = !user;
-  document.getElementById('refreshAccountBtn').hidden = !user;
   document.getElementById('manageBillingBtn').hidden = !user || !backendState.access.hasBillingAccount || !backendState.config.billingEnabled;
   const enabled = backendState.config.billingEnabled;
   const unlock = document.getElementById('unlockPlusBtn');
@@ -184,7 +183,6 @@ function initAccountUI() {
     try { await syncAccount(); } catch { /* Preserve local pending data for the next sign-in. */ }
     try { await window.TomodoBackend.signOut(); } catch (error) { showAccountError(error); }
   });
-  document.getElementById('refreshAccountBtn').addEventListener('click',() => window.TomodoBackend.refresh().catch(showAccountError));
   document.getElementById('manageBillingBtn').addEventListener('click',() => window.TomodoBackend.billingPortal().catch(showAccountError));
   document.getElementById('unlockPlusBtn').addEventListener('click',async () => {
     if (!backendState.user) {

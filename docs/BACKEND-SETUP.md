@@ -68,7 +68,7 @@ stripe listen --forward-to http://localhost:8788/api/stripe-webhook
 
 8. Put the CLI's `whsec_...` signing secret in `.dev.vars` as `STRIPE_WEBHOOK_SECRET`.
 9. Set `BILLING_ENABLED=true` **with test keys**, restart the local server, sign in, select a plan, and test Checkout. The hosted checkout is test mode; use Stripe's documented test cards, not a real card. See https://docs.stripe.com/testing.
-10. The Checkout return URL does not grant access. The signed webhook reconciles Stripe's current subscription state and updates the database. Settings → Refresh account reloads access; the app also refreshes automatically every minute.
+10. The Checkout return URL does not grant access. The signed webhook reconciles Stripe's current subscription state and updates the database. The app refreshes account access automatically every minute and when the browser window regains focus.
 
 Optional tax collection uses `STRIPE_AUTOMATIC_TAX=true`. Configure Stripe Tax and the business's applicable obligations before enabling it. Prices shown by Tomodo are base prices; hosted Checkout displays the final total.
 
