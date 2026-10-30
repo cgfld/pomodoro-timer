@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { validatePassword, authErrorMessage } from './auth-policy.mjs';
+import { authErrorMessage } from './auth-policy.mjs';
 let client;
 let state = { ready:false,config:{ accountsEnabled:false,billingEnabled:false },user:null,access:{ plus:false },preferences:null,error:null,recovery:false,authCallback:false };
 let refreshInFlight;
@@ -83,7 +83,6 @@ window.TomodoBackend = Object.freeze({
   },
   async signUp(email,password) {
     requireClient();
-    validatePassword(password);
     const { data,error } = await client.auth.signUp({ email,password,options:{ emailRedirectTo:`${window.location.origin}/` } });
     if (error) throw new Error(authErrorMessage(error));
     if (data.session) await refresh();
@@ -96,7 +95,6 @@ window.TomodoBackend = Object.freeze({
   },
   async setPassword(password) {
     requireClient();
-    validatePassword(password);
     const { error } = await client.auth.updateUser({ password });
     if (error) throw new Error(authErrorMessage(error));
     state.recovery = false;

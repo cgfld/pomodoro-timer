@@ -1560,10 +1560,10 @@
         <label for="accountEmail">Email address</label>
         <input id="accountEmail" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" disabled>
         <label for="accountPassword">Password</label>
-        <input id="accountPassword" type="password" autocomplete="current-password" required minlength="1" maxlength="256" disabled>
+        <input id="accountPassword" type="password" autocomplete="current-password" required disabled>
         <div id="accountPasswordConfirmWrap" class="account-password-confirm" hidden>
           <label for="accountPasswordConfirm">Confirm password</label>
-          <input id="accountPasswordConfirm" type="password" autocomplete="new-password" maxlength="256" required disabled>
+          <input id="accountPasswordConfirm" type="password" autocomplete="new-password" required disabled>
         </div>
         <button id="accountSignInBtn" type="submit" class="plus-action" disabled>Sign in</button>
         <div class="account-auth-links">
@@ -1577,10 +1577,9 @@
         <p id="accountPasswordHelp" class="settings-description">Already using email links? Add a password to the same account. Your statistics and subscription stay with you.</p>
         <form id="setPasswordForm" class="account-signin-form">
           <label for="newAccountPassword">New password</label>
-          <input id="newAccountPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="256" aria-describedby="accountPasswordLength" disabled>
-          <span id="accountPasswordLength" class="settings-description">Use at least 12 characters. Password managers and passphrases are welcome.</span>
+          <input id="newAccountPassword" type="password" autocomplete="new-password" required disabled>
           <label for="confirmNewAccountPassword">Confirm new password</label>
-          <input id="confirmNewAccountPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="256" disabled>
+          <input id="confirmNewAccountPassword" type="password" autocomplete="new-password" required disabled>
           <button type="submit" id="saveAccountPasswordBtn" class="plus-action" disabled>Save password</button>
         </form>
         <p id="passwordMessage" class="settings-description" role="status" aria-live="polite"></p>

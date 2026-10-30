@@ -136,7 +136,7 @@ The signing secret belongs to that endpoint and environment; a local CLI secret 
 
 Settings supports email/password sign-in, password account creation with email confirmation, and the existing email-link option. Email addresses act as usernames.
 
-- New passwords must contain at least 12 characters, up to 256. Password-manager paste and passphrases are supported. Existing passwords are not rejected by the sign-in form merely for being shorter.
+- Tomodo adds no password length or character-composition rules. Passwords are passed unchanged to Supabase, whose project-level policy still applies. Password-manager paste and passphrases are supported.
 - Signed-in email-link users can set a password on their existing account, preserving statistics, customer ID, and subscription.
 - Forgot password sends a Supabase recovery email to the same allowed root redirect. A verified recovery callback automatically opens Settings and focuses the new-password form.
 - Passwords are passed directly to Supabase Auth over HTTPS. Tomodo does not persist them to localStorage, its database, logs, or configuration. Fields clear after success and when Settings closes.

@@ -221,12 +221,11 @@ function updateAccountAuthMode() {
   document.getElementById('accountPasswordConfirm').disabled = !signup || !connected;
   const password = document.getElementById('accountPassword');
   password.disabled = !connected;
-  password.minLength = signup ? 12 : 1;
   password.autocomplete = signup ? 'new-password' : 'current-password';
   document.getElementById('forgotPasswordBtn').hidden = signup;
   for (const id of ['forgotPasswordBtn','emailLinkBtn']) document.getElementById(id).disabled = !connected;
   document.getElementById('accountAuthHelp').textContent = signup
-    ? 'Use at least 12 characters. Confirm your email to finish creating your account.'
+    ? 'Confirm your email to finish creating your account.'
     : 'Use your email and password, or sign in with an email link.';
 }
 function initPasswordUI() {
