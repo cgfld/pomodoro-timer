@@ -1,6 +1,6 @@
 # Connect Tomodo's backend
 
-Production is Cloudflare Worker **pomodoro-timer**, serving both `tomodo.app` and `www.tomodo.app`. The checked-in `wrangler.jsonc` targets that existing Worker; `www` redirects to the canonical `tomodo.app` origin. Neither account has been created yet, so sign-in, email delivery, and actual test payments still need to be verified against your services. No production deployment or payment has been performed.
+Production is Cloudflare Worker **pomodoro-timer**, serving both `tomodo.app` and `www.tomodo.app`. The checked-in `wrangler.jsonc` targets that existing Worker; `www` redirects to the canonical `tomodo.app` origin. The site is deployed, Supabase is connected, and email-link sign-in has been confirmed. Password sign-in, password changes, and recovery callbacks have also been verified against production using disposable accounts. Stripe is not configured and paid checkout remains disabled.
 
 ## 1. Create the Supabase project first
 
@@ -130,7 +130,7 @@ The signing secret belongs to that endpoint and environment; a local CLI secret 
 - `npm run build` creates only allowlisted public assets.
 - Both Cloudflare Pages Functions and Workers bundles compile without deployment.
 
-**Still required before public launch:** actual Supabase email sign-in, real project migration, complete Stripe sandbox purchase/renewal/cancel/failure tests, two-device sync testing, production email delivery, and the business's support/privacy/purchase/refund/tax setup. These require the accounts you will create; local mocks are not a substitute for that final integration test.
+**Still required before paid launch:** complete Stripe sandbox purchase/renewal/cancel/failure tests, two-device sync testing, and the business's support/privacy/purchase/refund/tax setup. Supabase sign-in and the database migration are connected; actual signup/password-reset email delivery should be checked alongside the already verified recovery callbacks.
 
 ## Password sign-in and recovery
 
