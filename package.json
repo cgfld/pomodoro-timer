@@ -6,7 +6,8 @@
     "build": "node scripts/build.mjs",
     "test": "node --test tests/*.test.cjs tests/*.test.mjs",
     "dev": "npm run build && wrangler dev --port 8788",
-    "dev:worker": "npm run dev"
+    "dev:worker": "npm run dev",
+    "connect:supabase": "node scripts/connect-supabase.mjs"
   },
   "engines": {
     "node": ">=22"

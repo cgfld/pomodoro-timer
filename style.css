@@ -3094,3 +3094,13 @@ body[data-theme="retro"] .plus-tracking-intro h3 { font-family: inherit; }
 .plus-plan input { position: absolute; top: 10px; right: 10px; accent-color: var(--plus-accent, #455e4b); }
 .plus-plan:has(input:checked) { border-color: var(--plus-accent, #455e4b); box-shadow: inset 0 0 0 1px var(--plus-accent, #455e4b); }
 #accountMessage:empty, #checkoutMessage:empty { display: none; }
+
+.account-auth-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px; border: 1px solid var(--plus-border, #cfd3c1); border-radius: var(--plus-card-radius, 8px); }
+.account-auth-modes button { padding: 9px 8px; border: 0; border-radius: var(--plus-card-radius, 5px); background: none; color: var(--plus-muted, #6b7464); font: inherit; font-size: .72rem; cursor: pointer; }
+.account-auth-modes button[aria-pressed="true"] { background: var(--plus-accent, #526f58); color: var(--plus-button-text, #fffdf2); }
+.account-password-confirm { display: grid; gap: 10px; }
+.account-auth-links { display: grid; gap: 0; }
+.account-auth-links .plus-secondary { margin: 0; padding: 8px; }
+.account-password-section { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--plus-border, #cfd3c1); }
+.account-password-section h4 { font-size: .82rem; }
+.account-auth-modes button:focus-visible { outline: 2px solid var(--plus-accent, #b39a60); outline-offset: 2px; }

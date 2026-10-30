@@ -41,6 +41,16 @@ The local Worker runs on port 8788. `.dev.vars` overrides the production `APP_OR
 
 The UI-only local Plus preview remains at `?review=plus`. It never bypasses server authorization, even on localhost. Real server features require a verified paid account.
 
+### Connect the verified project to production
+
+After filling the three Supabase values in the ignored `.dev.vars` file and applying the migration, run:
+
+```sh
+npm run connect:supabase
+```
+
+The connector validates the key types, email authentication, and all four database tables before changing production. It passes only the three Supabase values to Wrangler over stdin and then checks `https://tomodo.app/api/config`. It never uploads the localhost `APP_ORIGIN`, prints key values, or changes Stripe settings. Cloudflare login must be active. To validate without uploading, use `node scripts/connect-supabase.mjs --check`.
+
 ## 3. Create Stripe in test mode
 
 1. Create a Stripe account and use its sandbox/test environment.
@@ -121,3 +131,14 @@ The signing secret belongs to that endpoint and environment; a local CLI secret 
 - Both Cloudflare Pages Functions and Workers bundles compile without deployment.
 
 **Still required before public launch:** actual Supabase email sign-in, real project migration, complete Stripe sandbox purchase/renewal/cancel/failure tests, two-device sync testing, production email delivery, and the business's support/privacy/purchase/refund/tax setup. These require the accounts you will create; local mocks are not a substitute for that final integration test.
+
+## Password sign-in and recovery
+
+Settings supports email/password sign-in, password account creation with email confirmation, and the existing email-link option. Email addresses act as usernames.
+
+- New passwords must contain at least 12 characters, up to 256. Password-manager paste and passphrases are supported. Existing passwords are not rejected by the sign-in form merely for being shorter.
+- Signed-in email-link users can set a password on their existing account, preserving statistics, customer ID, and subscription.
+- Forgot password sends a Supabase recovery email to the same allowed root redirect. A verified recovery callback automatically opens Settings and focuses the new-password form.
+- Passwords are passed directly to Supabase Auth over HTTPS. Tomodo does not persist them to localStorage, its database, logs, or configuration. Fields clear after success and when Settings closes.
+- Supabase handles password verification/hashing, email confirmation, and auth rate limits. Any stricter project-level password or reauthentication policy remains enforced by Supabase.
+- `node scripts/diagnose-password.mjs` tests the local build against the live Supabase/API using a disposable account. `--live` tests deployed assets instead. Neither sends email, and the temporary account is removed afterward. Actual signup/recovery email delivery should also be tested by the site owner.

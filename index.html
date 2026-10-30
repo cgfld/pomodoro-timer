@@ -1552,12 +1552,39 @@
       <p id="accountSettingsStatus">Tomodo Free</p>
       <p class="settings-description" id="accountSettingsNote">Checking account services…</p>
       <form id="accountSignInForm" class="account-signin-form">
-        <h4>Sign in or create an account</h4>
+        <h4 id="accountAuthHeading">Sign in to Tomodo</h4>
+        <div class="account-auth-modes" role="group" aria-label="Account access">
+          <button type="button" data-auth-mode="signin" aria-pressed="true">Sign in</button>
+          <button type="button" data-auth-mode="signup" aria-pressed="false">Create account</button>
+        </div>
         <label for="accountEmail">Email address</label>
         <input id="accountEmail" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" disabled>
-        <button id="accountSignInBtn" type="submit" class="plus-action" disabled>Email me a sign-in link</button>
-        <p class="settings-description">No password needed. New visitors can create an account with the same link.</p>
+        <label for="accountPassword">Password</label>
+        <input id="accountPassword" type="password" autocomplete="current-password" required minlength="1" maxlength="256" disabled>
+        <div id="accountPasswordConfirmWrap" class="account-password-confirm" hidden>
+          <label for="accountPasswordConfirm">Confirm password</label>
+          <input id="accountPasswordConfirm" type="password" autocomplete="new-password" maxlength="256" required disabled>
+        </div>
+        <button id="accountSignInBtn" type="submit" class="plus-action" disabled>Sign in</button>
+        <div class="account-auth-links">
+          <button type="button" id="forgotPasswordBtn" class="plus-secondary" disabled>Forgot password?</button>
+          <button type="button" id="emailLinkBtn" class="plus-secondary" disabled>Email me a sign-in link instead</button>
+        </div>
+        <p id="accountAuthHelp" class="settings-description">Use your email and password, or sign in with an email link.</p>
       </form>
+      <section id="accountPasswordSection" class="account-password-section" aria-labelledby="accountPasswordTitle" hidden>
+        <h4 id="accountPasswordTitle">Set or change your password</h4>
+        <p id="accountPasswordHelp" class="settings-description">Already using email links? Add a password to the same account. Your statistics and subscription stay with you.</p>
+        <form id="setPasswordForm" class="account-signin-form">
+          <label for="newAccountPassword">New password</label>
+          <input id="newAccountPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="256" aria-describedby="accountPasswordLength" disabled>
+          <span id="accountPasswordLength" class="settings-description">Use at least 12 characters. Password managers and passphrases are welcome.</span>
+          <label for="confirmNewAccountPassword">Confirm new password</label>
+          <input id="confirmNewAccountPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="256" disabled>
+          <button type="submit" id="saveAccountPasswordBtn" class="plus-action" disabled>Save password</button>
+        </form>
+        <p id="passwordMessage" class="settings-description" role="status" aria-live="polite"></p>
+      </section>
       <div class="settings-account-actions">
         <button type="button" class="settings-outline" id="refreshAccountBtn" hidden>Refresh account</button>
         <button type="button" class="settings-outline" id="manageBillingBtn" hidden>Manage billing</button>

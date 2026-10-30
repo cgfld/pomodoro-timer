@@ -76,3 +76,49 @@ test('changing accounts isolates local sources; sign-out restores guest stats an
     assert.equal(w.document.getElementById('manageBillingBtn').hidden,true);
   } finally {dom.window.close();}
 });
+
+test('password sign-in, signup mismatch, and email reset use their separate actions',async()=>{
+  const {dom,w,context}=await boot();
+  const calls=[];
+  w.TomodoBackend.signInWithPassword=async(email,password)=>calls.push(['signin',email,password]);
+  w.TomodoBackend.signUp=async(email,password)=>{calls.push(['signup',email,password]);return {signedIn:false};};
+  w.TomodoBackend.resetPassword=async email=>calls.push(['reset',email]);
+  w.TomodoBackend.signIn=async email=>calls.push(['link',email]);
+  try {
+    context.nextAccount={ready:true,config:{accountsEnabled:true,billingEnabled:false},user:null,access:{plus:false},preferences:null};
+    await vm.runInContext('applyAccountState(nextAccount)',context);
+    const email=w.document.getElementById('accountEmail');email.value='person@example.com';
+    const password=w.document.getElementById('accountPassword');password.value='test password phrase';
+    w.document.getElementById('accountSignInForm').dispatchEvent(new w.Event('submit',{cancelable:true}));
+    await new Promise(resolve=>setImmediate(resolve));
+    assert.equal(calls[0][0],'signin');assert.equal(password.value,'');
+    w.document.querySelector('[data-auth-mode="signup"]').click();
+    assert.equal(w.document.getElementById('accountPasswordConfirmWrap').hidden,false);
+    password.value='test password phrase';w.document.getElementById('accountPasswordConfirm').value='different phrase';
+    w.document.getElementById('accountSignInForm').dispatchEvent(new w.Event('submit',{cancelable:true}));
+    assert.equal(calls.length,1);assert.match(w.document.getElementById('accountMessage').textContent,/do not match/);
+    w.document.querySelector('[data-auth-mode="signin"]').click();
+    w.document.getElementById('forgotPasswordBtn').click();await new Promise(resolve=>setImmediate(resolve));
+    assert.equal(calls.at(-1)[0],'reset');
+    w.document.getElementById('emailLinkBtn').click();await new Promise(resolve=>setImmediate(resolve));
+    assert.equal(calls.at(-1)[0],'link');
+  } finally {w.close();}
+});
+test('a verified recovery callback opens password settings; saving and closing clears password fields',async()=>{
+  const {dom,w,context}=await boot();
+  const calls=[];w.TomodoBackend.setPassword=async password=>calls.push(password);
+  try {
+    context.nextAccount={...account('user-a',false),recovery:true,authCallback:true};
+    await vm.runInContext('applyAccountState(nextAccount)',context);
+    assert.equal(w.document.getElementById('settingsDialog').open,true);
+    assert.equal(w.document.getElementById('accountPasswordSection').hidden,false);
+    assert.equal(w.document.getElementById('accountPasswordTitle').textContent,'Choose a new password');
+    const password=w.document.getElementById('newAccountPassword');const confirm=w.document.getElementById('confirmNewAccountPassword');
+    password.value='a new test passphrase';confirm.value=password.value;
+    w.document.getElementById('setPasswordForm').dispatchEvent(new w.Event('submit',{cancelable:true}));
+    await new Promise(resolve=>setImmediate(resolve));
+    assert.equal(calls.length,1);assert.equal(password.value,'');assert.equal(confirm.value,'');
+    password.value='another test password';w.document.getElementById('settingsDialog').close();assert.equal(password.value,'');
+    assert(!Object.keys(w.localStorage).some(key=>String(w.localStorage.getItem(key)).includes('a new test passphrase')));
+  } finally {w.close();}
+});

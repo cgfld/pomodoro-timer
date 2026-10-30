@@ -1,10 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
+import { validatePassword, authErrorMessage } from './auth-policy.mjs';
 let client;
-let state = { ready:false,config:{ accountsEnabled:false,billingEnabled:false },user:null,access:{ plus:false },preferences:null,error:null };
+let state = { ready:false,config:{ accountsEnabled:false,billingEnabled:false },user:null,access:{ plus:false },preferences:null,error:null,recovery:false,authCallback:false };
 let refreshInFlight;
 const emit = () => window.dispatchEvent(new CustomEvent('tomodo:account',{ detail:{ ...state } }));
+async function sessionForClient() {
+  const { data, error } = await client.auth.getSession();
+  if (error) throw error;
+  return data.session;
+}
+function requireClient() { if (!client) throw new Error('Account services are not configured yet.'); }
 async function api(path,options = {}) {
-  const { data:{ session } } = await client.auth.getSession();
+  const session = await sessionForClient();
   if (!session) throw new Error('Please sign in.');
   const expected = options.expectedUserId || state.user?.id;
   if (expected && session.user.id !== expected) throw new Error('Account changed. Please refresh.');
@@ -20,18 +27,17 @@ async function refresh() {
   if (!client) return state;
   if (refreshInFlight) return refreshInFlight;
   refreshInFlight = (async () => {
-    const { data:{ session } } = await client.auth.getSession();
-    if (!session) { state = { ...state,ready:true,user:null,access:{ plus:false },preferences:null,error:null }; emit(); return state; }
+    let session;
     try {
+      session = await sessionForClient();
+      if (!session) { state = { ...state,ready:true,user:null,access:{ plus:false },preferences:null,error:null,recovery:false }; emit(); return state; }
       const [account,preferences] = await Promise.all([api('/api/account'),api('/api/preferences')]);
-      // A sign-out in another tab must not resurrect the prior account.
-      const { data:{ session:latest } } = await client.auth.getSession();
+      const latest = await sessionForClient();
       if (latest?.user.id !== account.user.id) return state;
       state = { ...state,...account,preferences,ready:true,error:null };
     } catch (error) {
-      // Fail closed for premium access on authentication/service failures.
-      const safeUser = state.user?.id === session.user.id ? state.user : null;
-      state = { ...state,ready:true,user:safeUser,preferences:null,access:{ plus:false },error:error.message };
+      const safeUser = session && state.user?.id === session.user.id ? state.user : null;
+      state = { ...state,ready:true,user:safeUser,preferences:null,access:{ plus:false },error:authErrorMessage(error) };
     }
     emit(); return state;
   })().finally(() => { refreshInFlight = null; });
@@ -39,6 +45,9 @@ async function refresh() {
 }
 async function init() {
   try {
+    const hash = new URLSearchParams(window.location.hash.slice(1));
+    state.authCallback = ['access_token','error','error_code','error_description'].some(key => hash.has(key));
+    state.recovery = hash.get('type') === 'recovery';
     const response = await fetch('/api/config',{ cache:'no-store' });
     if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) throw new Error('Account services are not configured yet.');
     const config = await response.json();
@@ -47,11 +56,17 @@ async function init() {
     client = createClient(config.supabaseUrl,config.supabasePublishableKey,{
       auth:{ persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'implicit' }
     });
-    client.auth.onAuthStateChange(() => { setTimeout(() => refresh(),0); });
+    client.auth.onAuthStateChange(event => {
+      if (event === 'PASSWORD_RECOVERY') state.recovery = true;
+      if (event === 'SIGNED_OUT') state.recovery = false;
+      setTimeout(() => refresh(),0);
+    });
+    const { error: initializationError } = await client.auth.initialize();
+    if (initializationError) throw initializationError;
     await refresh();
     window.addEventListener('focus',() => refresh());
     setInterval(() => refresh(),60000);
-  } catch (error) { state = { ...state,ready:true,error:error.message }; emit(); }
+  } catch (error) { state = { ...state,ready:true,error:authErrorMessage(error) }; emit(); }
 }
 window.TomodoBackend = Object.freeze({
   init,refresh,getState:() => ({ ...state }),
@@ -59,6 +74,33 @@ window.TomodoBackend = Object.freeze({
     if (!client) throw new Error('Account services are not configured yet.');
     const { error } = await client.auth.signInWithOtp({ email,options:{ emailRedirectTo:`${window.location.origin}/` } });
     if (error) throw error;
+  },
+  async signInWithPassword(email,password) {
+    requireClient();
+    const { error } = await client.auth.signInWithPassword({ email,password });
+    if (error) throw new Error(authErrorMessage(error));
+    await refresh();
+  },
+  async signUp(email,password) {
+    requireClient();
+    validatePassword(password);
+    const { data,error } = await client.auth.signUp({ email,password,options:{ emailRedirectTo:`${window.location.origin}/` } });
+    if (error) throw new Error(authErrorMessage(error));
+    if (data.session) await refresh();
+    return { signedIn:Boolean(data.session) };
+  },
+  async resetPassword(email) {
+    requireClient();
+    const { error } = await client.auth.resetPasswordForEmail(email,{ redirectTo:`${window.location.origin}/` });
+    if (error) throw new Error(authErrorMessage(error));
+  },
+  async setPassword(password) {
+    requireClient();
+    validatePassword(password);
+    const { error } = await client.auth.updateUser({ password });
+    if (error) throw new Error(authErrorMessage(error));
+    state.recovery = false;
+    await refresh();
   },
   async signOut() {
     if (!client) return;
