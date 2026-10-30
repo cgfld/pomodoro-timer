@@ -12,6 +12,40 @@
 <body data-theme="tomato">
   <div class="background-ambient" id="ambientBg"></div>
 
+  <div class="hourglass-landscape" aria-hidden="true">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <defs>
+        <linearGradient id="hourglassDuneFar" x2="0" y2="1">
+          <stop stop-color="#e3cfaa" /><stop offset="1" stop-color="#d1b58a" />
+        </linearGradient>
+        <linearGradient id="hourglassDuneMiddle" x2=".5" y2="1">
+          <stop stop-color="#d8b889" /><stop offset="1" stop-color="#bd986b" />
+        </linearGradient>
+        <linearGradient id="hourglassDuneNear" x2=".2" y2="1">
+          <stop stop-color="#c5a075" /><stop offset="1" stop-color="#a5815d" />
+        </linearGradient>
+      </defs>
+      <circle cx="1130" cy="245" r="78" fill="#f5dfb0" opacity=".5" />
+      <g class="hourglass-dune hourglass-dune-far">
+        <path d="M-220 565 C-20 575 135 405 340 458 S685 615 900 480 S1240 425 1660 548 V1040 H-220Z" fill="url(#hourglassDuneFar)" />
+        <path d="M-100 553 C105 493 210 418 340 458 S685 615 900 480 S1240 425 1540 520" fill="none" stroke="#f5e5c9" stroke-width="2" opacity=".55" />
+      </g>
+      <g class="hourglass-dune hourglass-dune-middle">
+        <path d="M-220 690 C40 570 200 720 440 602 S810 536 1040 661 S1380 580 1660 607 V1040 H-220Z" fill="url(#hourglassDuneMiddle)" />
+        <path d="M440 602 C615 532 723 620 893 720 C703 676 572 638 440 602Z" fill="#b99468" opacity=".35" />
+        <path d="M-120 652 C70 597 210 715 440 602 S810 536 1040 661 S1380 580 1580 608" fill="none" stroke="#eed9b5" stroke-width="2" opacity=".5" />
+      </g>
+      <g class="hourglass-dune hourglass-dune-near">
+        <path d="M-220 811 C20 817 255 692 460 753 S780 885 1040 758 S1415 744 1660 806 V1040 H-220Z" fill="url(#hourglassDuneNear)" />
+        <path d="M-100 806 C125 778 284 704 460 753 S780 885 1040 758 S1415 744 1550 780" fill="none" stroke="#e6c99f" stroke-width="3" opacity=".55" />
+        <g fill="none" stroke="#e6c99f" stroke-width="1" opacity=".2">
+          <path d="M40 845 Q240 765 410 805 M15 861 Q240 781 430 824 M-10 877 Q240 797 450 843 M-35 893 Q240 813 470 862" />
+          <path d="M1040 822 Q1230 748 1480 830 M1010 842 Q1230 766 1480 848 M980 862 Q1230 784 1480 866 M950 882 Q1230 802 1480 884" />
+        </g>
+      </g>
+    </svg>
+  </div>
+
   <div class="astronomical-sky" aria-hidden="true">
     <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
       <defs>
@@ -736,31 +770,54 @@
         <h1>tomodo</h1>
       </div>
       <div class="header-actions">
-        <button id="notificationBtn" class="icon-btn" title="Toggle Desktop Notifications" aria-label="Notifications">
-          <svg class="bell-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-          </svg>
-          <span class="badge" id="notifBadge"></span>
-        </button>
-        <button id="statsBtn" class="icon-btn" title="Open statistics" aria-label="Open statistics" aria-haspopup="dialog">
+        <div class="header-tooltip-control">
+        <button id="statsBtn" class="icon-btn" aria-label="Open statistics" aria-haspopup="dialog">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M4 20V11 M10 20V5 M16 20V14 M22 20H2" />
           </svg>
         </button>
-        <button id="soundBtn" class="icon-btn" title="Toggle Sound Chimes" aria-label="Sound Mute/Unmute">
-          <svg id="soundOnIcon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-          </svg>
-          <svg id="soundOffIcon" class="hidden" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-            <line x1="23" y1="9" x2="17" y2="15"></line>
-            <line x1="17" y1="9" x2="23" y2="15"></line>
+          <span class="alerts-tooltip" role="tooltip">Statistics</span>
+        </div>
+        <div class="alerts-control">
+          <button id="alertsMenuToggle" class="icon-btn" type="button" aria-label="Sound and notifications" aria-expanded="false" aria-controls="alertsMenu">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 10v4 M8 6v12 M12 3v18 M16 6v12 M20 10v4" />
+            </svg>
+          </button>
+          <span class="alerts-tooltip" role="tooltip">Sound &amp; Notifications</span>
+          <div id="alertsMenu" class="plus-dialog alerts-menu" role="group" aria-label="Sound and notifications" hidden>
+            <h2>Sound &amp; notifications</h2>
+            <button id="soundBtn" class="alert-option" type="button" role="switch" aria-checked="true">
+              <svg id="soundOnIcon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M11 5 6 9H2v6h4l5 4V5Z M15.5 8.5a5 5 0 0 1 0 7 M19 5a10 10 0 0 1 0 14" />
+              </svg>
+              <svg id="soundOffIcon" class="hidden" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M11 5 6 9H2v6h4l5 4V5Z M17 9l6 6 M23 9l-6 6" />
+              </svg>
+              <span>Sounds</span><span id="soundStatus" class="alert-status" aria-hidden="true">On</span>
+            </button>
+            <button id="notificationBtn" class="alert-option" type="button" role="switch" aria-checked="false" aria-describedby="notificationHelp">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M10 21h4" />
+              </svg>
+              <span>Notifications</span><span id="notificationStatus" class="alert-status" aria-hidden="true">Off</span>
+            </button>
+            <p id="notificationHelp" class="alert-help">Get an alert when an interval ends.</p>
+          </div>
+        </div>
+        <div class="header-tooltip-control">
+        <button id="settingsBtn" class="icon-btn" type="button" aria-label="Settings" aria-haspopup="dialog">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9.5 3h5l.6 2.5 2.1 1.2 2.5-.7 2.5 4.3-1.9 1.7v2.4l1.9 1.7-2.5 4.3-2.5-.7-2.1 1.2-.6 2.1h-5l-.6-2.1-2.1-1.2-2.5.7L1.8 16l1.9-1.7v-2.4L1.8 10.2l2.5-4.3 2.5.7 2.1-1.2Z" transform="translate(1 0) scale(.9)" />
+            <circle cx="12" cy="12" r="3" />
           </svg>
         </button>
+          <span class="alerts-tooltip" role="tooltip">Settings</span>
+        </div>
       </div>
     </header>
+
+    <div id="reviewBanner" class="review-banner" hidden>Local Plus preview · Simulated access, no payment <a href="?">View Free</a></div>
 
     <!-- Theme Customization Switcher -->
     <div class="theme-bar" role="toolbar" aria-label="Theme Selection">
@@ -821,7 +878,7 @@
           <button class="theme-more-option theme-more-select" type="button" data-theme="winter" aria-label="Try the Northern Lights theme">
             <span>northern lights</span><span class="theme-more-lock" aria-hidden="true">❄️</span>
           </button>
-          <p class="theme-more-note">more themes coming soon</p>
+          <p class="theme-more-note">Extra themes included with <strong>Plus</strong></p>
         </div>
       </div>
     </div>
@@ -1374,22 +1431,22 @@
 
     <dialog id="statsDialog" class="stats-dialog" aria-labelledby="statsDialogTitle">
       <div class="stats-dialog-header">
-        <h2 id="statsDialogTitle">Your Statistics</h2>
+        <h2 id="statsDialogTitle">Today’s statistics</h2>
         <button id="closeStatsBtn" class="stats-dialog-close" aria-label="Close statistics" title="Close">×</button>
       </div>
       <!-- Accomplishments & Tracking Section -->
       <section class="accomplishments-section" aria-label="Session Accomplishments">
       <div class="accomplishments-header">
         <div class="accomplishments-title-group">
-          <span class="accomplishments-icon">🏆</span>
-          <span class="accomplishments-title">Accomplishments</span>
+          <span class="accomplishments-icon" aria-hidden="true">🍅</span>
+          <span class="accomplishments-title">Today’s activity</span>
         </div>
-        <button id="resetStatsBtn" class="reset-stats-btn" title="Reset accomplishments history" aria-label="Reset Statistics">
+        <button id="resetStatsBtn" class="reset-stats-btn" title="Reset today’s statistics" aria-label="Reset today’s statistics">
           <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
             <path d="M3 3v5h5"></path>
           </svg>
-          <span>Reset Stats</span>
+          <span>Reset today</span>
         </button>
       </div>
 
@@ -1427,6 +1484,14 @@
       </div>
 
       <!-- Today's focus time -->
+      <div class="premium-section" data-premium-section="goals">
+        <div class="premium-teaser" data-premium-teaser="goals">
+          <div><span class="plus-badge">Plus</span><h3>A little focus, every day.</h3>
+          <p>Set a daily work goal and watch your progress grow.</p></div>
+          <div class="goal-sample" aria-hidden="true"><span></span></div>
+          <button type="button" class="plus-action" data-open-plus="goals">Explore work goals</button>
+        </div>
+        <div data-premium-content="goals" hidden>
       <div class="daily-focus-card">
         <div class="daily-focus-header">
           <span class="daily-focus-title">Today's work goal</span>
@@ -1447,6 +1512,17 @@
         <span class="daily-focus-progress-text" id="dailyFocusProgressText">0% complete</span>
       </div>
 
+        </div>
+      </div>
+      <div class="premium-section" data-premium-section="history">
+        <div class="premium-teaser" data-premium-teaser="history">
+          <div><span class="plus-badge">Plus</span><h3>See your focus take shape.</h3>
+          <p>Look back at your work by day, week, and month.</p></div>
+          <div class="history-sample" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <small>Example activity</small>
+          <button type="button" class="plus-action" data-open-plus="history">Explore work history</button>
+        </div>
+        <div data-premium-content="history" hidden>
       <div class="work-history-card" aria-label="Daily work history">
         <div class="work-history-header">
           <span class="daily-focus-title">Work by day</span>
@@ -1462,10 +1538,98 @@
         </div>
         <div class="work-history-chart" id="workHistoryChart" role="list" aria-label="Daily focused work time"></div>
       </div>
+        </div>
+      </div>
       </section>
     </dialog>
   </div>
 
+  <dialog id="settingsDialog" class="plus-dialog settings-dialog" aria-labelledby="settingsTitle">
+    <button type="button" class="plus-close" id="closeSettingsBtn" aria-label="Close settings">×</button>
+    <h2 id="settingsTitle">Settings</h2>
+    <section class="settings-section" aria-labelledby="accountSettingsTitle">
+      <h3 id="accountSettingsTitle">Your account</h3>
+      <p id="accountSettingsStatus">Tomodo Free</p>
+      <p class="settings-description" id="accountSettingsNote">Checking account services…</p>
+      <form id="accountSignInForm" class="account-signin-form">
+        <h4>Sign in or create an account</h4>
+        <label for="accountEmail">Email address</label>
+        <input id="accountEmail" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" disabled>
+        <button id="accountSignInBtn" type="submit" class="plus-action" disabled>Email me a sign-in link</button>
+        <p class="settings-description">No password needed. New visitors can create an account with the same link.</p>
+      </form>
+      <div class="settings-account-actions">
+        <button type="button" class="settings-outline" id="refreshAccountBtn" hidden>Refresh account</button>
+        <button type="button" class="settings-outline" id="manageBillingBtn" hidden>Manage billing</button>
+        <button type="button" class="settings-outline" id="importLocalStatsBtn" hidden>Import this browser’s previous statistics</button>
+        <button type="button" class="settings-outline" id="signOutBtn" hidden>Sign out</button>
+      </div>
+      <p id="accountMessage" class="settings-description" role="status" aria-live="polite"></p>
+    </section>
+    <section class="settings-section" aria-labelledby="defaultThemeTitle">
+      <h3 id="defaultThemeTitle">Default theme <span class="plus-badge">Plus</span></h3>
+      <p class="settings-description">Choose the theme that greets you when you open Tomodo.</p>
+      <form id="defaultThemeForm">
+        <label for="defaultThemeSelect">Open Tomodo with</label>
+        <select id="defaultThemeSelect" disabled><option value="">Last used theme</option></select>
+        <button type="submit" id="saveDefaultThemeBtn" class="plus-action" disabled>Save default theme</button>
+      </form>
+      <p id="defaultThemeStatus" class="settings-description" role="status" aria-live="polite"></p>
+      <button type="button" id="settingsExplorePlusBtn" class="plus-secondary" data-open-plus="settings">Explore Plus</button>
+    </section>
+  </dialog>
+
+  <dialog id="plusDialog" class="plus-dialog" aria-labelledby="plusTitle">
+    <button type="button" class="plus-close" id="closePlusBtn" aria-label="Close Plus preview">×</button>
+    <span class="plus-badge">Tomodo Plus</span>
+    <h2 id="plusTitle">Make time your own.</h2>
+    <p id="plusDescription">More worlds to focus in. A clearer view of your progress.</p>
+    <div class="plus-tracking-intro">
+      <h3>See your focus add up with Plus.</h3>
+      <p>Set a daily goal, track your work, and see the habits you’re building.</p>
+    </div>
+    <div class="plus-feature-intro"><h3>Set daily goals</h3><p>Give your workday a target.</p></div>
+    <div class="plus-goal-preview" aria-label="Example daily work goal: 1 hour completed out of a 1 hour 30 minute goal, 67 percent complete. This is sample activity.">
+      <div class="plus-goal-heading"><span>Today’s work goal</span><span class="plus-example-label">Example</span></div>
+      <div class="plus-goal-readout"><strong>1h</strong><span>of 1h 30m</span></div>
+      <div class="plus-goal-track" aria-hidden="true"><span></span></div>
+      <div class="plus-goal-caption">67% complete · 30 minutes to go</div>
+    </div>
+    <div class="plus-feature-intro"><h3>Track your work history</h3><p>See your focus add up over days, weeks, months, and years.</p></div>
+    <figure class="plus-history-preview" aria-label="Example weekly work history: 9 hours 45 minutes of focus, with a daily goal of 1 hour 30 minutes. This is sample activity.">
+      <figcaption><span>This week’s focus</span><span class="plus-example-label">Example</span></figcaption>
+      <div class="plus-history-total">9h 45m <span>one focused session at a time</span></div>
+      <div class="plus-chart-goal-label">Daily goal · 1h 30m</div>
+      <div class="plus-week-chart" aria-hidden="true">
+        <div class="plus-chart-goal-line"></div>
+        <div class="plus-chart-column"><i style="--bar-height:50%"></i><span>M</span></div>
+        <div class="plus-chart-column"><i style="--bar-height:87.5%"></i><span>T</span></div>
+        <div class="plus-chart-column"><i style="--bar-height:75%"></i><span>W</span></div>
+        <div class="plus-chart-column"><i style="--bar-height:100%"></i><span>T</span></div>
+        <div class="plus-chart-column"><i style="--bar-height:62.5%"></i><span>F</span></div>
+        <div class="plus-chart-column"><i style="--bar-height:37.5%"></i><span>S</span></div>
+        <div class="plus-chart-column"><i style="--bar-height:75%"></i><span>S</span></div>
+      </div>
+    </figure>
+    <ul class="plus-benefits">
+      <li><strong>Every theme included</strong><span id="plusThemeNote">Find your favorite place to focus.</span></li>
+    </ul>
+    <div class="plus-pricing" aria-label="Planned Plus pricing">
+      <label class="plus-plan"><input type="radio" name="plusPlan" value="monthly" checked aria-label="Monthly Plus, 3 dollars per month"><strong>$3<span>/month</span></strong><small>Billed monthly</small></label>
+      <label class="plus-plan"><input type="radio" name="plusPlan" value="yearly" aria-label="Yearly Plus, 24 dollars per year"><span class="plus-saving">Save 33%</span><strong>$24<span>/year</span></strong><small>$2 per month, billed yearly</small></label>
+    </div>
+    <p class="plus-launch-note" id="plusPurchaseNote">Subscriptions are not configured yet.</p>
+    <p id="checkoutMessage" class="settings-description" role="status" aria-live="polite"></p>
+    <button type="button" class="plus-action" id="unlockPlusBtn" disabled>Unlock goals &amp; history · Coming soon</button>
+    <button type="button" class="plus-secondary" id="keepFocusingBtn">Keep using Free</button>
+    <a id="localPlusReview" class="local-review-link" href="?review=plus" hidden>Review Plus locally · no purchase</a>
+    <p class="plus-free-note">Tomato, Desert Oasis, Zen Garden, and today’s statistics are always free.</p>
+  </dialog>
+  <script src="access.js"></script>
+  <script src="daily-stats.js"></script>
+  <script src="sync-store.js"></script>
+  <script src="account-client.js"></script>
+  <script src="account-ui.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

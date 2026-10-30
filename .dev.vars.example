@@ -1,0 +1,13 @@
+# Copy to .dev.vars (ignored by Git). Never put real secrets in source files.
+APP_ORIGIN=http://localhost:8788
+SUPABASE_URL=
+SUPABASE_PUBLISHABLE_KEY=
+SUPABASE_SECRET_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRICE_MONTHLY=
+STRIPE_PRICE_YEARLY=
+# Keep false until test-mode end-to-end checks and purchase policies are complete.
+BILLING_ENABLED=false
+# Set true only after configuring Stripe Tax for the business.
+STRIPE_AUTOMATIC_TAX=false

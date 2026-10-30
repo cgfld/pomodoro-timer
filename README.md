@@ -107,3 +107,20 @@ You can switch themes at any time using the theme bar below the header, with add
   - 🔄 **Completed Full Cycles**: Tracks every completed 8-segment cycle.
   - ⚖️ **Work vs. Rest Balance Bar**: Visual ratio showing your productivity balance.
   - 💾 **Persistent & Resettable**: Saved in `localStorage` across reloads, with a 1-click Reset button.
+
+## Tomodo accounts and Plus
+
+The `feature/tomodo-plus` branch includes the Free/Plus UI and a Cloudflare backend using Supabase authentication/storage and Stripe-hosted subscriptions. Plus is $3/month or $24/year. External accounts and production credentials have not been connected yet.
+
+```sh
+npm ci
+npm run dev
+```
+
+Open `http://localhost:8788/` for the app or `http://localhost:8788/?review=plus` for a local UI-only Plus preview. The review switch never grants server-side paid access. Without configured services, the free timer still works and sign-in/checkout remain unavailable.
+
+- [Backend setup guide](docs/BACKEND-SETUP.md): create Supabase/Stripe accounts, apply the database migration, configure secrets, and select Pages or Workers deployment.
+- [Product rollout](docs/PLUS-ROLLOUT.md): plan split and review instructions.
+- Run `npm test` for automated checks and `npm run build` to create deployable assets in `dist/`.
+
+Deploy only the built assets and compiled backend. Secret keys belong in Cloudflare secrets or the ignored `.dev.vars` file, never frontend code or Git.
