@@ -34,6 +34,7 @@ async function page(url=origin) {
   return w;
 }
 async function savePassword(w,password) {
+  if (w.document.getElementById('accountPasswordSection').hidden) w.document.getElementById('togglePasswordBtn').click();
   w.document.getElementById('newAccountPassword').value=password;
   w.document.getElementById('confirmNewAccountPassword').value=password;
   w.document.getElementById('passwordMessage').textContent='';

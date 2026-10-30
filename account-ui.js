@@ -1,4 +1,5 @@
 let accountAuthMode = 'signin';
+let passwordEditorOpen = false;
 let handledAuthReturn = false;
 /* Account integration for the existing timer. Cloud aggregates never enter source snapshots. */
 function preferenceKey(name) { return currentAccountId ? `${name}_${currentAccountId}` : name; }
@@ -94,14 +95,18 @@ function renderAccountUI() {
   document.getElementById('accountEmail').disabled = !connected;
   document.getElementById('accountSignInBtn').disabled = !connected;
   updateAccountAuthMode();
-  document.getElementById('accountPasswordSection').hidden = !user;
+  const passwordVisible = Boolean(user && passwordEditorOpen);
+  document.getElementById('accountPasswordSection').hidden = !passwordVisible;
+  const passwordToggle = document.getElementById('togglePasswordBtn');
+  passwordToggle.hidden = !user;
+  passwordToggle.setAttribute('aria-expanded',String(passwordVisible));
+  passwordToggle.textContent = passwordVisible ? 'Hide password form' : 'Set or change password';
   for (const id of ['newAccountPassword','confirmNewAccountPassword','saveAccountPasswordBtn']) document.getElementById(id).disabled = !connected || !user;
   document.getElementById('accountPasswordTitle').textContent = backendState.recovery ? 'Choose a new password' : 'Set or change your password';
   document.getElementById('accountPasswordHelp').textContent = backendState.recovery ? 'Your reset link has been verified. Save a new password to finish.' : 'Already using email links? Add a password to the same account. Your statistics and subscription stay with you.';
   document.getElementById('signOutBtn').hidden = !user;
   document.getElementById('refreshAccountBtn').hidden = !user;
   document.getElementById('manageBillingBtn').hidden = !user || !backendState.access.hasBillingAccount || !backendState.config.billingEnabled;
-  document.getElementById('importLocalStatsBtn').hidden = !user;
   const enabled = backendState.config.billingEnabled;
   const unlock = document.getElementById('unlockPlusBtn');
   unlock.disabled = !enabled || Boolean(backendState.access.plus);
@@ -118,6 +123,8 @@ async function applyAccountState(next) {
   const changed = currentAccountId !== (next.user?.id || null);
   const wasPlus = hasPlus;
   if (changed) {
+    passwordEditorOpen = false;
+    document.getElementById('passwordMessage').textContent = '';
     if (isRunning) pauseTimer();
     syncGeneration++;
     clearTimeout(syncTimer); syncTimer = null;
@@ -148,6 +155,7 @@ async function applyAccountState(next) {
     pauseTimer(); activeThemePreview = null;
     setTheme('tomato',{ restoring:true });
   }
+  if (next.user && next.recovery && !handledAuthReturn) passwordEditorOpen = true;
   renderAccountUI(); renderStats();
   if (next.authCallback && !handledAuthReturn && (next.user || next.error)) {
     handledAuthReturn = true;
@@ -160,18 +168,6 @@ async function applyAccountState(next) {
   }
   if (next.error) showAccountError(new Error(next.error));
   if (currentAccountId) await syncAccount();
-}
-async function importLocalStatistics() {
-  if (!currentAccountId) return;
-  if (!window.confirm('Add the statistics previously saved in this browser to your account? Repeating this import will not count them twice.')) return;
-  const guest = TomodoSyncStore.create(localStorage,'guest');
-  const rows = guest.rows().filter(row => backendState.access.plus || row.day === getLocalDateKey());
-  const account = currentAccountId;
-  for (let offset = 0; offset < rows.length; offset += 100) {
-    await window.TomodoBackend.sync({ sourceId:guest.sourceId,timezone:currentTimezone(),rows:rows.slice(offset,offset+100) },account);
-  }
-  await syncAccount();
-  document.getElementById('accountMessage').textContent = backendState.access.plus ? 'Previous browser activity imported.' : 'Today’s browser activity imported. Earlier history can be imported with Plus.';
 }
 function initAccountUI() {
   window.addEventListener('tomodo:account',event => { applyAccountState(event.detail).catch(showAccountError); });
@@ -190,7 +186,6 @@ function initAccountUI() {
   });
   document.getElementById('refreshAccountBtn').addEventListener('click',() => window.TomodoBackend.refresh().catch(showAccountError));
   document.getElementById('manageBillingBtn').addEventListener('click',() => window.TomodoBackend.billingPortal().catch(showAccountError));
-  document.getElementById('importLocalStatsBtn').addEventListener('click',() => importLocalStatistics().catch(showAccountError));
   document.getElementById('unlockPlusBtn').addEventListener('click',async () => {
     if (!backendState.user) {
       document.getElementById('plusDialog').close();
@@ -229,6 +224,15 @@ function updateAccountAuthMode() {
     : 'Use your email and password, or sign in with an email link.';
 }
 function initPasswordUI() {
+  document.getElementById('togglePasswordBtn').addEventListener('click',() => {
+    passwordEditorOpen = document.getElementById('accountPasswordSection').hidden;
+    if (!passwordEditorOpen) {
+      document.getElementById('newAccountPassword').value = '';
+      document.getElementById('confirmNewAccountPassword').value = '';
+    }
+    renderAccountUI();
+    if (passwordEditorOpen) document.getElementById('newAccountPassword').focus();
+  });
   const form = document.getElementById('accountSignInForm');
   const password = document.getElementById('accountPassword');
   const confirm = document.getElementById('accountPasswordConfirm');
@@ -287,10 +291,14 @@ function initPasswordUI() {
       await window.TomodoBackend.setPassword(first.value);
       first.value = ''; second.value = '';
       status.textContent = 'Password saved. You can now sign in with your email and password.';
+      passwordEditorOpen = false;
+      renderAccountUI();
     } catch (error) { status.textContent = error.message || 'Unable to save the password. Please try again.'; }
     finally { button.disabled = !backendState.user; }
   });
   document.getElementById('settingsDialog').addEventListener('close',() => {
+    passwordEditorOpen = false;
+    renderAccountUI();
     for (const field of [password,confirm,document.getElementById('newAccountPassword'),document.getElementById('confirmNewAccountPassword')]) field.value = '';
   });
 }

@@ -3104,3 +3104,5 @@ body[data-theme="retro"] .plus-tracking-intro h3 { font-family: inherit; }
 .account-password-section { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--plus-border, #cfd3c1); }
 .account-password-section h4 { font-size: .82rem; }
 .account-auth-modes button:focus-visible { outline: 2px solid var(--plus-accent, #b39a60); outline-offset: 2px; }
+.password-toggle { display: block; width: 100%; margin-top: 16px; }
+#passwordMessage:empty { display: none; }

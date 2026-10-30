@@ -35,7 +35,7 @@ Then run:
 npm run dev
 ```
 
-Open http://localhost:8788/, choose Settings, enter your email, and follow the sign-in link. You should see your email, a Sign out button, and an option to import this browser's previous statistics. Accounts without Plus can sync today's statistics; historical import and history reads require Plus.
+Open http://localhost:8788/, choose Settings, enter your email, and follow the sign-in link. You should see your email and a Sign out button. Password controls are behind the Set or change password button. Accounts without Plus can sync today's statistics; historical import and history reads require Plus.
 
 The local Worker runs on port 8788. `.dev.vars` overrides the production `APP_ORIGIN` with `http://localhost:8788`. The Python static server is still usable for theme design, but it does not run account or payment endpoints.
 
@@ -116,7 +116,7 @@ The signing secret belongs to that endpoint and environment; a local CLI secret 
 - Verified `active`/`trialing` subscriptions with an approved price and future paid-period end receive Plus. Cancel-at-period-end retains access until that end. `past_due`, unpaid, canceled, or expired access is free; there is no payment-failure grace period yet. Refunds do not themselves cancel subscriptions; handle refund/cancellation policy through Stripe/support.
 - Replayed webhook event IDs are deduplicated. Current subscription state is fetched from Stripe, and stale reconciliations cannot overwrite newer ones.
 - Source snapshots are scoped to an account and browser. Higher revisions replace prior totals; retrying does not add the same work twice. Cloud aggregates are displayed separately and never uploaded as local work.
-- A user explicitly imports prior guest data. Re-importing the same source is idempotent. Switching accounts partitions local data; sign-out restores guest data.
+- Guest statistics stay local and separate from signed-in account statistics. There is no import button. Switching accounts partitions local data; sign-out restores guest data.
 - Reset today resets this browser's contribution only, preserving previous days and other devices.
 - Modern browsers use a Web Lock to prevent multiple Tomodo tabs from running a timer simultaneously. Cross-device sessions remain separate contributions.
 - Pending local work survives network failure. Today sync is available to signed-in free users; old pending history sync resumes with Plus.

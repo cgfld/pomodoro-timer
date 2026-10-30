@@ -51,6 +51,14 @@ test('verified account state unlocks paid controls and combines cloud totals wit
     assert.equal(w.document.getElementById('statsWorkTime').textContent,'10m 0s');
     assert.equal(w.document.getElementById('manageBillingBtn').hidden,false);
     assert.equal(w.document.getElementById('accountSignInForm').hidden,true);
+    assert.equal(w.document.getElementById('accountPasswordSection').hidden,true);
+    const toggle=w.document.getElementById('togglePasswordBtn');
+    toggle.click();
+    assert.equal(w.document.getElementById('accountPasswordSection').hidden,false);
+    assert.equal(toggle.getAttribute('aria-expanded'),'true');
+    toggle.click();
+    assert.equal(w.document.getElementById('accountPasswordSection').hidden,true);
+    assert.equal(w.document.getElementById('importLocalStatsBtn'),null);
     assert(syncs.length>0);
     assert.equal(syncs[0].user,'user-a');
     assert.equal(syncs[0].payload.rows[0].work_seconds,0);
