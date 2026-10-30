@@ -119,7 +119,7 @@ npm run dev
 
 Open `http://localhost:8788/` for the app or `http://localhost:8788/?review=plus` for a local UI-only Plus preview. The review switch never grants server-side paid access. Without configured services, the free timer still works and sign-in/checkout remain unavailable.
 
-- [Backend setup guide](docs/BACKEND-SETUP.md): create Supabase/Stripe accounts, apply the database migration, configure secrets, and select Pages or Workers deployment.
+- [Backend setup guide](docs/BACKEND-SETUP.md): create Supabase/Stripe accounts, apply the database migration, configure secrets, and deploy to the existing Cloudflare Worker.
 - [Product rollout](docs/PLUS-ROLLOUT.md): plan split and review instructions.
 - Run `npm test` for automated checks and `npm run build` to create deployable assets in `dist/`.
 

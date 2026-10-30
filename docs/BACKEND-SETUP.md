@@ -1,6 +1,6 @@
 # Connect Tomodo's backend
 
-The implementation runs on Cloudflare Pages **or** Cloudflare Workers. Neither account has been created yet, so sign-in, email delivery, and actual test payments still need to be verified against your services. No production deployment or payment has been performed.
+Production is Cloudflare Worker **pomodoro-timer**, serving both `tomodo.app` and `www.tomodo.app`. The checked-in `wrangler.jsonc` targets that existing Worker; `www` redirects to the canonical `tomodo.app` origin. Neither account has been created yet, so sign-in, email delivery, and actual test payments still need to be verified against your services. No production deployment or payment has been performed.
 
 ## 1. Create the Supabase project first
 
@@ -37,7 +37,7 @@ npm run dev
 
 Open http://localhost:8788/, choose Settings, enter your email, and follow the sign-in link. You should see your email, a Sign out button, and an option to import this browser's previous statistics. Accounts without Plus can sync today's statistics; historical import and history reads require Plus.
 
-Use `npm run dev:worker` for the Workers version; its default port is 8787, so change `APP_ORIGIN` and the Supabase redirect URL to match. The Python static server is still usable for theme design, but it does not run account or payment endpoints.
+The local Worker runs on port 8788. `.dev.vars` overrides the production `APP_ORIGIN` with `http://localhost:8788`. The Python static server is still usable for theme design, but it does not run account or payment endpoints.
 
 The UI-only local Plus preview remains at `?review=plus`. It never bypasses server authorization, even on localhost. Real server features require a verified paid account.
 
@@ -62,14 +62,16 @@ stripe listen --forward-to http://localhost:8788/api/stripe-webhook
 
 Optional tax collection uses `STRIPE_AUTOMATIC_TAX=true`. Configure Stripe Tax and the business's applicable obligations before enabling it. Prices shown by Tomodo are base prices; hosted Checkout displays the final total.
 
-## 4. Confirm whether the existing Cloudflare project is Pages or Workers
+## 4. Deploy to the existing Cloudflare Worker
 
-Open Cloudflare → Workers & Pages and open the project serving `tomodo.app`.
+The production mapping has been verified through Cloudflare: `tomodo.app` and `www.tomodo.app` use Worker `pomodoro-timer`. `wrangler.jsonc` now contains its name and account ID. It preserves dashboard variables and uses the `ASSETS` binding for the built website.
 
-- **Pages** projects show Pages deployments, a build command, and a build output directory. Use `wrangler.jsonc`. Set the existing project's build command to `npm run build`, output directory to `dist`, and Node version to 22 or newer. Pages compiles `functions/api/[[path]].js` automatically. Match the config's `name` to the existing project name before using deployment commands.
-- **Workers** projects show a Worker script and bindings. Use `wrangler.worker.jsonc`, matching its `name` to the existing Worker. `worker.mjs` serves API routes and delegates the website to the `ASSETS` binding. Run `npm run build` before deployment.
+```sh
+npm run build
+npx wrangler deploy
+```
 
-Both versions use the same backend; do not create a second production site or change DNS just to add accounts. Do not upload the entire repository as static assets: deploy only the `dist` output and the compiled backend.
+For Git-based Workers Builds use `npm run build` as the build command and `npx wrangler deploy` as the deploy command. Do not create a second site or change DNS. The separate Pages Functions wrapper is available for future migration, but production uses `worker.mjs`.
 
 ## 5. Configure production after test-mode verification
 

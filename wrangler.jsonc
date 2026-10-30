@@ -1,6 +1,20 @@
 {
-  "name": "tomodo",
-  "pages_build_output_dir": "./dist",
+  "name": "pomodoro-timer",
+  "account_id": "016d5706a7407f90fe5bc711049bfd5b",
+  "main": "worker.mjs",
   "compatibility_date": "2026-10-29",
-  "compatibility_flags": ["nodejs_compat"]
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "keep_vars": true,
+  "vars": {
+    "APP_ORIGIN": "https://tomodo.app"
+  },
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/api/*"
+    ]
+  }
 }
