@@ -983,9 +983,6 @@ body[data-theme="astronomical"] .accomplishments-icon { color: #dfca91; }
   flex-direction: column;
   gap: 9px;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, .06);
-  border: 1px solid rgba(255, 255, 255, .1);
-  border-radius: var(--radius-sm);
 }
 
 .daily-focus-header,
@@ -1353,7 +1350,6 @@ body[data-theme="zen"] .legend-dot.yellow {
 body[data-theme="zen"] .control-btn.primary { color: #f8f6ed; background: linear-gradient(145deg, #789274, #526f58); border: 1px solid #a3b19a; }
 body[data-theme="zen"] .control-btn.secondary { color: #526f58; background: #f4f1e7; border: 1px solid #bcc4b1; }
 body[data-theme="zen"] .stat-value { color: #49664f; }
-body[data-theme="zen"] .daily-focus-card { background: rgba(243, 241, 232, .8); border-color: rgba(104, 122, 94, .24); }
 body[data-theme="zen"] .stat-card.work::before { background: #789274; box-shadow: 0 0 8px rgba(120, 146, 116, .35); }
 body[data-theme="zen"] .stat-card.rest::before { background: #b58a5c; box-shadow: 0 0 8px rgba(181, 138, 92, .3); }
 body[data-theme="zen"] .stat-card.cycles::before { background: #9c8056; box-shadow: 0 0 8px rgba(156, 128, 86, .3); }
@@ -1461,7 +1457,6 @@ body[data-theme="sundial"] .stat-dot.yellow { background: #d0aa5d; }
 body[data-theme="sundial"] .legend-dot.green { background: #75834f; box-shadow: 0 0 7px rgba(117, 131, 79, .4); }
 body[data-theme="sundial"] .legend-dot.orange { background: #bd7045; box-shadow: 0 0 7px rgba(189, 112, 69, .4); }
 body[data-theme="sundial"] .legend-dot.yellow { background: #d0aa5d; box-shadow: 0 0 7px rgba(208, 170, 93, .4); }
-body[data-theme="sundial"] .daily-focus-card { background: rgba(255, 246, 223, .65); border-color: rgba(139, 101, 61, .22); }
 body[data-theme="sundial"] .theme-more-menu { color: #58432e; background: #ead9b8; border-color: #a47749; }
 body[data-theme="sundial"] .control-btn.primary { color: #fff8ec; background: linear-gradient(145deg, #bd7045, #98583a); border: 1px solid #a7794e; }
 body[data-theme="sundial"] .control-btn.secondary { color: #795638; background: #f2e4c7; border: 1px solid #bea17b; }
@@ -1897,12 +1892,6 @@ body[data-theme="tomato"] .stat-subtext {
   color: rgba(255, 255, 255, 0.85);
 }
 
-body[data-theme="tomato"] .daily-focus-card {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(8px);
-}
-
 body[data-theme="tomato"] .daily-focus-title,
 body[data-theme="tomato"] .daily-focus-value {
   color: #ffffff;
@@ -2124,7 +2113,6 @@ body[data-theme="rainy"] .stat-dot.yellow { background: #a899bb; box-shadow: 0 0
 body[data-theme="rainy"] .control-btn.primary { color: #f5f8f5; background: linear-gradient(145deg, #759b9b, #527b80); border: 1px solid #a1baba; }
 body[data-theme="rainy"] .control-btn.secondary { color: #4e7278; background: #edf3ef; border: 1px solid #aebfc0; }
 body[data-theme="rainy"] .stat-value { color: #456b70; }
-body[data-theme="rainy"] .daily-focus-card,
 body[data-theme="rainy"] .work-history-card { background: rgba(241, 247, 244, .58); border-color: rgba(91, 122, 129, .26); }
 body[data-theme="rainy"] .work-history-bar { background: linear-gradient(90deg, #759b9b, #527b80); }
 body[data-theme="rainy"] .daily-focus-track { background: rgba(66, 92, 101, .14); }
@@ -2245,7 +2233,6 @@ body[data-theme="night"] .stat-dot.yellow { background: #e3c77e; box-shadow: 0 0
 body[data-theme="night"] .control-btn.primary { color: #211f37; background: linear-gradient(145deg, #c2b9e8, #9287c7); border: 1px solid #c9c2e4; }
 body[data-theme="night"] .control-btn.secondary { color: #ddd8f0; background: rgba(234, 233, 248, .1); border: 1px solid rgba(210, 208, 239, .3); }
 body[data-theme="night"] .stat-value { color: #e6d9ad; }
-body[data-theme="night"] .daily-focus-card,
 body[data-theme="night"] .work-history-card { background: rgba(238, 238, 250, .08); border-color: rgba(214, 215, 240, .18); }
 body[data-theme="night"] .work-history-bar { background: linear-gradient(90deg, #aaa0dc, #8379bd); }
 body[data-theme="night"] .daily-focus-track { background: rgba(5, 10, 28, .32); }
@@ -2351,7 +2338,6 @@ body[data-theme="forest"] .legend-dot.yellow,
 body[data-theme="forest"] .stat-dot.yellow { background: #b29a4e; box-shadow: 0 0 8px rgba(178, 154, 78, .35); }
 body[data-theme="forest"] .control-btn.primary { color: #fffdf0; background: linear-gradient(145deg, #82a66b, #588052); border: 1px solid #a6ba88; }
 body[data-theme="forest"] .control-btn.secondary { color: #4a6748; background: #f7f6e7; border: 1px solid #b6c29b; }
-body[data-theme="forest"] .daily-focus-card,
 body[data-theme="forest"] .work-history-card { background: rgba(255, 255, 247, .62); border-color: rgba(108, 139, 85, .2); }
 body[data-theme="forest"] .work-history-bar { background: linear-gradient(90deg, #91a977, #567a59); }
 body[data-theme="forest"] .daily-focus-track { background: rgba(63, 94, 57, .14); }
@@ -2413,7 +2399,6 @@ body[data-theme="forest"][data-forest-mode="night"] .light-item:is(.active, .com
 body[data-theme="forest"][data-forest-mode="night"] .light-item:is(.active, .completed) .light-inner-dot { background: #f4f0dc; }
 body[data-theme="forest"][data-forest-mode="night"] .control-btn.primary { color: #f7f3df; background: linear-gradient(145deg, #789b70, #4f7558); border-color: #a7b58a; }
 body[data-theme="forest"][data-forest-mode="night"] .control-btn.secondary { color: #dbe2c6; background: rgba(234, 237, 207, .1); border-color: rgba(203, 212, 175, .3); }
-body[data-theme="forest"][data-forest-mode="night"] .daily-focus-card,
 body[data-theme="forest"][data-forest-mode="night"] .work-history-card { background: rgba(231, 234, 201, .08); border-color: rgba(217, 224, 184, .17); }
 body[data-theme="forest"][data-forest-mode="night"] .daily-focus-track { background: rgba(13, 28, 22, .3); }
 .forest-shooting-star { display: none; }
@@ -2562,7 +2547,6 @@ body[data-theme="winter"] .legend-dot.yellow,
 body[data-theme="winter"] .stat-dot.yellow { background: #8993c7; box-shadow: 0 0 7px rgba(137, 147, 199, .34); }
 body[data-theme="winter"] .control-btn.primary { color: #f5fbf8; background: linear-gradient(145deg, #55958a, #406d7e); border: 1px solid #7db6b4; }
 body[data-theme="winter"] .control-btn.secondary { color: #416575; background: #f4f9f7; border: 1px solid #a9c5c9; }
-body[data-theme="winter"] .daily-focus-card,
 body[data-theme="winter"] .work-history-card { background: rgba(249, 253, 250, .68); border-color: rgba(98, 143, 153, .22); }
 body[data-theme="winter"] .work-history-bar { background: linear-gradient(90deg, #55958a, #406d7e); }
 body[data-theme="winter"] .daily-focus-track { background: rgba(57, 91, 107, .14); }
