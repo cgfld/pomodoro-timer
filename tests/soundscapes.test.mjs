@@ -49,3 +49,23 @@ test('rejected browser playback leaves controls ready to retry',async()=>{
   const {dom,w,button}=setup({rejectResume:true});
   try {button.click();await flush();assert.equal(button.getAttribute('aria-pressed'),'false');assert.equal(button.disabled,false);assert.match(w.document.getElementById('soundscapeDescription').textContent,/Try Play again/);}finally{dom.window.close();}
 });
+
+test('timer hooks start, pause, and cancel a pending audio start',async()=>{
+  const {dom,w,contexts,button}=setup();
+  try {
+    const sounds=w.TomodoSoundscapes;
+    const starting=sounds.play();
+    sounds.pause();
+    await starting;
+    assert.equal(button.getAttribute('aria-pressed'),'false');
+    assert.equal(contexts[0].sources.length,0,'pause during resume prevents late playback');
+    await sounds.play();
+    assert.equal(button.getAttribute('aria-pressed'),'true');
+    const count=contexts[0].sources.length;
+    await sounds.play();
+    assert.equal(contexts[0].sources.length,count,'repeated start does not duplicate audio');
+    sounds.pause();
+    assert(contexts[0].sources.every(s=>s.stopped));
+    assert.equal(button.getAttribute('aria-pressed'),'false');
+  } finally {dom.window.close();}
+});

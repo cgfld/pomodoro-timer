@@ -676,6 +676,7 @@ function beginTimer() {
   getAudioContext();
   lastHeartbeatTime = Date.now();
   isRunning = true;
+  globalThis.TomodoSoundscapes?.play?.();
   targetEndTime = performance.now() + (secondsRemaining * 1000);
 
   clearInterval(timerInterval);
@@ -687,6 +688,7 @@ function beginTimer() {
 function pauseTimer() {
   if (isRunning) flushTrackedTime();
   isRunning = false;
+  globalThis.TomodoSoundscapes?.pause?.();
   clearInterval(timerInterval);
   timerInterval = null;
   if (timerLockRelease) { timerLockRelease(); timerLockRelease = null; }
@@ -1326,7 +1328,10 @@ function initPlusExperience() {
     button.setAttribute('aria-label', `${TomodoAccess.themeNames[button.dataset.theme]}${hasPlus ? '' : ', Plus theme preview'}`);
   });
   document.querySelectorAll('[data-open-plus]').forEach(button => {
-    button.addEventListener('click', () => openPlusDialog(button.dataset.openPlus));
+    button.addEventListener('click', () => {
+      button.closest('dialog')?.close();
+      openPlusDialog(button.dataset.openPlus);
+    });
   });
   const dialog = document.getElementById('plusDialog');
   const close = () => dialog.close();

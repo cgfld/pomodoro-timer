@@ -790,7 +790,7 @@
             <button id="soundscapeBtn" class="alert-option" type="button" aria-pressed="false" aria-describedby="soundscapeDescription">
               <span aria-hidden="true">≈</span><span>Nature sounds</span><span id="soundscapeStatus" class="alert-status">Play</span>
             </button>
-            <p id="soundscapeDescription" class="alert-help" role="status">Garden breeze · follows your theme</p>
+            <p id="soundscapeDescription" class="alert-help" role="status">Garden breeze · follows your timer and theme</p>
             <label class="soundscape-volume" for="soundscapeVolume"><span>Ambience volume</span><input id="soundscapeVolume" type="range" min="0" max="100" value="35"></label>
             <button id="soundBtn" class="alert-option" type="button" role="switch" aria-checked="true">
               <svg id="soundOnIcon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -1437,6 +1437,7 @@
     <dialog id="statsDialog" class="stats-dialog" aria-labelledby="statsDialogTitle">
       <div class="stats-dialog-header">
         <h2 id="statsDialogTitle">Today’s statistics</h2>
+        <button type="button" class="dialog-plus-link" data-open-plus="history" data-premium-teaser="plus">Get Plus</button>
         <button id="closeStatsBtn" class="stats-dialog-close" aria-label="Close statistics" title="Close">×</button>
       </div>
       <!-- Accomplishments & Tracking Section -->
@@ -1552,6 +1553,7 @@
   <dialog id="settingsDialog" class="plus-dialog settings-dialog" aria-labelledby="settingsTitle">
     <button type="button" class="plus-close" id="closeSettingsBtn" aria-label="Close settings">×</button>
     <h2 id="settingsTitle">Settings</h2>
+    <button type="button" id="settingsExplorePlusBtn" class="dialog-plus-link settings-plus-link" data-open-plus="settings">Get Plus · $11.99 annually</button>
     <section class="settings-section" aria-labelledby="accountSettingsTitle">
       <h3 id="accountSettingsTitle">Your account</h3>
       <p id="accountSettingsStatus">Tomodo Free</p>
@@ -1605,7 +1607,6 @@
         <button type="submit" id="saveDefaultThemeBtn" class="plus-action" disabled>Save default theme</button>
       </form>
       <p id="defaultThemeStatus" class="settings-description" role="status" aria-live="polite"></p>
-      <button type="button" id="settingsExplorePlusBtn" class="plus-secondary" data-open-plus="settings">Explore Plus</button>
     </section>
   </dialog>
 

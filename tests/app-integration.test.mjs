@@ -130,3 +130,25 @@ test('a verified recovery callback opens password settings; saving and closing c
     assert(!Object.keys(w.localStorage).some(key=>String(w.localStorage.getItem(key)).includes('a new test passphrase')));
   } finally {w.close();}
 });
+
+test('timer playback controls ambience and both dialog headers open Plus',async()=>{
+  const {dom,w,context}=await boot();
+  try {
+    const calls=[];
+    w.TomodoSoundscapes.play=()=>calls.push('play');
+    w.TomodoSoundscapes.pause=()=>calls.push('pause');
+    vm.runInContext('startTimer(); pauseTimer();',context);
+    assert.deepEqual(calls,['play','pause']);
+    const stats=w.document.getElementById('statsDialog');
+    stats.showModal();
+    stats.querySelector('.dialog-plus-link').click();
+    assert.equal(stats.open,false);
+    assert.equal(w.document.getElementById('plusDialog').open,true);
+    w.document.getElementById('plusDialog').close();
+    const settings=w.document.getElementById('settingsDialog');
+    settings.showModal();
+    w.document.getElementById('settingsExplorePlusBtn').click();
+    assert.equal(settings.open,false);
+    assert.equal(w.document.getElementById('plusDialog').open,true);
+  } finally {dom.window.close();}
+});

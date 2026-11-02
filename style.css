@@ -208,6 +208,12 @@ body {
   margin: 0;
   font-size: 1rem;
 }
+.stats-dialog-header { gap: 10px; }
+.stats-dialog-header h2 { flex: 1; }
+.dialog-plus-link { flex-shrink: 0; padding: 8px 11px; color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 8px; font: inherit; font-size: .7rem; font-weight: 700; cursor: pointer; }
+.dialog-plus-link:hover { background: rgba(128,128,128,.12); }
+.dialog-plus-link:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.settings-plus-link { display: block; width: 100%; margin: 0 0 20px; }
 
 .stats-dialog-close {
   width: 34px;

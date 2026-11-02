@@ -1,4 +1,4 @@
-/* Local, synthesized ambient textures. No downloads, recordings, or autoplay. */
+/* Local, synthesized ambient textures; playback follows timer start/pause. */
 (function (root) {
   'use strict';
   // Each layer: noise color, low-pass cutoff, level, slow swell speed, stereo position.
@@ -94,12 +94,13 @@
     button.setAttribute('aria-pressed',String(playing));
     button.disabled=pending || !(root.AudioContext || root.webkitAudioContext);
     status.textContent=!(root.AudioContext || root.webkitAudioContext) ? 'Unavailable' : pending ? 'Starting…' : playing ? 'Pause' : 'Play';
-    description.textContent=message || `${(profiles[theme] || profiles.tomato).name} · follows your theme`;
+    description.textContent=message || `${(profiles[theme] || profiles.tomato).name} · follows your timer and theme`;
     slider.setAttribute('aria-valuetext',`${slider.value}%`);
   }
-  button.addEventListener('click',async()=>{
+  function pause() {operation++;pending=false;playing=false;player?.pause();render();}
+  async function play() {
+    if (playing || pending) return;
     const request=++operation;
-    if (playing) {playing=false;player.pause();render();return;}
     pending=true;render();
     try {
       if (!context) {
@@ -113,8 +114,11 @@
       if (request!==operation) return;
       if (context.state!=='running') throw new Error('Audio unavailable');
       player.setVolume(slider.value/100);player.play(theme);playing=true;pending=false;render();
-    } catch {pending=false;playing=false;player?.pause();render('Audio unavailable. Try Play again.');}
-  });
+    } catch {if(request!==operation)return;pending=false;playing=false;player?.pause();render('Audio unavailable. Try Play again.');}
+  }
+  root.TomodoSoundscapes.play=play;
+  root.TomodoSoundscapes.pause=pause;
+  button.addEventListener('click',()=>playing ? pause() : play());
   slider.addEventListener('input',()=>{
     player?.setVolume(slider.value/100);
     try {root.localStorage.setItem('tomodo_soundscape_volume',slider.value);} catch {}
@@ -124,6 +128,6 @@
     if (!Object.hasOwn(profiles,value) || theme===value) return;
     theme=value;if (playing) player.play(theme);render();
   };
-  root.addEventListener('pagehide',()=>{operation++;pending=false;playing=false;player?.pause();render();});
+  root.addEventListener('pagehide',pause);
   render();
 })(globalThis);
