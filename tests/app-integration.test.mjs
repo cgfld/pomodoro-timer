@@ -152,3 +152,18 @@ test('timer playback controls ambience and both dialog headers open Plus',async(
     assert.equal(w.document.getElementById('plusDialog').open,true);
   } finally {dom.window.close();}
 });
+
+test('Plus purchases use the annual plan without the removed pricing card',async()=>{
+  const {dom,w,context}=await boot();
+  try {
+    const plans=[];
+    w.TomodoBackend.checkout=async plan=>plans.push(plan);
+    context.nextAccount=account('user-a',false);
+    await vm.runInContext('applyAccountState(nextAccount)',context);
+    assert.equal(w.document.querySelector('.plus-pricing'),null);
+    w.document.getElementById('unlockPlusBtn').click();
+    await new Promise(resolve=>setImmediate(resolve));
+    assert.deepEqual(plans,['yearly']);
+    assert.match(w.document.querySelector('#statsDialog > .dialog-plus-link').textContent,/11\.99 annually/);
+  } finally {dom.window.close();}
+});

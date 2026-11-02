@@ -195,7 +195,7 @@ function initAccountUI() {
     }
     const button = document.getElementById('unlockPlusBtn');
     button.disabled = true;
-    try { await window.TomodoBackend.checkout(document.querySelector('input[name="plusPlan"]:checked').value); }
+    try { await window.TomodoBackend.checkout('yearly'); }
     catch (error) { document.getElementById('checkoutMessage').textContent = error.message; renderAccountUI(); }
   });
   renderAccountUI();
