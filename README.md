@@ -124,3 +124,9 @@ Open `http://localhost:8788/` for the app or `http://localhost:8788/?review=plus
 - Run `npm test` for automated checks and `npm run build` to create deployable assets in `dist/`.
 
 Deploy only the built assets and compiled backend. Secret keys belong in Cloudflare secrets or the ignored `.dev.vars` file, never frontend code or Git.
+
+## macOS app
+
+The native app bundles the existing timer with Tauri and connects to the same accounts and sync backend as the website. Run `npm run mac:dev` for development or `npm run mac:build` to create the app and DMG. Rust and Apple's command line tools are required.
+
+See [native app setup and release checklist](docs/NATIVE-APPS.md) for Keychain storage, email callback configuration, build output, current limits, and the iOS follow-up.

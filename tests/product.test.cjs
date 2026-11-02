@@ -13,9 +13,9 @@ test('only the three advertised themes are free; unknown themes are never availa
   assert.equal(access.canUseTheme('unknown', true), false);
 });
 
-test('today and timer are free; goals and history require Plus', () => {
-  for (const feature of ['today', 'timer']) assert.equal(access.canUseFeature(feature), true);
-  for (const feature of ['goals', 'history']) {
+test('today, timer, and daily goals are free; history requires Plus', () => {
+  for (const feature of ['today', 'timer', 'goals']) assert.equal(access.canUseFeature(feature), true);
+  for (const feature of ['history']) {
     assert.equal(access.canUseFeature(feature), false);
     assert.equal(access.canUseFeature(feature, true), true);
   }

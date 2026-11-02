@@ -40,7 +40,6 @@ test('expired and nonpaying accounts cannot fetch history or write paid preferen
   const history = await handleApi(request('/api/activity?from=2020-01-01&to=2020-01-02'),env,{db});
   assert.equal(history.status,403);
   assert.equal((await handleApi(request('/api/preferences','PATCH',{default_theme:'rolex'}),env,{db})).status,403);
-  assert.equal((await handleApi(request('/api/preferences','PATCH',{goal_seconds:3600}),env,{db})).status,403);
   assert.equal(db.operations.filter(x=>x==='activity_sources').length,0);
 });
 test('paid subscriptions must match an approved price and have a future period end', () => {
@@ -143,4 +142,30 @@ test('Checkout rejects an ineligible product even when the annual amount is corr
   const db = fakeDb({status:'free',stripe_customer_id:'cus_test'});
   const stripe = {prices:{retrieve:async()=>({active:true,currency:'usd',unit_amount:1199,recurring:{interval:'year',interval_count:1},product:{active:true,tax_code:'txcd_other'}})}};
   assert.equal((await handleApi(request('/api/checkout','POST',{plan:'yearly'}),env,{db,stripe})).status,503);
+});
+
+test('Free accounts read and save daily goals with validation; default themes remain paid',async()=>{
+  const db=fakeDb();
+  const originalFrom=db.from;
+  const patches=[];
+  const prefs={
+    select(){return this;},eq(){return this;},
+    maybeSingle:async()=>({data:{theme:'zen',default_theme:'hourglass',goal_seconds:5400,timezone:'UTC'},error:null}),
+    upsert:async()=>({data:null,error:null}),
+    update:patch=>({eq:async()=>{patches.push(patch);return {data:null,error:null};}})
+  };
+  db.from=name=>name==='account_preferences'?prefs:originalFrom(name);
+  const result=await (await handleApi(request('/api/preferences'),env,{db})).json();
+  assert.equal(result.goal_seconds,5400);
+  assert.equal(result.default_theme,null);
+  for (const goal of [1800,5400,43200]) {
+    assert.equal((await handleApi(request('/api/preferences','PATCH',{goal_seconds:goal}),env,{db})).status,200);
+    assert.equal(patches.at(-1).goal_seconds,goal);
+    assert.equal(Object.hasOwn(patches.at(-1),'default_theme'),false);
+  }
+  for (const goal of [0,1799,1900,43201,'3600',null]) {
+    assert.equal((await handleApi(request('/api/preferences','PATCH',{goal_seconds:goal}),env,{db})).status,400);
+  }
+  assert.equal((await handleApi(request('/api/preferences','PATCH',{goal_seconds:3600,default_theme:'zen'}),env,{db})).status,403);
+  assert.equal(patches.length,3);
 });

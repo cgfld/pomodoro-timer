@@ -589,7 +589,7 @@ function updateDisplay() {
   const strokeOffset = RING_CIRCUMFERENCE * (1 - progressRatio) * strokeDirection;
   progressFillEl.style.strokeDashoffset = strokeOffset;
   const rakeRemaining = isRunning && targetEndTime
-    ? Math.max(0, (targetEndTime - performance.now()) / 1000)
+    ? Math.max(0, (targetEndTime - Date.now()) / 1000)
     : secondsRemaining;
   updateZenRake(rakeRemaining / currentSeg.durationSec);
 
@@ -677,7 +677,7 @@ function beginTimer() {
   lastHeartbeatTime = Date.now();
   isRunning = true;
   globalThis.TomodoSoundscapes?.play?.();
-  targetEndTime = performance.now() + (secondsRemaining * 1000);
+  targetEndTime = Date.now() + (secondsRemaining * 1000);
 
   clearInterval(timerInterval);
   timerInterval = setInterval(tick, 200);
@@ -686,7 +686,10 @@ function beginTimer() {
 }
 
 function pauseTimer() {
-  if (isRunning) flushTrackedTime();
+  if (isRunning) {
+    flushTrackedTime();
+    secondsRemaining = Math.max(0, Math.ceil((targetEndTime - Date.now()) / 1000));
+  }
   isRunning = false;
   globalThis.TomodoSoundscapes?.pause?.();
   clearInterval(timerInterval);
@@ -709,14 +712,14 @@ let lastSecondTicked = null;
 function tick() {
   if (!isRunning) return;
 
-  const now = performance.now();
+  const now = Date.now();
   const preciseRemaining = Math.max(0, (targetEndTime - now) / 1000);
   const preciseProgress = preciseRemaining / SEGMENTS[currentSegmentIndex].durationSec;
   updateZenRake(preciseProgress);
   const sundialProgress = Math.min(1, Math.max(0, 1 - preciseProgress));
   document.getElementById('sundialRingSun')?.setAttribute('transform', `rotate(${sundialProgress * 360} 160 160)`);
   document.getElementById('sundialShadow')?.setAttribute('transform', `rotate(${-sundialProgress * 360} 145 145)`);
-  const diffSec = Math.max(0, Math.round((targetEndTime - now) / 1000));
+  const diffSec = Math.max(0, Math.ceil((targetEndTime - now) / 1000));
 
   if (diffSec !== secondsRemaining) {
     secondsRemaining = diffSec;
@@ -812,7 +815,18 @@ function skipSegment() {
 }
 
 // --- Browser Notifications ---
+function notificationPermission() {
+  return window.TomodoNative ? window.TomodoNative.notificationPermission : ('Notification' in window ? Notification.permission : 'unsupported');
+}
 function requestNotificationPermission() {
+  if (window.TomodoNative) {
+    window.TomodoNative.requestNotificationPermission().then(permission => {
+      notificationsEnabled = permission === 'granted';
+      notificationBtn.classList.toggle('active', notificationsEnabled);
+      renderAlertSettings();
+    }).catch(showAccountError);
+    return;
+  }
   if (!('Notification' in window)) {
     alert('This browser does not support desktop notifications.');
     return;
@@ -832,10 +846,11 @@ function requestNotificationPermission() {
 }
 
 function sendNotification(title, body) {
-  if (!notificationsEnabled || !('Notification' in window) || Notification.permission !== 'granted') {
+  if (!notificationsEnabled || notificationPermission() !== 'granted') {
     return;
   }
   try {
+    if (window.TomodoNative) { window.TomodoNative.notify(title, body); return; }
     new Notification(title, {
       body: body,
       icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⏳</text></svg>'
@@ -900,6 +915,7 @@ let dailyWorkGoalSeconds = 2 * 60 * 60;
 const DAILY_WORK_GOAL_STORAGE_KEY = 'pomodoro_daily_work_goal_seconds';
 
 function loadDailyWorkGoal() {
+  dailyWorkGoalSeconds = 2 * 60 * 60;
   const savedGoal = Number(localStorage.getItem(preferenceKey(DAILY_WORK_GOAL_STORAGE_KEY)));
   if (Number.isFinite(savedGoal) && savedGoal > 0) {
     dailyWorkGoalSeconds = Math.min(12 * 60 * 60, Math.max(30 * 60, Math.round(savedGoal / (30 * 60)) * 30 * 60));
@@ -1073,8 +1089,8 @@ function flushTrackedTime() {
   const from = lastHeartbeatTime;
   lastHeartbeatTime = now;
   // Stop credit at the actual end of the interval, even if the tab wakes late.
-  const end = targetEndTime == null ? now : now - Math.max(0, performance.now() - targetEndTime);
-  if (isRunning && end > from && now - from < 600000) {
+  const end = targetEndTime == null ? now : Math.min(now, targetEndTime);
+  if (isRunning && end > from) {
     TomodoDailyStats.addTime(stats, SEGMENTS[currentSegmentIndex].type, from, end);
     ensureTodayWorkStats();
     saveStats();
@@ -1244,10 +1260,10 @@ if (tomatoDialFaceEl) {
 
 soundBtn.addEventListener('click', toggleSound);
 notificationBtn.addEventListener('click', () => {
-  if (!('Notification' in window)) return;
-  if (Notification.permission === 'default') {
+  if (notificationPermission() === 'unsupported') return;
+  if (notificationPermission() === 'default') {
     requestNotificationPermission();
-  } else if (Notification.permission === 'granted') {
+  } else if (notificationPermission() === 'granted') {
     notificationsEnabled = !notificationsEnabled;
     notificationBtn.classList.toggle('active', notificationsEnabled);
   } else {
@@ -1319,7 +1335,7 @@ function initPlusExperience() {
     content.inert = !hasPlus;
   });
   document.querySelectorAll('[data-premium-teaser]').forEach(teaser => { teaser.hidden = hasPlus; });
-  dailyFocusGoalInputEl.disabled = !hasPlus;
+  dailyFocusGoalInputEl.disabled = false;
   document.querySelectorAll('.theme-more-option[data-theme]').forEach(button => {
     const badge = document.createElement('span');
     badge.className = 'theme-plus-badge';
@@ -1343,8 +1359,8 @@ function initPlusExperience() {
 function renderAlertSettings() {
   soundBtn.setAttribute('aria-checked', String(soundEnabled));
   document.getElementById('soundStatus').textContent = soundEnabled ? 'On' : 'Off';
-  const supported = 'Notification' in window;
-  const permission = supported ? Notification.permission : 'unsupported';
+  const permission = notificationPermission();
+  const supported = permission !== 'unsupported';
   const enabled = permission === 'granted' && notificationsEnabled;
   notificationBtn.disabled = !supported;
   notificationBtn.setAttribute('aria-checked', String(enabled));
@@ -1352,7 +1368,7 @@ function renderAlertSettings() {
   document.getElementById('notificationHelp').textContent = !supported
     ? 'This browser does not support desktop notifications.'
     : permission === 'denied'
-      ? 'Allow notifications in your browser’s site settings to enable alerts.'
+      ? (window.TomodoNative ? 'Allow Tomodo notifications in macOS System Settings.' : 'Allow notifications in your browser’s site settings to enable alerts.')
       : 'Get an alert when an interval ends.';
 }
 
@@ -1429,6 +1445,18 @@ function initSettings() {
   });
 }
 
+// Reconcile immediately after the window returns from sleep or backgrounding.
+function resumeTimerDisplay() { if (isRunning) tick(); }
+window.addEventListener('focus', resumeTimerDisplay);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') resumeTimerDisplay();
+});
+window.addEventListener('tomodo:notifications', () => {
+  notificationsEnabled = notificationPermission() === 'granted';
+  notificationBtn.classList.toggle('active', notificationsEnabled);
+  renderAlertSettings();
+});
+
 // --- Initialization ---
 function init() {
   loadStats();
@@ -1450,7 +1478,7 @@ function init() {
   initAccountUI();
   initHeartbeat();
 
-  if ('Notification' in window && Notification.permission === 'granted') {
+  if (notificationPermission() === 'granted') {
     notificationsEnabled = true;
     notificationBtn.classList.add('active');
   }

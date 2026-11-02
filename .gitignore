@@ -7,3 +7,7 @@ dist/
 !.env.example
 !.dev.vars.example
 twilio_2FA_recovery_code.txt
+dist-native/
+src-tauri/target/
+src-tauri/gen/
+stripe_backup_code.txt

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#fff8ea"/><stop offset="1" stop-color="#eadbc0"/></linearGradient><radialGradient id="tomato" cx=".35" cy=".25" r=".8"><stop stop-color="#ff7764"/><stop offset=".6" stop-color="#e44432"/><stop offset="1" stop-color="#ac231f"/></radialGradient></defs>
+<rect x="32" y="32" width="960" height="960" rx="216" fill="url(#bg)"/>
+<ellipse cx="512" cy="809" rx="283" ry="40" fill="#643b24" opacity=".15"/>
+<path d="M512 293C306 199 185 385 204 571C223 767 380 823 512 812C666 824 807 734 821 560C837 368 704 210 512 293" fill="url(#tomato)"/>
+<path d="M512 318L369 274L455 252L425 185L509 240L581 172L567 255L670 256L561 306L546 370Z" fill="#427749"/>
+<circle cx="512" cy="552" r="198" fill="#fff3db" stroke="#ae3429" stroke-width="18"/>
+<circle cx="512" cy="552" r="168" fill="none" stroke="#654b38" stroke-width="15" stroke-dasharray="3 26"/>
+<path d="M512 552L512 423" stroke="#cf392c" stroke-width="21" stroke-linecap="round"/>
+<circle cx="512" cy="552" r="22" fill="#654b38"/>
+<path d="M320 406Q286 454 287 490" fill="none" stroke="#ffb1a0" stroke-width="18" stroke-linecap="round" opacity=".6"/>
+</svg>

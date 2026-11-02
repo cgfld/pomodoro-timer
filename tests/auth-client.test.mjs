@@ -5,10 +5,12 @@ import vm from 'node:vm';
 import { authErrorMessage } from '../src/auth-policy.mjs';
 const original=await readFile(new URL('../src/account-client.js',import.meta.url),'utf8');
 const source=original.replace(/import[^\n]+\n/g,'');
-function setup({hash='',session=null,initError=null,passwordError=null}={}) {
+function setup({hash='',session=null,initError=null,passwordError=null,native=null}={}) {
   let current=session;
   const calls=[];
+  let clientOptions;
   const auth={
+    exchangeCodeForSession:async code=>{calls.push(['exchange',code]);current={access_token:'native-token',user:{id:'user-a'}};return {error:null};},
     initialize:async()=>({error:initError}),getSession:async()=>({data:{session:current},error:null}),onAuthStateChange:()=>{},
     signInWithPassword:async values=>{calls.push(['password',values]);if(!passwordError)current={access_token:'test-token',user:{id:'user-a'}};return {error:passwordError};},
     signUp:async values=>{calls.push(['signup',values]);return {data:{session:null},error:null};},
@@ -17,10 +19,10 @@ function setup({hash='',session=null,initError=null,passwordError=null}={}) {
     signInWithOtp:async values=>{calls.push(['link',values]);return {error:null};},
     signOut:async()=>{current=null;return {error:null};}
   };
-  const window={location:{origin:'https://tomodo.app',hash},dispatchEvent(){},addEventListener(){}};
-  const context=vm.createContext({window,createClient:()=>({auth}),authErrorMessage,URLSearchParams,CustomEvent:class {},setTimeout:()=>0,setInterval:()=>0,fetch:async path=>({ok:true,headers:{get:()=> 'application/json'},json:async()=>path==='/api/config'?{accountsEnabled:true,billingEnabled:false,supabaseUrl:'https://example.supabase.co',supabasePublishableKey:'public'}:path==='/api/account'?{user:{id:'user-a',email:'a@example.com'},access:{plus:false}}:{theme:'tomato',default_theme:null,goal_seconds:null}})});
+  const window={TomodoNative:native,location:{origin:'https://tomodo.app',hash},dispatchEvent(){},addEventListener(){}};
+  const context=vm.createContext({window,URL,createClient:(_url,_key,options)=>{clientOptions=options;return {auth};},authErrorMessage,URLSearchParams,CustomEvent:class {},setTimeout:()=>0,setInterval:()=>0,fetch:async path=>({ok:true,headers:{get:()=> 'application/json'},json:async()=>path==='/api/config'?{accountsEnabled:true,billingEnabled:false,supabaseUrl:'https://example.supabase.co',supabasePublishableKey:'public'}:path==='/api/account'?{user:{id:'user-a',email:'a@example.com'},access:{plus:false}}:{theme:'tomato',default_theme:null,goal_seconds:null}})});
   vm.runInContext(source,context);
-  return {backend:window.TomodoBackend,calls};
+  return {backend:window.TomodoBackend,calls,getClientOptions:()=>clientOptions};
 }
 test('password sign-in uses Supabase and refreshes the verified account',async()=>{
   const {backend,calls}=setup();await backend.init();
@@ -62,4 +64,38 @@ test('setting a password does not impose an app length limit or character rules'
   const long=' '.repeat(300);
   await backend.setPassword(long);
   assert.equal(calls[1][1].password,long);
+});
+
+test('native authentication uses app callbacks and native networking for account requests',async()=>{
+  const paths=[];
+  let callback;
+  const native={
+    redirectTo:'tomodo://auth/callback',storage:{},
+    listenForAuth:async cb=>{callback=cb;},
+    fetch:async path=>{
+      paths.push(path);
+      return {ok:true,headers:{get:()=> 'application/json'},json:async()=>path==='/api/config'
+        ? {accountsEnabled:true,supabaseUrl:'https://example.supabase.co',supabasePublishableKey:'public'}
+        : path==='/api/account' ? {user:{id:'user-a'},access:{plus:true}} : {theme:'zen'}};
+    }
+  };
+  const {backend,calls,getClientOptions}=setup({native,session:{access_token:'test',user:{id:'user-a'}}});
+  await backend.init();
+  assert.equal(typeof callback,'function');
+  assert.equal(getClientOptions().auth.flowType,'pkce');
+  assert.equal(getClientOptions().auth.detectSessionInUrl,false);
+  assert.equal(getClientOptions().auth.storage,native.storage);
+  assert.equal(getClientOptions().global.fetch,native.fetch);
+  assert(paths.includes('/api/account'));
+  await backend.signIn('a@example.com');
+  await backend.resetPassword('a@example.com');
+  assert.equal(calls[0][1].options.emailRedirectTo,'tomodo://auth/callback');
+  assert.equal(calls[1][2].redirectTo,'tomodo://auth/callback');
+  await callback('https://other.example/callback?code=untrusted');
+  assert.equal(backend.getState().authCallback,false);
+  await callback('tomodo://auth/callback?code=trusted-code');
+  assert.equal(calls.at(-1)[0],'exchange');
+  assert.equal(calls.at(-1)[1],'trusted-code');
+  assert.equal(backend.getState().authCallback,true);
+  assert.equal(backend.getState().user.id,'user-a');
 });

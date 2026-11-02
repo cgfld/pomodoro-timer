@@ -2,8 +2,8 @@
 
 ## Phase one: product preview (implemented on feature/tomodo-plus)
 
-- Free: complete timer, Tomato, Desert Oasis, Zen Garden, and today's work/rest/completion totals.
-- Plus: other themes, daily goal, weekly/monthly work-by-day views.
+- Free: complete timer, Tomato, Desert Oasis, Zen Garden, daily goals, and today's work/rest/completion totals.
+- Plus: other themes, default theme selection, weekly/monthly work-by-day views.
 - Price proposal approved: $11.99 yearly.
 - Premium theme selection applies the actual theme to the full page without opening a window. The timer pauses; pressing Start (or Space) opens Plus instead of running it. Free themes remain usable, and Escape restores the previous theme. Browsing a premium theme does not change the saved preference or grant access.
 - Existing premium theme preferences and historical data are retained. Free users fall back to Tomato until entitled.
@@ -21,7 +21,7 @@ Run `npm ci` and `npm run dev` from the repository. The development runtime serv
 
 The review switch works only for localhost, 127.0.0.1, or [::1]. The same query parameter on tomodo.app or a Pages preview domain never grants Plus. There is no persistent paid flag in localStorage.
 
-Check every theme preview, the two locked statistics cards, and the paid views. Test mobile widths and keyboard navigation in a browser. No browser was connected in the implementation environment, so visual QA is still required.
+Check every theme preview, the free daily goal and locked history card, and the paid views. Test mobile widths and keyboard navigation in a browser. No browser was connected in the implementation environment, so visual QA is still required.
 
 Automated checks: `npm test`, `npm run build`, and `node --check app.js`. See the backend setup guide for completed checks and the remaining external integration tests.
 

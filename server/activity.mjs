@@ -55,7 +55,7 @@ export async function preferences(request, db, user, access) {
   if (request.method === 'GET') {
     const row = checked(await db.from('account_preferences').select('theme,default_theme,goal_seconds,timezone').eq('user_id', user.id).maybeSingle());
     const result = row || { theme:'tomato', default_theme:null, goal_seconds:7200, timezone:'UTC' };
-    if (!access.plus) { result.default_theme = null; result.goal_seconds = null; }
+    if (!access.plus) result.default_theme = null;
     return json(result);
   }
   const data = await body(request);
@@ -65,16 +65,14 @@ export async function preferences(request, db, user, access) {
     if (!access.plus && !FREE.has(data.theme)) throw new HttpError(403, 'This theme is included with Plus.');
     update.theme = data.theme;
   }
-  if (data.default_theme !== undefined || data.goal_seconds !== undefined) {
-    if (!access.plus) throw new HttpError(403, 'Default themes and goals are included with Plus.');
-    if (data.default_theme !== undefined) {
-      if (data.default_theme !== null && !THEMES.has(data.default_theme)) throw new HttpError(400, 'Unknown default theme.');
-      update.default_theme = data.default_theme;
-    }
-    if (data.goal_seconds !== undefined) {
-      update.goal_seconds = integer(data.goal_seconds,1800,43200,'work goal');
-      if (update.goal_seconds % 1800) throw new HttpError(400, 'Choose a goal in half-hour increments.');
-    }
+  if (data.default_theme !== undefined) {
+    if (!access.plus) throw new HttpError(403, 'Default themes are included with Plus.');
+    if (data.default_theme !== null && !THEMES.has(data.default_theme)) throw new HttpError(400, 'Unknown default theme.');
+    update.default_theme = data.default_theme;
+  }
+  if (data.goal_seconds !== undefined) {
+    update.goal_seconds = integer(data.goal_seconds,1800,43200,'work goal');
+    if (update.goal_seconds % 1800) throw new HttpError(400, 'Choose a goal in half-hour increments.');
   }
   if (data.timezone !== undefined) update.timezone = timezone(data.timezone);
   // Initialize once, then patch only supplied columns so saving a theme cannot

@@ -21,7 +21,7 @@ async function boot() {
   return {dom,w,context,syncs};
 }
 function account(id='user-a',plus=true) {
-  return {ready:true,config:{accountsEnabled:true,billingEnabled:true},user:{id,email:`${id}@example.com`},access:{plus,hasBillingAccount:plus},preferences:{theme:'zen',default_theme:plus?'hourglass':null,goal_seconds:plus?3600:null,timezone:'UTC'}};
+  return {ready:true,config:{accountsEnabled:true,billingEnabled:true},user:{id,email:`${id}@example.com`},access:{plus,hasBillingAccount:plus},preferences:{theme:'zen',default_theme:plus?'hourglass':null,goal_seconds:3600,timezone:'UTC'}};
 }
 test('actual app markup boots with free timer, menus, settings, and disabled unconfigured checkout',async()=>{
   const {dom,w}=await boot();
@@ -165,5 +165,69 @@ test('Plus purchases use the annual plan without the removed pricing card',async
     await new Promise(resolve=>setImmediate(resolve));
     assert.deepEqual(plans,['yearly']);
     assert.match(w.document.querySelector('#statsDialog > .dialog-plus-link').textContent,/11\.99 annually/);
+  } finally {dom.window.close();}
+});
+
+test('sleep recovery uses elapsed wall time, credits only the interval, and completes once',async()=>{
+  const {dom,w,context}=await boot();
+  try {
+    let now=w.Date.now();
+    w.Date.now=()=>now;
+    vm.runInContext('getAudioContext=()=>null; playChime=()=>{}; playClockTick=()=>{}; beginTimer()',context);
+    now+=10*60*1000;
+    w.dispatchEvent(new w.Event('focus'));
+    assert.equal(w.document.getElementById('timeDisplay').textContent,'15:00');
+    now+=30*60*1000;
+    w.dispatchEvent(new w.Event('focus'));
+    assert.equal(vm.runInContext('isRunning',context),false);
+    assert.equal(vm.runInContext('stats.workCompleted',context),1);
+    assert.equal(vm.runInContext('stats.workSeconds',context),120+25*60);
+    assert.equal(w.document.getElementById('timeDisplay').textContent,'05:00');
+    w.dispatchEvent(new w.Event('focus'));
+    assert.equal(vm.runInContext('stats.workCompleted',context),1);
+  } finally {dom.window.close();}
+});
+
+test('pausing between display ticks retains the current remaining time',async()=>{
+  const {dom,w,context}=await boot();
+  try {
+    let now=w.Date.now();w.Date.now=()=>now;
+    vm.runInContext('getAudioContext=()=>null; beginTimer()',context);
+    now+=12500;
+    vm.runInContext('pauseTimer()',context);
+    assert.equal(vm.runInContext('secondsRemaining',context),1488);
+    now+=60000;
+    vm.runInContext('beginTimer()',context);
+    now+=1000;
+    vm.runInContext('tick()',context);
+    assert.equal(vm.runInContext('secondsRemaining',context),1487);
+  } finally {dom.window.close();}
+});
+
+test('guests can set daily goals; Free accounts sync goals and keep guest preferences separate',async()=>{
+  const {dom,w,context}=await boot();
+  try {
+    const input=w.document.getElementById('dailyFocusGoalInput');
+    assert.equal(input.disabled,false);
+    assert.equal(input.closest('[hidden], [inert]'),null);
+    assert.equal(w.document.querySelector('[data-premium-teaser="goals"]'),null);
+    assert.equal(w.document.querySelector('[data-premium-content="history"]').hidden,true);
+    input.value='1.5';input.dispatchEvent(new w.Event('change'));
+    assert.equal(w.localStorage.getItem('pomodoro_daily_work_goal_seconds'),'5400');
+    assert.equal(w.document.getElementById('dailyFocusGoalValue').textContent,'1.5h');
+    const saved=[];w.TomodoBackend.savePreferences=async value=>saved.push(value);
+    context.nextAccount=account('free-user',false);
+    await vm.runInContext('applyAccountState(nextAccount)',context);
+    assert.equal(input.disabled,false);
+    assert.equal(input.value,'1');
+    input.value='3';input.dispatchEvent(new w.Event('change'));
+    assert.equal(saved[0].goal_seconds,10800);
+    assert.equal(w.localStorage.getItem('pomodoro_daily_work_goal_seconds_free-user'),'10800');
+    context.nextAccount={ready:true,config:{accountsEnabled:true,billingEnabled:true},user:null,access:{plus:false},preferences:null};
+    await vm.runInContext('applyAccountState(nextAccount)',context);
+    assert.equal(input.value,'1.5');
+    w.localStorage.removeItem('pomodoro_daily_work_goal_seconds');
+    vm.runInContext('loadDailyWorkGoal()',context);
+    assert.equal(input.value,'2');
   } finally {dom.window.close();}
 });

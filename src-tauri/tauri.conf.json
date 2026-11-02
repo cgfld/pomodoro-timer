@@ -1,0 +1,59 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Tomodo",
+  "version": "1.0.0",
+  "identifier": "app.tomodo.desktop",
+  "build": {
+    "beforeDevCommand": "npm run build:native",
+    "beforeBuildCommand": "npm run build:native",
+    "frontendDist": "../dist-native"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Tomodo",
+        "width": 1120,
+        "height": 850,
+        "minWidth": 390,
+        "minHeight": 640,
+        "backgroundColor": "#f8f1e7"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' ipc: http://ipc.localhost; media-src 'self' blob: data:"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "app",
+      "dmg"
+    ],
+    "category": "Productivity",
+    "shortDescription": "A calmer focus timer",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "macOS": {
+      "minimumSystemVersion": "11.0",
+      "signingIdentity": "-"
+    }
+  },
+  "plugins": {
+    "deep-link": {
+      "desktop": {
+        "schemes": [
+          "tomodo"
+        ]
+      }
+    },
+    "http": {
+      "scopeRedirects": true
+    }
+  }
+}

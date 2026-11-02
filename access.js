@@ -10,7 +10,7 @@
   const policy = Object.freeze({
     freeThemes, themeNames,
     canUseTheme: (theme, plus = false) => Object.hasOwn(themeNames, theme) && (plus || freeThemes.includes(theme)),
-    canUseFeature: (feature, plus = false) => ['timer', 'today'].includes(feature) || (plus && ['goals', 'history'].includes(feature)),
+    canUseFeature: (feature, plus = false) => ['timer', 'today', 'goals'].includes(feature) || (plus && ['history'].includes(feature)),
     startupTheme: (savedTheme, defaultTheme, plus = false) => {
       if (plus && Object.hasOwn(themeNames, defaultTheme)) return defaultTheme;
       return Object.hasOwn(themeNames, savedTheme) && (plus || freeThemes.includes(savedTheme)) ? savedTheme : 'tomato';

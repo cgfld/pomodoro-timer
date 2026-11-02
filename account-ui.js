@@ -77,7 +77,7 @@ async function syncAccount() {
 function renderPaidFeatures() {
   document.querySelectorAll('[data-premium-content]').forEach(el => { el.hidden = !hasPlus; el.inert = !hasPlus; });
   document.querySelectorAll('[data-premium-teaser]').forEach(el => { el.hidden = hasPlus; });
-  dailyFocusGoalInputEl.disabled = !hasPlus;
+  dailyFocusGoalInputEl.disabled = false;
   document.getElementById('defaultThemeSelect').disabled = !hasPlus;
   document.getElementById('saveDefaultThemeBtn').disabled = !hasPlus;
   document.getElementById('settingsExplorePlusBtn').hidden = hasPlus;
