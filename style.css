@@ -210,10 +210,34 @@ body {
 }
 .stats-dialog-header { gap: 10px; }
 .stats-dialog-header h2 { flex: 1; }
-.dialog-plus-link { flex-shrink: 0; padding: 8px 11px; color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 8px; font: inherit; font-size: .7rem; font-weight: 700; cursor: pointer; }
-.dialog-plus-link:hover { background: rgba(128,128,128,.12); }
-.dialog-plus-link:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.dialog-plus-link { flex-shrink: 0; padding: 14px 18px; color: var(--upgrade-ink, #fff9ed); background: linear-gradient(120deg, var(--upgrade-start, #315d42), var(--upgrade-end, #467345)); border: 1px solid var(--upgrade-border, #71926a); border-radius: var(--upgrade-radius, 12px); box-shadow: inset 0 1px 0 #ffffff40, 0 4px 12px var(--upgrade-shadow, #214b3026); font: inherit; font-size: .78rem; font-weight: 700; letter-spacing: .015em; cursor: pointer; transition: filter .18s ease, transform .18s ease, box-shadow .18s ease; }
+.dialog-plus-link:hover { filter: brightness(1.07); transform: translateY(-1px); box-shadow: inset 0 1px 0 #ffffff55, 0 6px 18px var(--upgrade-shadow, #214b3026); }
+.dialog-plus-link:active { transform: translateY(0); filter: brightness(.97); }
+.dialog-plus-link:focus-visible { outline: 3px solid var(--text-main, #526f58); outline-offset: 4px; }
 .settings-plus-link { display: block; width: 100%; margin: 20px 0 0; }
+
+/* The upgrade invitation carries the same palette in Statistics and Settings. */
+body[data-theme="tomato"] { --upgrade-start: #b42636; --upgrade-end: #c72a3a; --upgrade-ink: #fff9ed; --upgrade-border: #ff9e90; --upgrade-shadow: #861d3540; --upgrade-radius: 18px; }
+body[data-theme="sundial"] { --upgrade-start: #e7bb6e; --upgrade-end: #f5db9f; --upgrade-ink: #4e321c; --upgrade-border: #ba8c47; --upgrade-shadow: #88602c30; }
+body[data-theme="zen"] { --upgrade-start: #3d6548; --upgrade-end: #47724b; --upgrade-ink: #f6fbef; --upgrade-border: #8fa782; --upgrade-shadow: #304d342e; }
+body[data-theme="forest"] { --upgrade-start: #315d42; --upgrade-end: #467345; --upgrade-ink: #fff9df; --upgrade-border: #92ac6c; --upgrade-shadow: #214b3038; --upgrade-radius: 16px; }
+body[data-theme="forest"][data-forest-mode="night"] { --upgrade-start: #a5c08a; --upgrade-end: #d0dba7; --upgrade-ink: #203d2c; --upgrade-border: #d5e2b5; --upgrade-shadow: #b7d58a20; }
+body[data-theme="rainy"] { --upgrade-start: #315968; --upgrade-end: #427080; --upgrade-ink: #f3fcff; --upgrade-border: #86afb7; --upgrade-shadow: #31596830; }
+body[data-theme="night"] { --upgrade-start: #bcb2ef; --upgrade-end: #e2c8f0; --upgrade-ink: #211d39; --upgrade-border: #e1d5ff; --upgrade-shadow: #bca7ed30; --upgrade-radius: 16px; }
+body[data-theme="winter"] { --upgrade-start: #9fdbd6; --upgrade-end: #c9ece5; --upgrade-ink: #123b45; --upgrade-border: #76b5bb; --upgrade-shadow: #559eaa30; }
+body[data-theme="retro"] { --upgrade-start: #79f6b4; --upgrade-end: #d6fb86; --upgrade-ink: #161026; --upgrade-border: #c7ffde; --upgrade-shadow: #06041280; --upgrade-radius: 0; }
+body[data-theme="retro"] .dialog-plus-link { font-family: 'JetBrains Mono', monospace; border-width: 2px; box-shadow: 4px 4px 0 #080613; }
+body[data-theme="retro"] .dialog-plus-link:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 #080613; }
+body[data-theme="retro"] .dialog-plus-link:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #080613; }
+body[data-theme="hourglass"] { --upgrade-start: #dcb57a; --upgrade-end: #f0d59c; --upgrade-ink: #52391e; --upgrade-border: #b5935f; --upgrade-shadow: #98723f30; }
+body[data-theme="rolex"] { --upgrade-start: #bfa060; --upgrade-end: #ebd69b; --upgrade-ink: #17372b; --upgrade-border: #eddaac; --upgrade-shadow: #bfa06030; --upgrade-radius: 8px; }
+body[data-theme="astronomical"] { --upgrade-start: #c6b16e; --upgrade-end: #f0dfab; --upgrade-ink: #19273e; --upgrade-border: #f0dfab; --upgrade-shadow: #dfca9126; --upgrade-radius: 10px; }
+@media (prefers-reduced-motion: reduce) {
+  .dialog-plus-link { transition: none; }
+  .dialog-plus-link:hover, .dialog-plus-link:active,
+  body[data-theme="retro"] .dialog-plus-link:hover,
+  body[data-theme="retro"] .dialog-plus-link:active { transform: none; }
+}
 
 .stats-dialog-close {
   width: 34px;
