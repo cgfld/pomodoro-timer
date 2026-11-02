@@ -99,7 +99,7 @@ test('Checkout uses the verified customer, configured price, and fixed return UR
   db.rpc=async(name,params)=>{leases.push({name,params});return {data:name==='claim_checkout'?true:null,error:null};};
   let captured;
   const stripe={
-    prices:{retrieve:async()=>({active:true,currency:'usd',unit_amount:599,recurring:{interval:'year',interval_count:1}})},
+    prices:{retrieve:async()=>({active:true,currency:'usd',unit_amount:1199,recurring:{interval:'year',interval_count:1}})},
     subscriptions:{list:async()=>({data:[],has_more:false})},
     checkout:{sessions:{list:async()=>({data:[],has_more:false}),create:async(params)=>{captured=params;return {url:'https://checkout.stripe.com/test'};}}}
   };
@@ -116,6 +116,6 @@ test('Checkout uses the verified customer, configured price, and fixed return UR
 test('parallel Checkout requests stop at the lease and do not create another session',async()=>{
   const db=fakeDb({status:'free',stripe_customer_id:'cus_verified'});
   db.rpc=async()=>({data:false,error:null});
-  const stripe={prices:{retrieve:async()=>({active:true,currency:'usd',unit_amount:599,recurring:{interval:'year',interval_count:1}})}};
+  const stripe={prices:{retrieve:async()=>({active:true,currency:'usd',unit_amount:1199,recurring:{interval:'year',interval_count:1}})}};
   assert.equal((await handleApi(request('/api/checkout','POST',{plan:'yearly'}),env,{db,stripe})).status,409);
 });

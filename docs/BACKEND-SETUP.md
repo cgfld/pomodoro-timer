@@ -55,7 +55,7 @@ The connector validates the key types, email authentication, and all four databa
 
 1. Create a Stripe account and use its sandbox/test environment.
 2. Create one product: **Tomodo Plus**.
-3. Add one **USD recurring** price: **$5.99 every year**. No trial or metered pricing is configured by this implementation. The server verifies those amounts, currency, and intervals before checkout.
+3. Add one **USD recurring** price: **$11.99 every year**. No trial or metered pricing is configured by this implementation. The server verifies those amounts, currency, and intervals before checkout.
 4. Copy the price ID into `STRIPE_PRICE_YEARLY` in `.dev.vars`.
 5. Put the Stripe **test secret key** in `STRIPE_SECRET_KEY`. A Stripe publishable key is not needed because the app redirects to Stripe-hosted Checkout.
 6. Enable Stripe's customer portal and allow customers to update payment methods and cancel at the end of the paid period. Configure any plan switching to use only these Tomodo prices.

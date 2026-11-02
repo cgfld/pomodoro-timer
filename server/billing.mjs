@@ -21,7 +21,7 @@ export async function checkout(request, env, db, stripe, user) {
   if (!price) throw new HttpError(400, 'Choose the yearly plan.');
   const configuredPrice = await stripe.prices.retrieve(price);
   const interval = 'year';
-  if (!configuredPrice.active || configuredPrice.currency !== 'usd' || configuredPrice.unit_amount !== 599 || configuredPrice.recurring?.interval !== interval || configuredPrice.recurring?.interval_count !== 1) {
+  if (!configuredPrice.active || configuredPrice.currency !== 'usd' || configuredPrice.unit_amount !== 1199 || configuredPrice.recurring?.interval !== interval || configuredPrice.recurring?.interval_count !== 1) {
     throw new HttpError(503, 'The subscription price is not configured correctly. Please contact support.');
   }
   let access = await entitlement(db,user.id);

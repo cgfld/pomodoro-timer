@@ -4,7 +4,7 @@
 
 - Free: complete timer, Tomato, Desert Oasis, Zen Garden, and today's work/rest/completion totals.
 - Plus: other themes, daily goal, weekly/monthly work-by-day views.
-- Price proposal approved: $5.99 yearly.
+- Price proposal approved: $11.99 yearly.
 - Premium theme selection applies the actual theme to the full page without opening a window. The timer pauses; pressing Start (or Space) opens Plus instead of running it. Free themes remain usable, and Escape restores the previous theme. Browsing a premium theme does not change the saved preference or grant access.
 - Existing premium theme preferences and historical data are retained. Free users fall back to Tomato until entitled.
 - Local calendar rollover resets today's counters. Lifetime records remain stored for migration.

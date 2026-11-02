@@ -111,7 +111,7 @@ function renderAccountUI() {
   unlock.disabled = !enabled || Boolean(backendState.access.plus);
   unlock.textContent = backendState.access.plus ? 'Plus is active' : enabled ? 'Unlock goals & history' : 'Unlock goals & history · Coming soon';
   document.getElementById('plusPurchaseNote').textContent = enabled
-    ? '$5.99 per year. Manage or cancel your subscription in Settings.'
+    ? '$11.99 per year. Manage or cancel your subscription in Settings.'
     : 'Subscriptions are not configured yet.';
   document.getElementById('defaultThemeStatus').textContent = hasPlus
     ? user ? 'Your default theme is saved to your account.' : 'Your default is saved in this browser.'
