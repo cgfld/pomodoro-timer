@@ -4,7 +4,7 @@ import { checked, entitlement } from './services.mjs';
 function enabled(env) { if (!billingConfigured(env)) throw new HttpError(503, 'Subscriptions are not available yet.'); }
 const idOf = value => typeof value === 'string' ? value : value?.id;
 export function paidSubscription(subscriptions, env, now = Date.now()) {
-  const allowed = new Set([env.STRIPE_PRICE_MONTHLY, env.STRIPE_PRICE_YEARLY]);
+  const allowed = new Set([env.STRIPE_PRICE_YEARLY].filter(Boolean));
   const eligible = subscriptions.flatMap(subscription => {
     const items = subscription.items?.data || [];
     const paidItems = items.filter(item => allowed.has(idOf(item.price)));
@@ -17,11 +17,11 @@ export function paidSubscription(subscriptions, env, now = Date.now()) {
 export async function checkout(request, env, db, stripe, user) {
   enabled(env);
   const data = await body(request);
-  const price = data.plan === 'monthly' ? env.STRIPE_PRICE_MONTHLY : data.plan === 'yearly' ? env.STRIPE_PRICE_YEARLY : null;
-  if (!price) throw new HttpError(400, 'Choose monthly or yearly.');
+  const price = data.plan === 'yearly' ? env.STRIPE_PRICE_YEARLY : null;
+  if (!price) throw new HttpError(400, 'Choose the yearly plan.');
   const configuredPrice = await stripe.prices.retrieve(price);
-  const interval = data.plan === 'monthly' ? 'month' : 'year';
-  if (!configuredPrice.active || configuredPrice.currency !== 'usd' || configuredPrice.unit_amount !== (data.plan === 'monthly' ? 300 : 2400) || configuredPrice.recurring?.interval !== interval || configuredPrice.recurring?.interval_count !== 1) {
+  const interval = 'year';
+  if (!configuredPrice.active || configuredPrice.currency !== 'usd' || configuredPrice.unit_amount !== 599 || configuredPrice.recurring?.interval !== interval || configuredPrice.recurring?.interval_count !== 1) {
     throw new HttpError(503, 'The subscription price is not configured correctly. Please contact support.');
   }
   let access = await entitlement(db,user.id);

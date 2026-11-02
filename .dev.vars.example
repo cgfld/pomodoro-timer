@@ -5,7 +5,6 @@ SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SECRET_KEY=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
-STRIPE_PRICE_MONTHLY=
 STRIPE_PRICE_YEARLY=
 # Keep false until test-mode end-to-end checks and purchase policies are complete.
 BILLING_ENABLED=false

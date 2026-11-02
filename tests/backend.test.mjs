@@ -5,7 +5,7 @@ import { handleApi } from '../server/router.mjs';
 import { paidSubscription } from '../server/billing.mjs';
 import { body, dateKey, timezone, todayIn } from '../server/http.mjs';
 import { validateSnapshot } from '../server/activity.mjs';
-const env = { APP_ORIGIN:'https://tomodo.app',SUPABASE_URL:'https://example.supabase.co',SUPABASE_PUBLISHABLE_KEY:'public-test',SUPABASE_SECRET_KEY:'secret-test',STRIPE_SECRET_KEY:'sk_test_example',STRIPE_WEBHOOK_SECRET:'whsec_example',STRIPE_PRICE_MONTHLY:'price_month',STRIPE_PRICE_YEARLY:'price_year',BILLING_ENABLED:'true' };
+const env = { APP_ORIGIN:'https://tomodo.app',SUPABASE_URL:'https://example.supabase.co',SUPABASE_PUBLISHABLE_KEY:'public-test',SUPABASE_SECRET_KEY:'secret-test',STRIPE_SECRET_KEY:'sk_test_example',STRIPE_WEBHOOK_SECRET:'whsec_example',STRIPE_PRICE_YEARLY:'price_year',BILLING_ENABLED:'true' };
 const userId = '00000000-0000-4000-8000-000000000001';
 function fakeDb(access = null) {
   const operations = [];
@@ -47,9 +47,9 @@ test('paid subscriptions must match an approved price and have a future period e
   const future = Math.floor(Date.now()/1000)+3600;
   const sub = (status,price,end=future)=>({ id:'sub_1',status,items:{data:[{price:{id:price},current_period_end:end}]} });
   assert.equal(paidSubscription([sub('active','unrelated')],env),null);
-  assert.equal(paidSubscription([sub('past_due','price_month')],env),null);
-  assert.equal(paidSubscription([sub('active','price_month',1)],env),null);
-  assert.equal(paidSubscription([sub('active','price_month')],env).subscription.id,'sub_1');
+  assert.equal(paidSubscription([sub('past_due','price_year')],env),null);
+  assert.equal(paidSubscription([sub('active','price_year',1)],env),null);
+  assert.equal(paidSubscription([sub('active','price_year')],env).subscription.id,'sub_1');
   assert.equal(paidSubscription([sub('trialing','price_year')],env).end,future);
 });
 test('a validly signed stale event reconciles current Stripe state instead of granting old access', async () => {
@@ -90,8 +90,8 @@ test('JSON parser rejects oversized and non-object input', async () => {
 test('Checkout accepts only configured plans and correctly priced Stripe products', async () => {
   const db = fakeDb({status:'free',stripe_customer_id:'cus_test'});
   const stripe = { prices:{ retrieve:async()=>({active:true,currency:'usd',unit_amount:999,recurring:{interval:'month',interval_count:1}}) } };
-  assert.equal((await handleApi(request('/api/checkout','POST',{plan:'arbitrary',price:'price_attacker'}),env,{db,stripe})).status,400);
-  assert.equal((await handleApi(request('/api/checkout','POST',{plan:'monthly'}),env,{db,stripe})).status,503);
+  assert.equal((await handleApi(request('/api/checkout','POST',{plan:'monthly',price:'price_attacker'}),env,{db,stripe})).status,400);
+  assert.equal((await handleApi(request('/api/checkout','POST',{plan:'yearly'}),env,{db,stripe})).status,503);
 });
 test('Checkout uses the verified customer, configured price, and fixed return URLs',async()=>{
   const db = fakeDb({status:'free',stripe_customer_id:'cus_verified'});
@@ -99,7 +99,7 @@ test('Checkout uses the verified customer, configured price, and fixed return UR
   db.rpc=async(name,params)=>{leases.push({name,params});return {data:name==='claim_checkout'?true:null,error:null};};
   let captured;
   const stripe={
-    prices:{retrieve:async()=>({active:true,currency:'usd',unit_amount:2400,recurring:{interval:'year',interval_count:1}})},
+    prices:{retrieve:async()=>({active:true,currency:'usd',unit_amount:599,recurring:{interval:'year',interval_count:1}})},
     subscriptions:{list:async()=>({data:[],has_more:false})},
     checkout:{sessions:{list:async()=>({data:[],has_more:false}),create:async(params)=>{captured=params;return {url:'https://checkout.stripe.com/test'};}}}
   };
@@ -116,6 +116,6 @@ test('Checkout uses the verified customer, configured price, and fixed return UR
 test('parallel Checkout requests stop at the lease and do not create another session',async()=>{
   const db=fakeDb({status:'free',stripe_customer_id:'cus_verified'});
   db.rpc=async()=>({data:false,error:null});
-  const stripe={prices:{retrieve:async()=>({active:true,currency:'usd',unit_amount:300,recurring:{interval:'month',interval_count:1}})}};
-  assert.equal((await handleApi(request('/api/checkout','POST',{plan:'monthly'}),env,{db,stripe})).status,409);
+  const stripe={prices:{retrieve:async()=>({active:true,currency:'usd',unit_amount:599,recurring:{interval:'year',interval_count:1}})}};
+  assert.equal((await handleApi(request('/api/checkout','POST',{plan:'yearly'}),env,{db,stripe})).status,409);
 });
