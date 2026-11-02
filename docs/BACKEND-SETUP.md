@@ -1,6 +1,6 @@
 # Connect Tomodo's backend
 
-Production is Cloudflare Worker **pomodoro-timer**, serving both `tomodo.app` and `www.tomodo.app`. The checked-in `wrangler.jsonc` targets that existing Worker; `www` redirects to the canonical `tomodo.app` origin. The site is deployed, Supabase is connected, and email-link sign-in has been confirmed. Password sign-in, password changes, and recovery callbacks have also been verified against production using disposable accounts. Stripe is not configured and paid checkout remains disabled.
+Production is Cloudflare Worker **pomodoro-timer**, serving both `tomodo.app` and `www.tomodo.app`. The checked-in `wrangler.jsonc` targets that existing Worker; `www` redirects to the canonical `tomodo.app` origin. The site is deployed, Supabase is connected, and email-link sign-in has been confirmed. Password sign-in, password changes, and recovery callbacks have also been verified against production using disposable accounts. Live Stripe Managed Payments is configured and billing is enabled at $11.99/year.
 
 ## 1. Create the Supabase project first
 
@@ -53,11 +53,19 @@ The connector validates the key types, email authentication, and all four databa
 
 ## 3. Create Stripe in test mode
 
+Sandbox resources verified on 2026-11-02 in **tomodo.app sandbox** (`acct_1UX6pB0vQfdXsfq1`):
+
+- Existing product: `prod_VYWff3rtvcUe7v` (tomodo plus); tax code updated to `txcd_10103100`.
+- Existing default price: `price_1UXPc30vQfdXsfq13B4Vurvb`, USD 1199 every year, exclusive of tax. Saved to local `.dev.vars` as `STRIPE_PRICE_YEARLY`.
+- Managed Payments sandbox Checkout creation succeeded (`cs_test_a1Tup5Ly7NWR7dPgzwOIxw4MwqPXYJbpJzwH0Kqt96itRIIs7YUU8f4obr`). Payment remains incomplete. This standalone session is not associated with a Tomodo user and cannot verify account activation.
+- App integration still needs the sandbox `STRIPE_SECRET_KEY` and endpoint-specific `STRIPE_WEBHOOK_SECRET`. Obtain the secret key from the sandbox Dashboard; never commit it. Billing remains disabled until an authenticated app checkout and signed webhook have been verified.
+
+
 1. Create a Stripe account and use its sandbox/test environment.
-2. Create one product: **Tomodo Plus**.
+2. Activate Managed Payments in the Stripe Dashboard. Create one product: **Tomodo Plus**, with eligible tax code `txcd_10103100`. The integration uses API version `2026-02-25.preview` from the blueprint.
 3. Add one **USD recurring** price: **$11.99 every year**. No trial or metered pricing is configured by this implementation. The server verifies those amounts, currency, and intervals before checkout.
 4. Copy the price ID into `STRIPE_PRICE_YEARLY` in `.dev.vars`.
-5. Put the Stripe **test secret key** in `STRIPE_SECRET_KEY`. A Stripe publishable key is not needed because the app redirects to Stripe-hosted Checkout.
+5. Put the Stripe **test secret key** from https://dashboard.stripe.com/test/apikeys in `STRIPE_SECRET_KEY`. A Stripe publishable key is not needed because the app redirects to Stripe-hosted Checkout.
 6. Enable Stripe's customer portal and allow customers to update payment methods and cancel at the end of the paid period. Configure any plan switching to use only these Tomodo prices.
 7. Install the official Stripe CLI and forward signed events to your local endpoint:
 
@@ -70,7 +78,7 @@ stripe listen --forward-to http://localhost:8788/api/stripe-webhook
 9. Set `BILLING_ENABLED=true` **with test keys**, restart the local server, sign in, select a plan, and test Checkout. The hosted checkout is test mode; use Stripe's documented test cards, not a real card. See https://docs.stripe.com/testing.
 10. The Checkout return URL does not grant access. The signed webhook reconciles Stripe's current subscription state and updates the database. The app refreshes account access automatically every minute and when the browser window regains focus.
 
-Optional tax collection uses `STRIPE_AUTOMATIC_TAX=true`. Configure Stripe Tax and the business's applicable obligations before enabling it. Prices shown by Tomodo are base prices; hosted Checkout displays the final total.
+Checkout always sets `managed_payments[enabled]=true`. Stripe handles indirect tax calculation through Managed Payments; do not send `automatic_tax` or `customer_update[address]`. Prices shown by Tomodo are base prices; hosted Checkout displays the final total. Test different billing addresses and complete a sandbox payment using `4242 4242 4242 4242`, a future expiry, and any CVC. Verify the signed `checkout.session.completed` event updates the matching account before treating the integration as verified.
 
 ## 4. Deploy to the existing Cloudflare Worker
 
@@ -97,12 +105,11 @@ In the existing Cloudflare project's settings, add the corresponding variables/s
 | `STRIPE_WEBHOOK_SECRET` | Signing secret for this exact webhook endpoint | Secret |
 | `STRIPE_PRICE_YEARLY` | Yearly price ID for the selected environment | Plain variable |
 | `BILLING_ENABLED` | `true` only when ready to accept the selected environment's payments | Plain variable |
-| `STRIPE_AUTOMATIC_TAX` | `true` only after Stripe Tax configuration, otherwise `false` | Plain variable |
 
-Register `https://tomodo.app/api/stripe-webhook` in Stripe for these events:
+The live webhook is registered at `https://pomodoro-timer.colegreenfield3.workers.dev/api/stripe-webhook` for these events. The direct Worker address avoids the custom domain’s Cloudflare browser challenge; webhook signatures are still required:
 
 - `checkout.session.completed`
-- `checkout.session.async_payment_succeeded`
+- `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`
 - `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`
 - `invoice.paid`, `invoice.payment_failed`
 
@@ -141,3 +148,15 @@ Settings supports email/password sign-in, password account creation with email c
 - Passwords are passed directly to Supabase Auth over HTTPS. Tomodo does not persist them to localStorage, its database, logs, or configuration. Fields clear after success and when Settings closes.
 - Supabase handles password verification/hashing, email confirmation, and auth rate limits. Any stricter project-level password or reauthentication policy remains enforced by Supabase.
 - `node scripts/diagnose-password.mjs` tests the local build against the live Supabase/API using a disposable account. `--live` tests deployed assets instead. Neither sends email, and the temporary account is removed afterward. Actual signup/recovery email delivery should also be tested by the site owner.
+
+## Live billing verification — 2026-11-02
+
+- Live account `acct_1UXP6z15GQrGdGPl` (tomodo.app) reports charges enabled.
+- Product `prod_VYX7VNR9vaoQdL`, price `price_1UXQ3W15GQrGdGPl16XH1iHO`: USD 1199/year, exclusive of applicable tax, eligible tax code `txcd_10103100`.
+- Webhook `we_1UXQ3a15GQrGdGPlVWXWA71Z` uses `2026-02-25.preview` and the direct Worker address above.
+- Live Stripe secrets and `BILLING_ENABLED=true` uploaded to the existing Worker. Deployed version `98405bce-691e-4ff5-8cb1-c24b72c464ae`.
+- All 49 tests and build passed. Deployed Worker config confirms accounts and billing enabled.
+- A disposable account verified authenticated checkout through the application handler with real live Stripe/Supabase services, customer persistence, and portal creation. A synthetic signed webhook sent to the deployed Worker verified reconciliation without granting unpaid access. Validation sessions were expired, disposable users/customers cleaned up, and no payment was taken.
+- Direct custom-domain HTTP checks receive a Cloudflare browser challenge (403), so a complete customer browser checkout and real Stripe payment-event delivery remain unverified.
+
+`node scripts/connect-stripe.mjs --upload` validates/reuses this live product and configures the webhook and Cloudflare secrets without printing credentials. `node scripts/check-live-billing.mjs` performs the disposable-account checks above without charging a card.

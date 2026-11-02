@@ -110,7 +110,7 @@ You can switch themes at any time using the theme bar below the header, with add
 
 ## Tomodo accounts and Plus
 
-The `feature/tomodo-plus` branch includes the Free/Plus UI and a Cloudflare backend using Supabase authentication/storage and Stripe-hosted subscriptions. Plus is $11.99/year. Supabase is connected in production, including email/password sign-in, email links, and password recovery. Stripe billing remains unconfigured and disabled.
+The `feature/tomodo-plus` branch includes the Free/Plus UI and a Cloudflare backend using Supabase authentication/storage and Stripe-hosted subscriptions. Plus is $11.99/year. Supabase is connected in production, including email/password sign-in, email links, and password recovery. Live Stripe Managed Payments billing is configured and enabled at $11.99/year. The live webhook uses the Worker’s direct address to avoid the custom domain’s Cloudflare browser challenge.
 
 ```sh
 npm ci

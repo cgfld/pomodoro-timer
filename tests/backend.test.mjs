@@ -99,12 +99,15 @@ test('Checkout uses the verified customer, configured price, and fixed return UR
   db.rpc=async(name,params)=>{leases.push({name,params});return {data:name==='claim_checkout'?true:null,error:null};};
   let captured;
   const stripe={
-    prices:{retrieve:async()=>({active:true,currency:'usd',unit_amount:1199,recurring:{interval:'year',interval_count:1}})},
+    prices:{retrieve:async()=>({active:true,currency:'usd',unit_amount:1199,product:{active:true,tax_code:'txcd_10103100'},recurring:{interval:'year',interval_count:1}})},
     subscriptions:{list:async()=>({data:[],has_more:false})},
     checkout:{sessions:{list:async()=>({data:[],has_more:false}),create:async(params)=>{captured=params;return {url:'https://checkout.stripe.com/test'};}}}
   };
   const response=await handleApi(request('/api/checkout','POST',{plan:'yearly',customer:'cus_attacker',userId:'attacker',success_url:'https://evil.example'}),env,{db,stripe});
   assert.equal(response.status,200);
+  assert.deepEqual(captured.managed_payments,{enabled:true});
+  assert.equal(captured.automatic_tax,undefined);
+  assert.equal(captured.customer_update,undefined);
   assert.equal(captured.customer,'cus_verified');
   assert.equal(captured.client_reference_id,userId);
   assert.equal(captured.line_items[0].price,'price_year');
@@ -116,6 +119,28 @@ test('Checkout uses the verified customer, configured price, and fixed return UR
 test('parallel Checkout requests stop at the lease and do not create another session',async()=>{
   const db=fakeDb({status:'free',stripe_customer_id:'cus_verified'});
   db.rpc=async()=>({data:false,error:null});
-  const stripe={prices:{retrieve:async()=>({active:true,currency:'usd',unit_amount:1199,recurring:{interval:'year',interval_count:1}})}};
+  const stripe={prices:{retrieve:async()=>({active:true,currency:'usd',unit_amount:1199,product:{active:true,tax_code:'txcd_10103100'},recurring:{interval:'year',interval_count:1}})}};
   assert.equal((await handleApi(request('/api/checkout','POST',{plan:'yearly'}),env,{db,stripe})).status,409);
+});
+
+test('completed Checkout reconciles and persists the current subscription for the customer', async () => {
+  const stripe = new Stripe('sk_test_example');
+  const end = Math.floor(Date.now()/1000)+31536000;
+  const payload = JSON.stringify({id:'evt_checkout',type:'checkout.session.completed',data:{object:{id:'cs_test',customer:'cus_test',subscription:'sub_paid'}}});
+  const signature = stripe.webhooks.generateTestHeaderString({payload,secret:env.STRIPE_WEBHOOK_SECRET});
+  const db = fakeDb({user_id:userId});
+  let applied;
+  db.rpc = async(name,params)=>{applied=params;return {data:null,error:null};};
+  stripe.subscriptions.list = async()=>({data:[{id:'sub_paid',status:'active',items:{data:[{price:'price_year',current_period_end:end}]}}],has_more:false});
+  const req = new Request('https://tomodo.app/api/stripe-webhook',{method:'POST',headers:{'stripe-signature':signature},body:payload});
+  assert.equal((await handleApi(req,env,{db,stripe})).status,200);
+  assert.equal(applied.p_customer_id,'cus_test');
+  assert.equal(applied.p_subscription_id,'sub_paid');
+  assert.equal(applied.p_status,'active');
+  assert.equal(applied.p_access_until,new Date(end*1000).toISOString());
+});
+test('Checkout rejects an ineligible product even when the annual amount is correct', async () => {
+  const db = fakeDb({status:'free',stripe_customer_id:'cus_test'});
+  const stripe = {prices:{retrieve:async()=>({active:true,currency:'usd',unit_amount:1199,recurring:{interval:'year',interval_count:1},product:{active:true,tax_code:'txcd_other'}})}};
+  assert.equal((await handleApi(request('/api/checkout','POST',{plan:'yearly'}),env,{db,stripe})).status,503);
 });

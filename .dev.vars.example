@@ -8,5 +8,3 @@ STRIPE_WEBHOOK_SECRET=
 STRIPE_PRICE_YEARLY=
 # Keep false until test-mode end-to-end checks and purchase policies are complete.
 BILLING_ENABLED=false
-# Set true only after configuring Stripe Tax for the business.
-STRIPE_AUTOMATIC_TAX=false

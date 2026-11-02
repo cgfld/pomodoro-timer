@@ -5,7 +5,7 @@ export function services(env) {
   if (!configured(env)) throw new HttpError(503, 'Account services are not configured yet.');
   return {
     db: createClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY, { auth: { persistSession: false, autoRefreshToken: false } }),
-    stripe: env.STRIPE_SECRET_KEY ? new Stripe(env.STRIPE_SECRET_KEY, { httpClient: Stripe.createFetchHttpClient(), maxNetworkRetries: 2 }) : null
+    stripe: env.STRIPE_SECRET_KEY ? new Stripe(env.STRIPE_SECRET_KEY, { apiVersion: '2026-02-25.preview', httpClient: Stripe.createFetchHttpClient(), maxNetworkRetries: 2 }) : null
   };
 }
 export async function userFor(request, db) {
