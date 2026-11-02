@@ -401,6 +401,7 @@ function setTheme(theme, { restoring = false, previewing = false } = {}) {
   if (!previewing && TomodoAccess.canUseTheme(theme, hasPlus)) activeThemePreview = null;
   currentTheme = theme;
   document.body.setAttribute('data-theme', theme);
+  globalThis.TomodoSoundscapes?.setTheme?.(theme);
   if (!previewing && !restoring) {
     localStorage.setItem(preferenceKey('pomodoro_theme'), theme);
     if (currentAccountId && window.TomodoBackend) window.TomodoBackend.savePreferences({ theme }).catch(showAccountError);

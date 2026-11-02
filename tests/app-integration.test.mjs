@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 import { JSDOM } from 'jsdom';
-const files = await Promise.all(['access.js','daily-stats.js','sync-store.js','account-ui.js','app.js'].map(async file=>[file,await readFile(new URL(`../${file}`,import.meta.url),'utf8')]));
+const files = await Promise.all(['access.js','daily-stats.js','sync-store.js','account-ui.js','soundscapes.js','app.js'].map(async file=>[file,await readFile(new URL(`../${file}`,import.meta.url),'utf8')]));
 const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
 const day=()=>{const date=new Date();return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;};
 async function boot() {
