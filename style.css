@@ -2739,19 +2739,14 @@ body[data-theme="hourglass"] .light-item .light-bulb {
   border-color: var(--light-tone);
   box-shadow: none;
 }
-body[data-theme="hourglass"] .light-item.active .light-bulb {
+body[data-theme="hourglass"] .light-item:is(.active, .completed) .light-bulb {
   background: var(--light-tone);
   border-color: #fffaf0;
   box-shadow: 0 0 0 2px var(--light-tone);
   animation: none;
 }
-body[data-theme="hourglass"] .light-item.completed .light-bulb {
-  background: var(--light-tint);
-  border-color: var(--light-tone);
-  box-shadow: none;
-  filter: none;
-}
-body[data-theme="hourglass"] .light-item.completed .light-inner-dot { background: var(--light-tone); }
+body[data-theme="hourglass"] .light-item.completed .light-bulb { filter: none; }
+body[data-theme="hourglass"] .light-item:is(.active, .completed) .light-inner-dot { background: #fffaf0; }
 body[data-theme="hourglass"] .legend-dot { box-shadow: none; }
 
 /* Green sunburst dial, champagne markers, and a fluted gold bezel. */
@@ -2827,13 +2822,14 @@ body[data-theme="rolex"] .light-item[data-type="work"] { --watch-light: #b9a268;
 body[data-theme="rolex"] .light-item[data-type="shortRest"] { --watch-light: #c39370; }
 body[data-theme="rolex"] .light-item[data-type="longRest"] { --watch-light: #d5bd7e; }
 body[data-theme="rolex"] .light-item .light-bulb { border-color: var(--watch-light); box-shadow: none; }
-body[data-theme="rolex"] .light-item.active .light-bulb {
+body[data-theme="rolex"] .light-item:is(.active, .completed) .light-bulb {
   background: var(--watch-light);
   border-color: #eddbab;
   box-shadow: 0 0 0 2px #b9a26833;
   animation: none;
 }
-body[data-theme="rolex"] .light-item.completed .light-bulb { background: #b9a26833; filter: none; }
+body[data-theme="rolex"] .light-item.completed .light-bulb { filter: none; }
+body[data-theme="rolex"] .light-item:is(.active, .completed) .light-inner-dot { background: #eddbab; }
 body[data-theme="rolex"] .legend-dot { box-shadow: none; }
 
 /* Astronomical clock: celestial brasswork and a medieval blue dial. */
@@ -2880,9 +2876,9 @@ body[data-theme="astronomical"] .light-item[data-type="work"] { --celestial-ligh
 body[data-theme="astronomical"] .light-item[data-type="shortRest"] { --celestial-light: #c18c72; }
 body[data-theme="astronomical"] .light-item[data-type="longRest"] { --celestial-light: #a4adce; }
 body[data-theme="astronomical"] .light-item .light-bulb { border-color: var(--celestial-light); box-shadow: none; }
-body[data-theme="astronomical"] .light-item.active .light-bulb { background: var(--celestial-light); border-color: #e1cf9a; box-shadow: 0 0 0 2px #b5a26926; animation: none; }
-body[data-theme="astronomical"] .light-item.completed .light-bulb { background: #b5a26926; filter: none; }
-body[data-theme="astronomical"] .light-item.completed .light-inner-dot { background: var(--celestial-light); }
+body[data-theme="astronomical"] .light-item:is(.active, .completed) .light-bulb { background: var(--celestial-light); border-color: #e1cf9a; box-shadow: 0 0 0 2px #b5a26926; animation: none; }
+body[data-theme="astronomical"] .light-item.completed .light-bulb { filter: none; }
+body[data-theme="astronomical"] .light-item:is(.active, .completed) .light-inner-dot { background: #e1cf9a; }
 body[data-theme="astronomical"] .legend-dot { box-shadow: none; }
 .theme-more-option[data-theme="astronomical"] .theme-more-lock { font-size: 1rem; }
 
